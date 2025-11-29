@@ -150,8 +150,20 @@ async function handleBooking(formData) {
             const serviceName = getServiceName(formData.service);
             const totalPrice = result.booking.totalPrice / 100; // Convert cents to dollars
 
+            // Build success message
+            let message = `✅ Booking Confirmed!\n\nThank you, ${formData.name}!\n\nBooking ID: #${result.booking.id}\nService: ${serviceName}\nTotal: $${totalPrice.toFixed(2)}\nPickup: ${formData.pickupDate} (${getTimeDisplay(formData.pickupTime)})`;
+
+            // Only mention email if it was actually sent
+            if (result.emailSent) {
+                message += `\n\nWe've sent a confirmation email to ${formData.email}.`;
+            } else {
+                message += `\n\nYour booking has been saved! We'll contact you at ${formData.phone} to confirm.`;
+            }
+
+            message += `\n\nWe'll see you at your pickup time!`;
+
             // Show success message
-            alert(`✅ Booking Confirmed!\n\nThank you, ${formData.name}!\n\nBooking ID: #${result.booking.id}\nService: ${serviceName}\nTotal: $${totalPrice.toFixed(2)}\nPickup: ${formData.pickupDate} (${getTimeDisplay(formData.pickupTime)})\n\nWe've sent a confirmation email to ${formData.email}.\nWe'll see you at your pickup time!`);
+            alert(message);
 
             // Reset the form
             document.getElementById('bookingForm').reset();
