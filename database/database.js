@@ -1,0 +1,284 @@
+// ==================================
+// DATABASE MODULE
+// Handles all database operations using SQLite
+// ==================================
+
+const sqlite3 = require('sqlite3').verbose();
+const path = require('path');
+
+// Database file path
+const DB_PATH = path.join(__dirname, 'arielgo.db');
+
+// Create database connection
+const db = new sqlite3.Database(DB_PATH, (err) => {
+    if (err) {
+        console.error('Error opening database:', err);
+    } else {
+        console.log('✅ Connected to SQLite database');
+        initializeDatabase();
+    }
+});
+
+/**
+ * Initialize database tables
+ */
+function initializeDatabase() {
+    // Create bookings table
+    db.run(`
+        CREATE TABLE IF NOT EXISTS bookings (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            phone TEXT NOT NULL,
+            email TEXT NOT NULL,
+            address TEXT NOT NULL,
+            service TEXT NOT NULL,
+            pickupDate TEXT NOT NULL,
+            pickupTime TEXT,
+            numberOfBags INTEGER DEFAULT 1,
+            pricePerBag INTEGER NOT NULL,
+            totalPrice INTEGER NOT NULL,
+            status TEXT DEFAULT 'pending',
+            notes TEXT,
+            createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
+            updatedAt TEXT DEFAULT CURRENT_TIMESTAMP
+        )
+    `, (err) => {
+        if (err) {
+            console.error('Error creating bookings table:', err);
+        } else {
+            console.log('✅ Bookings table ready');
+        }
+    });
+
+    // Create index on status for faster queries
+    db.run(`
+        CREATE INDEX IF NOT EXISTS idx_status ON bookings(status)
+    `);
+
+    // Create index on pickupDate for faster date queries
+    db.run(`
+        CREATE INDEX IF NOT EXISTS idx_pickup_date ON bookings(pickupDate)
+    `);
+}
+
+/**
+ * Create a new booking
+ */
+function createBooking(bookingData) {
+    return new Promise((resolve, reject) => {
+        const sql = `
+            INSERT INTO bookings (
+                name, phone, email, address, service,
+                pickupDate, pickupTime, numberOfBags,
+                pricePerBag, totalPrice, status, notes
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `;
+
+        const params = [
+            bookingData.name,
+            bookingData.phone,
+            bookingData.email,
+            bookingData.address,
+            bookingData.service,
+            bookingData.pickupDate,
+            bookingData.pickupTime,
+            bookingData.numberOfBags || 1,
+            bookingData.pricePerBag,
+            bookingData.totalPrice,
+            bookingData.status || 'pending',
+            bookingData.notes || ''
+        ];
+
+        db.run(sql, params, function(err) {
+            if (err) {
+                console.error('Error creating booking:', err);
+                reject(err);
+            } else {
+                // Get the created booking
+                getBookingById(this.lastID)
+                    .then(resolve)
+                    .catch(reject);
+            }
+        });
+    });
+}
+
+/**
+ * Get a booking by ID
+ */
+function getBookingById(id) {
+    return new Promise((resolve, reject) => {
+        const sql = 'SELECT * FROM bookings WHERE id = ?';
+
+        db.get(sql, [id], (err, row) => {
+            if (err) {
+                console.error('Error fetching booking:', err);
+                reject(err);
+            } else {
+                resolve(row || null);
+            }
+        });
+    });
+}
+
+/**
+ * Get all bookings (with optional status filter)
+ */
+function getAllBookings(status = null) {
+    return new Promise((resolve, reject) => {
+        let sql = 'SELECT * FROM bookings';
+        let params = [];
+
+        if (status) {
+            sql += ' WHERE status = ?';
+            params.push(status);
+        }
+
+        sql += ' ORDER BY createdAt DESC';
+
+        db.all(sql, params, (err, rows) => {
+            if (err) {
+                console.error('Error fetching bookings:', err);
+                reject(err);
+            } else {
+                resolve(rows);
+            }
+        });
+    });
+}
+
+/**
+ * Update booking status
+ */
+function updateBookingStatus(id, newStatus) {
+    return new Promise((resolve, reject) => {
+        const sql = `
+            UPDATE bookings
+            SET status = ?, updatedAt = CURRENT_TIMESTAMP
+            WHERE id = ?
+        `;
+
+        db.run(sql, [newStatus, id], function(err) {
+            if (err) {
+                console.error('Error updating booking status:', err);
+                reject(err);
+            } else {
+                if (this.changes === 0) {
+                    resolve(null); // Booking not found
+                } else {
+                    getBookingById(id)
+                        .then(resolve)
+                        .catch(reject);
+                }
+            }
+        });
+    });
+}
+
+/**
+ * Get booking statistics
+ */
+function getBookingStats() {
+    return new Promise((resolve, reject) => {
+        const statsQueries = {
+            total: 'SELECT COUNT(*) as count FROM bookings',
+            pending: 'SELECT COUNT(*) as count FROM bookings WHERE status = "pending"',
+            confirmed: 'SELECT COUNT(*) as count FROM bookings WHERE status = "confirmed"',
+            completed: 'SELECT COUNT(*) as count FROM bookings WHERE status = "completed"',
+            cancelled: 'SELECT COUNT(*) as count FROM bookings WHERE status = "cancelled"',
+            totalRevenue: 'SELECT SUM(totalPrice) as total FROM bookings WHERE status != "cancelled"',
+            averageOrderValue: 'SELECT AVG(totalPrice) as average FROM bookings WHERE status != "cancelled"',
+            totalBags: 'SELECT SUM(numberOfBags) as total FROM bookings WHERE status != "cancelled"'
+        };
+
+        const stats = {};
+        const promises = [];
+
+        for (const [key, query] of Object.entries(statsQueries)) {
+            promises.push(
+                new Promise((res, rej) => {
+                    db.get(query, [], (err, row) => {
+                        if (err) {
+                            rej(err);
+                        } else {
+                            if (key.includes('Revenue') || key.includes('OrderValue')) {
+                                // Convert cents to dollars for revenue stats
+                                const value = row.total || row.average || 0;
+                                stats[key] = value;
+                                stats[`${key}Dollars`] = (value / 100).toFixed(2);
+                            } else {
+                                stats[key] = row.count || row.total || row.average || 0;
+                            }
+                            res();
+                        }
+                    });
+                })
+            );
+        }
+
+        Promise.all(promises)
+            .then(() => resolve(stats))
+            .catch(reject);
+    });
+}
+
+/**
+ * Get bookings for a specific date
+ */
+function getBookingsByDate(date) {
+    return new Promise((resolve, reject) => {
+        const sql = 'SELECT * FROM bookings WHERE pickupDate = ? ORDER BY pickupTime';
+
+        db.all(sql, [date], (err, rows) => {
+            if (err) {
+                console.error('Error fetching bookings by date:', err);
+                reject(err);
+            } else {
+                resolve(rows);
+            }
+        });
+    });
+}
+
+/**
+ * Delete a booking (for testing/admin purposes)
+ */
+function deleteBooking(id) {
+    return new Promise((resolve, reject) => {
+        const sql = 'DELETE FROM bookings WHERE id = ?';
+
+        db.run(sql, [id], function(err) {
+            if (err) {
+                console.error('Error deleting booking:', err);
+                reject(err);
+            } else {
+                resolve(this.changes > 0);
+            }
+        });
+    });
+}
+
+/**
+ * Close database connection
+ */
+function close() {
+    db.close((err) => {
+        if (err) {
+            console.error('Error closing database:', err);
+        } else {
+            console.log('Database connection closed');
+        }
+    });
+}
+
+// Export all functions
+module.exports = {
+    createBooking,
+    getBookingById,
+    getAllBookings,
+    updateBookingStatus,
+    getBookingStats,
+    getBookingsByDate,
+    deleteBooking,
+    close
+};
