@@ -122,9 +122,15 @@ app.post('/api/bookings', async (req, res) => {
         const booking = await db.createBooking(fullBookingData);
 
         // Send email notification
+        let emailSent = false;
         try {
-            await emailService.sendBookingConfirmation(booking);
-            console.log('Confirmation email sent successfully');
+            const emailResult = await emailService.sendBookingConfirmation(booking);
+            emailSent = emailResult.success;
+            if (emailSent) {
+                console.log('Confirmation email sent successfully');
+            } else {
+                console.log('Email not sent:', emailResult.reason || 'Email not configured');
+            }
         } catch (emailError) {
             console.error('Failed to send email:', emailError);
             // Don't fail the booking if email fails
@@ -134,6 +140,7 @@ app.post('/api/bookings', async (req, res) => {
         res.status(201).json({
             success: true,
             message: 'Booking created successfully!',
+            emailSent: emailSent,
             booking: {
                 id: booking.id,
                 name: booking.name,
