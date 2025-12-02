@@ -1,12 +1,23 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
 from app.core.config import settings
-from app.api import questions, scraper, ai
+from app.api import questions, scraper, ai, auth
+from app.services.database_service import db_service
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
+    await db_service.connect_db()
+    yield
+    # Shutdown
+    await db_service.close_db()
 
 app = FastAPI(
     title="Ariel API",
     description="Revolutionary revision platform - AI-powered learning without distractors",
-    version="1.0.0"
+    version="1.0.0",
+    lifespan=lifespan
 )
 
 # CORS middleware
@@ -19,6 +30,7 @@ app.add_middleware(
 )
 
 # Include routers
+app.include_router(auth.router, prefix="/api/auth", tags=["authentication"])
 app.include_router(questions.router, prefix="/api/questions", tags=["questions"])
 app.include_router(scraper.router, prefix="/api/scraper", tags=["scraper"])
 app.include_router(ai.router, prefix="/api/ai", tags=["ai"])
