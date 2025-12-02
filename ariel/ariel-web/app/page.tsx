@@ -1,8 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import InputMethods from '@/components/InputMethods';
 import QuestionCard from '@/components/QuestionCard';
+import AuthModal from '@/components/AuthModal';
+import { useAuth } from '@/lib/useAuth';
 
 interface Question {
   question: string;
@@ -12,10 +15,17 @@ interface Question {
 }
 
 export default function Home() {
+  const router = useRouter();
+  const { user, isAuthenticated, login, checkAuth } = useAuth();
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isSessionActive, setIsSessionActive] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
+
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
 
   const handleQuestionsLoaded = (loadedQuestions: Question[]) => {
     setQuestions(loadedQuestions);
@@ -42,6 +52,16 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Header */}
+      {/* Auth Modal */}
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        onSuccess={(user, token) => {
+          login(user, token);
+          router.push('/dashboard');
+        }}
+      />
+
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
@@ -51,14 +71,31 @@ export default function Home() {
               </h1>
               <p className="text-sm text-gray-600 mt-1">Learning forward, always positive</p>
             </div>
-            {isSessionActive && (
-              <button
-                onClick={handleRestart}
-                className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 transition-colors"
-              >
-                ← Start Over
-              </button>
-            )}
+            <div className="flex items-center gap-3">
+              {isSessionActive && (
+                <button
+                  onClick={handleRestart}
+                  className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 transition-colors"
+                >
+                  ← Start Over
+                </button>
+              )}
+              {isAuthenticated ? (
+                <button
+                  onClick={() => router.push('/dashboard')}
+                  className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
+                >
+                  Dashboard
+                </button>
+              ) : (
+                <button
+                  onClick={() => setShowAuthModal(true)}
+                  className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
+                >
+                  Sign In
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </header>
