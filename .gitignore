@@ -2,6 +2,13 @@
 node_modules/
 package-lock.json
 
+# Python virtual environments
+venv/
+env/
+*-venv/
+*.pyc
+__pycache__/
+
 # Environment variables (contains sensitive info like passwords)
 .env
 
