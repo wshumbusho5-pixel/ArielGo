@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from app.core.config import settings
-from app.api import questions, scraper, ai, auth, progress
+from app.api import questions, scraper, ai, auth, progress, gamification
 from app.services.database_service import db_service
 
 @asynccontextmanager
@@ -32,6 +32,7 @@ app.add_middleware(
 # Include routers
 app.include_router(auth.router, prefix="/api/auth", tags=["authentication"])
 app.include_router(progress.router, prefix="/api/progress", tags=["progress"])
+app.include_router(gamification.router, prefix="/api/gamification", tags=["gamification"])
 app.include_router(questions.router, prefix="/api/questions", tags=["questions"])
 app.include_router(scraper.router, prefix="/api/scraper", tags=["scraper"])
 app.include_router(ai.router, prefix="/api/ai", tags=["ai"])
