@@ -8,16 +8,21 @@
     "dev": "nodemon server.js",
     "init-db": "node database/init-database.js"
   },
-  "keywords": ["laundry", "delivery", "arielgo"],
+  "keywords": [
+    "laundry",
+    "delivery",
+    "arielgo"
+  ],
   "author": "ArielGo",
   "license": "MIT",
   "dependencies": {
-    "express": "^4.18.2",
-    "cors": "^2.8.5",
-    "sqlite3": "^5.1.6",
     "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
     "nodemailer": "^6.9.7",
-    "dotenv": "^16.3.1"
+    "sqlite3": "^5.1.6",
+    "stripe": "^20.0.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.2"
