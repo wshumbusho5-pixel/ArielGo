@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Bookings - ArielGo Admin{% endblock %}
+
+{% block content %}
+<div class="bookings-page">
+    <div class="page-header">
+        <h2>All Bookings</h2>
+        <div class="filters">
+            <a href="{{ url_for('bookings', status='all') }}" class="filter-btn {% if status_filter == 'all' %}active{% endif %}">All</a>
+            <a href="{{ url_for('bookings', status='pending') }}" class="filter-btn {% if status_filter == 'pending' %}active{% endif %}">Pending</a>
+            <a href="{{ url_for('bookings', status='confirmed') }}" class="filter-btn {% if status_filter == 'confirmed' %}active{% endif %}">Confirmed</a>
+            <a href="{{ url_for('bookings', status='in_progress') }}" class="filter-btn {% if status_filter == 'in_progress' %}active{% endif %}">In Progress</a>
+            <a href="{{ url_for('bookings', status='completed') }}" class="filter-btn {% if status_filter == 'completed' %}active{% endif %}">Completed</a>
+            <a href="{{ url_for('bookings', status='cancelled') }}" class="filter-btn {% if status_filter == 'cancelled' %}active{% endif %}">Cancelled</a>
+        </div>
+    </div>
+
+    {% if bookings %}
+    <table class="bookings-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Customer</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Service</th>
+                <th>Bags</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Pickup Date</th>
+                <th>Created</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for booking in bookings %}
+            <tr>
+                <td>#{{ booking.id }}</td>
+                <td>{{ booking.customer_name }}</td>
+                <td>{{ booking.customer_phone }}</td>
+                <td>{{ booking.customer_email }}</td>
+                <td>{{ booking.service_type }}</td>
+                <td>{{ booking.bags }}</td>
+                <td>${{ "%.2f"|format(booking.total / 100) }}</td>
+                <td><span class="status-badge status-{{ booking.status }}">{{ booking.status }}</span></td>
+                <td>{{ booking.pickup_date }} {{ booking.pickup_time }}</td>
+                <td>{{ booking.created_at[:10] }}</td>
+                <td>
+                    <a href="{{ url_for('booking_detail', booking_id=booking.id) }}" class="btn-small">View</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="no-data">No bookings found</p>
+    {% endif %}
+</div>
+{% endblock %}
