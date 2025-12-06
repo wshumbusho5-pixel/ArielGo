@@ -6,6 +6,55 @@
     <title>Track Your Order - ArielGo Laundry</title>
     <link rel="stylesheet" href="/css/style.css">
     <style>
+        /* Navigation */
+        .top-nav {
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 15px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .top-nav .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .top-nav .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2563eb;
+            text-decoration: none;
+        }
+
+        .top-nav .nav-links {
+            display: flex;
+            gap: 25px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .top-nav .nav-links a {
+            text-decoration: none;
+            color: #64748b;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .top-nav .nav-links a:hover {
+            color: #2563eb;
+        }
+
+    </style>
+    <style>
         .track-container {
             max-width: 600px;
             margin: 80px auto 40px;
@@ -224,6 +273,19 @@
     </style>
 </head>
 <body>
+    <!-- Navigation -->
+    <nav class="top-nav">
+        <div class="container">
+            <a href="/" class="logo">ArielGo</a>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/track.html">Track Order</a></li>
+                <li><a href="/driver.html">Driver App</a></li>
+                <li><a href="http://localhost:5002" target="_blank">Admin</a></li>
+            </ul>
+        </div>
+    </nav>
+
     <div class="track-container">
         <div class="track-card">
             <h1>Track Your Order</h1>
