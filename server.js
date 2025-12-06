@@ -15,6 +15,9 @@ const path = require('path');
 const db = require('./database/database');
 const emailService = require('./services/email-service');
 const pricingService = require('./services/pricing-service');
+const paymentService = require('./services/payment-service');
+const smsService = require('./services/sms-service');
+const promoService = require('./services/promo-service');
 
 // Create Express application
 const app = express();
@@ -136,11 +139,27 @@ app.post('/api/bookings', async (req, res) => {
             // Don't fail the booking if email fails
         }
 
+        // Send SMS notification
+        let smsSent = false;
+        try {
+            const smsResult = await smsService.sendBookingConfirmation(booking);
+            smsSent = smsResult.success;
+            if (smsSent) {
+                console.log('Confirmation SMS sent successfully');
+            } else {
+                console.log('SMS not sent:', smsResult.reason || 'SMS not configured');
+            }
+        } catch (smsError) {
+            console.error('Failed to send SMS:', smsError);
+            // Don't fail the booking if SMS fails
+        }
+
         // Return success response
         res.status(201).json({
             success: true,
             message: 'Booking created successfully!',
             emailSent: emailSent,
+            smsSent: smsSent,
             booking: {
                 id: booking.id,
                 name: booking.name,
@@ -232,6 +251,28 @@ app.patch('/api/bookings/:id/status', async (req, res) => {
             });
         }
 
+        // Send SMS notification for status change
+        try {
+            const smsResult = await smsService.sendStatusUpdate(updated, newStatus);
+            if (smsResult.success) {
+                console.log('Status update SMS sent successfully');
+            }
+        } catch (smsError) {
+            console.error('Failed to send status update SMS:', smsError);
+            // Don't fail the update if SMS fails
+        }
+
+        // Send email notification for status change
+        try {
+            const emailResult = await emailService.sendStatusUpdate(updated, newStatus);
+            if (emailResult.success) {
+                console.log('Status update email sent successfully');
+            }
+        } catch (emailError) {
+            console.error('Failed to send status update email:', emailError);
+            // Don't fail the update if email fails
+        }
+
         res.json({
             success: true,
             message: 'Booking status updated successfully',
@@ -260,6 +301,219 @@ app.get('/api/stats', async (req, res) => {
         res.status(500).json({
             success: false,
             error: 'Failed to fetch statistics'
+        });
+    }
+});
+
+// ==================================
+// PAYMENT ROUTES
+// ==================================
+
+// Create payment intent for a booking
+app.post('/api/payments/create-intent', async (req, res) => {
+    try {
+        const bookingData = {
+            name: req.body.name,
+            email: req.body.email,
+            phone: req.body.phone,
+            service: req.body.service,
+            numberOfBags: req.body.numberOfBags || 1,
+            totalPrice: req.body.totalPrice,
+            pickupDate: req.body.pickupDate,
+            pickupTime: req.body.pickupTime
+        };
+
+        const result = await paymentService.createPaymentIntent(bookingData);
+
+        if (!result.success) {
+            return res.status(400).json({
+                success: false,
+                error: result.error || result.reason
+            });
+        }
+
+        res.json({
+            success: true,
+            clientSecret: result.clientSecret,
+            paymentIntentId: result.paymentIntentId,
+            amount: result.amount
+        });
+
+    } catch (error) {
+        console.error('Error creating payment intent:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to create payment intent'
+        });
+    }
+});
+
+// Check payment status
+app.get('/api/payments/:paymentIntentId/status', async (req, res) => {
+    try {
+        const result = await paymentService.getPaymentStatus(req.params.paymentIntentId);
+
+        if (!result.success) {
+            return res.status(400).json({
+                success: false,
+                error: result.error || result.reason
+            });
+        }
+
+        res.json({
+            success: true,
+            status: result.status,
+            paid: result.paid
+        });
+
+    } catch (error) {
+        console.error('Error checking payment status:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to check payment status'
+        });
+    }
+});
+
+// Process refund
+app.post('/api/payments/:paymentIntentId/refund', async (req, res) => {
+    try {
+        const amount = req.body.amount || null; // Optional partial refund
+
+        const result = await paymentService.processRefund(req.params.paymentIntentId, amount);
+
+        if (!result.success) {
+            return res.status(400).json({
+                success: false,
+                error: result.error || result.reason
+            });
+        }
+
+        res.json({
+            success: true,
+            refundId: result.refundId,
+            amount: result.amount,
+            status: result.status
+        });
+
+    } catch (error) {
+        console.error('Error processing refund:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to process refund'
+        });
+    }
+});
+
+// Get Stripe publishable key
+app.get('/api/payments/config', (req, res) => {
+    res.json({
+        publishableKey: process.env.STRIPE_PUBLISHABLE_KEY || null,
+        configured: paymentService.isConfigured()
+    });
+});
+
+// ==================================
+// PROMO CODE ROUTES
+// ==================================
+
+// Validate promo code
+app.post('/api/promo/validate', async (req, res) => {
+    try {
+        const { code, subtotal } = req.body;
+
+        if (!code || !subtotal) {
+            return res.status(400).json({
+                success: false,
+                error: 'Code and subtotal are required'
+            });
+        }
+
+        const result = await promoService.validatePromoCode(code, subtotal);
+
+        if (!result.valid) {
+            return res.status(400).json({
+                success: false,
+                error: result.error
+            });
+        }
+
+        res.json({
+            success: true,
+            promo: result
+        });
+
+    } catch (error) {
+        console.error('Error validating promo code:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to validate promo code'
+        });
+    }
+});
+
+// Create promo code (admin)
+app.post('/api/promo/create', async (req, res) => {
+    try {
+        const promoData = {
+            code: req.body.code,
+            discountType: req.body.discountType, // 'percentage' or 'fixed'
+            discountValue: req.body.discountValue, // e.g., 20 for 20% or 500 for $5.00
+            maxUses: req.body.maxUses || 0,
+            expiresAt: req.body.expiresAt || null,
+            active: req.body.active !== undefined ? req.body.active : 1
+        };
+
+        const promo = await promoService.createPromoCode(promoData);
+
+        res.status(201).json({
+            success: true,
+            promo: promo
+        });
+
+    } catch (error) {
+        console.error('Error creating promo code:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to create promo code'
+        });
+    }
+});
+
+// Get all promo codes (admin)
+app.get('/api/promo/all', async (req, res) => {
+    try {
+        const promos = await promoService.getAllPromoCodes();
+
+        res.json({
+            success: true,
+            promos: promos
+        });
+
+    } catch (error) {
+        console.error('Error fetching promo codes:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to fetch promo codes'
+        });
+    }
+});
+
+// Deactivate promo code (admin)
+app.patch('/api/promo/:id/deactivate', async (req, res) => {
+    try {
+        await promoService.deactivatePromoCode(req.params.id);
+
+        res.json({
+            success: true,
+            message: 'Promo code deactivated'
+        });
+
+    } catch (error) {
+        console.error('Error deactivating promo code:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to deactivate promo code'
         });
     }
 });
@@ -304,6 +558,10 @@ app.listen(PORT, () => {
     console.log(`   - GET  /api/bookings/:id`);
     console.log(`   - PATCH /api/bookings/:id/status`);
     console.log(`   - GET  /api/stats`);
+    console.log(`   - POST /api/payments/create-intent`);
+    console.log(`   - GET  /api/payments/:id/status`);
+    console.log(`   - POST /api/payments/:id/refund`);
+    console.log(`   - GET  /api/payments/config`);
     console.log('========================================');
     console.log('Press Ctrl+C to stop the server');
     console.log('');

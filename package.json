@@ -22,7 +22,8 @@
     "express": "^4.18.2",
     "nodemailer": "^6.9.7",
     "sqlite3": "^5.1.6",
-    "stripe": "^20.0.0"
+    "stripe": "^20.0.0",
+    "twilio": "^5.10.7"
   },
   "devDependencies": {
     "nodemon": "^3.0.2"
