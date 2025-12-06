@@ -19,6 +19,7 @@ const paymentService = require('./services/payment-service');
 const smsService = require('./services/sms-service');
 const promoService = require('./services/promo-service');
 const routeOptimizer = require('./services/route-optimizer');
+const aiAssistant = require('./services/ai-assistant');
 
 // Create Express application
 const app = express();
@@ -520,6 +521,126 @@ app.patch('/api/promo/:id/deactivate', async (req, res) => {
 });
 
 // ==================================
+// AI ASSISTANT ROUTES
+// ==================================
+
+// Chat with AI assistant
+app.post('/api/assistant/chat', async (req, res) => {
+    try {
+        const { message, userEmail } = req.body;
+
+        if (!message) {
+            return res.status(400).json({
+                success: false,
+                error: 'Message is required'
+            });
+        }
+
+        // Build user context
+        const context = {};
+
+        if (userEmail) {
+            // Get user's bookings
+            const allBookings = await db.getAllBookings();
+            const userBookings = allBookings.filter(b => b.email === userEmail);
+
+            // Get active orders
+            const activeOrders = userBookings.filter(b =>
+                ['pending', 'confirmed', 'in_progress'].includes(b.status)
+            );
+
+            // Build context
+            context.userEmail = userEmail;
+            context.activeOrders = activeOrders;
+            context.orderHistory = {
+                totalOrders: userBookings.length,
+                lastOrderDate: userBookings.length > 0
+                    ? userBookings.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0].pickupDate
+                    : null
+            };
+
+            // Add user name from most recent booking
+            if (userBookings.length > 0) {
+                context.userName = userBookings[0].name;
+            }
+        }
+
+        // Get AI response
+        const response = await aiAssistant.chat(message, context);
+
+        res.json(response);
+
+    } catch (error) {
+        console.error('Error in AI chat:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to get AI response'
+        });
+    }
+});
+
+// Get conversation suggestions
+app.post('/api/assistant/suggestions', async (req, res) => {
+    try {
+        const { userEmail } = req.body;
+
+        // Build user context
+        const context = {};
+
+        if (userEmail) {
+            const allBookings = await db.getAllBookings();
+            const userBookings = allBookings.filter(b => b.email === userEmail);
+            const activeOrders = userBookings.filter(b =>
+                ['pending', 'confirmed', 'in_progress'].includes(b.status)
+            );
+
+            context.activeOrders = activeOrders;
+        }
+
+        const suggestions = aiAssistant.getSuggestions(context);
+
+        res.json({
+            success: true,
+            suggestions: suggestions
+        });
+
+    } catch (error) {
+        console.error('Error getting suggestions:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to get suggestions'
+        });
+    }
+});
+
+// Get laundry care tip
+app.get('/api/assistant/tip', async (req, res) => {
+    try {
+        const topic = req.query.topic || null;
+        const result = await aiAssistant.getLaundryCareTip(topic);
+
+        res.json(result);
+
+    } catch (error) {
+        console.error('Error getting laundry tip:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to get laundry tip'
+        });
+    }
+});
+
+// Check if AI assistant is configured
+app.get('/api/assistant/status', (req, res) => {
+    res.json({
+        configured: aiAssistant.isConfigured(),
+        message: aiAssistant.isConfigured()
+            ? 'AI Assistant is ready'
+            : 'AI Assistant is not configured. Add OPENAI_API_KEY to .env file.'
+    });
+});
+
+// ==================================
 // ROUTE OPTIMIZATION (Driver Tools)
 // ==================================
 
@@ -648,6 +769,10 @@ app.listen(PORT, () => {
     console.log(`   - GET  /api/payments/:id/status`);
     console.log(`   - POST /api/payments/:id/refund`);
     console.log(`   - GET  /api/payments/config`);
+    console.log(`   - POST /api/assistant/chat`);
+    console.log(`   - POST /api/assistant/suggestions`);
+    console.log(`   - GET  /api/assistant/tip`);
+    console.log(`   - GET  /api/assistant/status`);
     console.log('========================================');
     console.log('Press Ctrl+C to stop the server');
     console.log('');

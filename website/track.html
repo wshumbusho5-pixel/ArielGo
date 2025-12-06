@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Track Your Order - ArielGo Laundry</title>
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/ai-chat.css">
     <style>
         /* Navigation */
         .top-nav {
@@ -429,6 +430,12 @@
             buildProgressTracker(booking.status);
 
             document.getElementById('orderDetails').classList.add('visible');
+
+            // Update AI chat with user email
+            if (typeof aiChat !== 'undefined' && aiChat) {
+                window.userEmail = booking.email;
+                aiChat.setUserEmail(booking.email);
+            }
         }
 
         function buildProgressTracker(currentStatus) {
@@ -492,5 +499,6 @@
             document.getElementById('email').value = urlParams.get('email');
         }
     </script>
+    <script src="/js/ai-chat.js"></script>
 </body>
 </html>
