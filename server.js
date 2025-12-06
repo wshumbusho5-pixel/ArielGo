@@ -18,6 +18,7 @@ const pricingService = require('./services/pricing-service');
 const paymentService = require('./services/payment-service');
 const smsService = require('./services/sms-service');
 const promoService = require('./services/promo-service');
+const routeOptimizer = require('./services/route-optimizer');
 
 // Create Express application
 const app = express();
@@ -514,6 +515,91 @@ app.patch('/api/promo/:id/deactivate', async (req, res) => {
         res.status(500).json({
             success: false,
             error: 'Failed to deactivate promo code'
+        });
+    }
+});
+
+// ==================================
+// ROUTE OPTIMIZATION (Driver Tools)
+// ==================================
+
+// Get optimized route for a specific date
+app.get('/api/routes/optimize/:date', async (req, res) => {
+    try {
+        const date = req.params.date;
+
+        // Get all confirmed bookings for the date
+        const allBookings = await db.getAllBookings();
+        const dateBookings = allBookings.filter(b =>
+            b.pickupDate === date &&
+            (b.status === 'confirmed' || b.status === 'in_progress')
+        );
+
+        if (dateBookings.length === 0) {
+            return res.json({
+                success: true,
+                routes: [],
+                message: 'No bookings for this date'
+            });
+        }
+
+        // Geocode bookings if needed
+        const geocodedBookings = await routeOptimizer.geocodeBookings(dateBookings);
+
+        // Generate optimized routes
+        const routes = routeOptimizer.generateDailyRoutes(geocodedBookings);
+
+        res.json({
+            success: true,
+            date: date,
+            routes: routes,
+            totalBookings: dateBookings.length
+        });
+
+    } catch (error) {
+        console.error('Error optimizing route:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to optimize route'
+        });
+    }
+});
+
+// Get route for specific time window
+app.post('/api/routes/optimize', async (req, res) => {
+    try {
+        const { bookingIds, startLocation } = req.body;
+
+        if (!bookingIds || bookingIds.length === 0) {
+            return res.status(400).json({
+                success: false,
+                error: 'Booking IDs required'
+            });
+        }
+
+        // Get bookings by IDs
+        const bookings = [];
+        for (const id of bookingIds) {
+            const booking = await db.getBookingById(id);
+            if (booking) {
+                bookings.push(booking);
+            }
+        }
+
+        // Geocode and optimize
+        const geocodedBookings = await routeOptimizer.geocodeBookings(bookings);
+        const optimized = routeOptimizer.optimizeRoute(geocodedBookings, startLocation);
+
+        res.json({
+            success: true,
+            ...optimized
+        });
+
+    } catch (error) {
+        console.error('Error optimizing custom route:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to optimize route'
         });
     }
 });
