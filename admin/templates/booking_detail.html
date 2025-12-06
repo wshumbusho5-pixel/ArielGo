@@ -14,15 +14,15 @@
             <h3>Customer Information</h3>
             <div class="detail-row">
                 <span class="label">Name:</span>
-                <span class="value">{{ booking.customer_name }}</span>
+                <span class="value">{{ booking.name }}</span>
             </div>
             <div class="detail-row">
                 <span class="label">Phone:</span>
-                <span class="value">{{ booking.customer_phone }}</span>
+                <span class="value">{{ booking.phone }}</span>
             </div>
             <div class="detail-row">
                 <span class="label">Email:</span>
-                <span class="value">{{ booking.customer_email }}</span>
+                <span class="value">{{ booking.email }}</span>
             </div>
         </div>
 
@@ -30,15 +30,15 @@
             <h3>Booking Details</h3>
             <div class="detail-row">
                 <span class="label">Service Type:</span>
-                <span class="value">{{ booking.service_type }}</span>
+                <span class="value">{{ booking.service }}</span>
             </div>
             <div class="detail-row">
                 <span class="label">Number of Bags:</span>
-                <span class="value">{{ booking.bags }}</span>
+                <span class="value">{{ booking.numberOfBags }}</span>
             </div>
             <div class="detail-row">
                 <span class="label">Total:</span>
-                <span class="value">${{ "%.2f"|format(booking.total / 100) }}</span>
+                <span class="value">${{ "%.2f"|format(booking.totalPrice / 100) }}</span>
             </div>
             <div class="detail-row">
                 <span class="label">Status:</span>
@@ -50,20 +50,20 @@
             <h3>Pickup Information</h3>
             <div class="detail-row">
                 <span class="label">Address:</span>
-                <span class="value">{{ booking.pickup_address }}</span>
+                <span class="value">{{ booking.address }}</span>
             </div>
             <div class="detail-row">
                 <span class="label">Date:</span>
-                <span class="value">{{ booking.pickup_date }}</span>
+                <span class="value">{{ booking.pickupDate }}</span>
             </div>
             <div class="detail-row">
                 <span class="label">Time:</span>
-                <span class="value">{{ booking.pickup_time }}</span>
+                <span class="value">{{ booking.pickupTime }}</span>
             </div>
-            {% if booking.special_instructions %}
+            {% if booking.notes %}
             <div class="detail-row">
-                <span class="label">Special Instructions:</span>
-                <span class="value">{{ booking.special_instructions }}</span>
+                <span class="label">Notes:</span>
+                <span class="value">{{ booking.notes }}</span>
             </div>
             {% endif %}
         </div>
@@ -72,11 +72,11 @@
             <h3>Timestamps</h3>
             <div class="detail-row">
                 <span class="label">Created:</span>
-                <span class="value">{{ booking.created_at }}</span>
+                <span class="value">{{ booking.createdAt }}</span>
             </div>
             <div class="detail-row">
                 <span class="label">Last Updated:</span>
-                <span class="value">{{ booking.updated_at }}</span>
+                <span class="value">{{ booking.updatedAt }}</span>
             </div>
         </div>
     </div>
