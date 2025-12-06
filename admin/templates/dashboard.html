@@ -58,12 +58,12 @@
                 {% for booking in bookings %}
                 <tr>
                     <td>#{{ booking.id }}</td>
-                    <td>{{ booking.customer_name }}</td>
-                    <td>{{ booking.service_type }}</td>
-                    <td>{{ booking.bags }}</td>
-                    <td>${{ "%.2f"|format(booking.total / 100) }}</td>
+                    <td>{{ booking.name }}</td>
+                    <td>{{ booking.service }}</td>
+                    <td>{{ booking.numberOfBags }}</td>
+                    <td>${{ "%.2f"|format(booking.totalPrice / 100) }}</td>
                     <td><span class="status-badge status-{{ booking.status }}">{{ booking.status }}</span></td>
-                    <td>{{ booking.created_at[:10] }}</td>
+                    <td>{{ booking.createdAt[:10] }}</td>
                     <td>
                         <a href="{{ url_for('booking_detail', booking_id=booking.id) }}" class="btn-small">View</a>
                     </td>
