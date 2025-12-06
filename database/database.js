@@ -39,6 +39,9 @@ function initializeDatabase() {
             totalPrice INTEGER NOT NULL,
             status TEXT DEFAULT 'pending',
             notes TEXT,
+            paymentIntentId TEXT,
+            paymentStatus TEXT DEFAULT 'pending',
+            stripeCustomerId TEXT,
             createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
             updatedAt TEXT DEFAULT CURRENT_TIMESTAMP
         )
@@ -47,6 +50,8 @@ function initializeDatabase() {
             console.error('Error creating bookings table:', err);
         } else {
             console.log('✅ Bookings table ready');
+            // Add payment columns to existing table if they don't exist
+            addPaymentColumns();
         }
     });
 
@@ -59,6 +64,71 @@ function initializeDatabase() {
     db.run(`
         CREATE INDEX IF NOT EXISTS idx_pickup_date ON bookings(pickupDate)
     `);
+
+    // Create promo codes table
+    db.run(`
+        CREATE TABLE IF NOT EXISTS promo_codes (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            code TEXT NOT NULL UNIQUE,
+            discountType TEXT NOT NULL,
+            discountValue INTEGER NOT NULL,
+            maxUses INTEGER DEFAULT 0,
+            usedCount INTEGER DEFAULT 0,
+            expiresAt TEXT,
+            active INTEGER DEFAULT 1,
+            createdAt TEXT DEFAULT CURRENT_TIMESTAMP
+        )
+    `, (err) => {
+        if (err) {
+            console.error('Error creating promo_codes table:', err);
+        } else {
+            console.log('✅ Promo codes table ready');
+        }
+    });
+
+    // Create index on code for faster lookups
+    db.run(`
+        CREATE INDEX IF NOT EXISTS idx_promo_code ON promo_codes(code)
+    `);
+}
+
+/**
+ * Add payment columns to existing bookings table (migration)
+ */
+function addPaymentColumns() {
+    // Check if columns exist, if not add them
+    db.all("PRAGMA table_info(bookings)", [], (err, columns) => {
+        if (err) {
+            console.error('Error checking table schema:', err);
+            return;
+        }
+
+        const columnNames = columns.map(col => col.name);
+
+        // Add paymentIntentId if doesn't exist
+        if (!columnNames.includes('paymentIntentId')) {
+            db.run('ALTER TABLE bookings ADD COLUMN paymentIntentId TEXT', (err) => {
+                if (err) console.error('Error adding paymentIntentId:', err);
+                else console.log('✅ Added paymentIntentId column');
+            });
+        }
+
+        // Add paymentStatus if doesn't exist
+        if (!columnNames.includes('paymentStatus')) {
+            db.run("ALTER TABLE bookings ADD COLUMN paymentStatus TEXT DEFAULT 'pending'", (err) => {
+                if (err) console.error('Error adding paymentStatus:', err);
+                else console.log('✅ Added paymentStatus column');
+            });
+        }
+
+        // Add stripeCustomerId if doesn't exist
+        if (!columnNames.includes('stripeCustomerId')) {
+            db.run('ALTER TABLE bookings ADD COLUMN stripeCustomerId TEXT', (err) => {
+                if (err) console.error('Error adding stripeCustomerId:', err);
+                else console.log('✅ Added stripeCustomerId column');
+            });
+        }
+    });
 }
 
 /**
@@ -70,8 +140,9 @@ function createBooking(bookingData) {
             INSERT INTO bookings (
                 name, phone, email, address, service,
                 pickupDate, pickupTime, numberOfBags,
-                pricePerBag, totalPrice, status, notes
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                pricePerBag, totalPrice, status, notes,
+                paymentIntentId, paymentStatus, stripeCustomerId
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
 
         const params = [
@@ -86,7 +157,10 @@ function createBooking(bookingData) {
             bookingData.pricePerBag,
             bookingData.totalPrice,
             bookingData.status || 'pending',
-            bookingData.notes || ''
+            bookingData.notes || '',
+            bookingData.paymentIntentId || null,
+            bookingData.paymentStatus || 'pending',
+            bookingData.stripeCustomerId || null
         ];
 
         db.run(sql, params, function(err) {
