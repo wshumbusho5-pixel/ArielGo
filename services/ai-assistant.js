@@ -30,7 +30,7 @@ if (process.env.OPENAI_API_KEY) {
         });
         providerType = 'ollama';
         console.log('✅ AI Assistant service initialized (Ollama)');
-        console.log('💡 Using local Ollama - install a model with: ollama pull llama2');
+        console.log('💡 Using local Ollama with model: llama3.2:3b');
     } catch (error) {
         console.log('⚠️  No AI provider configured - AI Assistant disabled');
         console.log('   Option 1: Add OPENAI_API_KEY to .env for OpenAI');
@@ -75,7 +75,7 @@ async function chat(userMessage, context = {}) {
 
         } else if (providerType === 'ollama') {
             // Use Ollama
-            const ollamaModel = process.env.OLLAMA_MODEL || 'llama2';
+            const ollamaModel = process.env.OLLAMA_MODEL || 'llama3.2:3b';
 
             const completion = await aiProvider.chat({
                 model: ollamaModel,
@@ -237,7 +237,7 @@ async function getLaundryCareTip(topic = null) {
             tip = completion.choices[0].message.content;
 
         } else if (providerType === 'ollama') {
-            const ollamaModel = process.env.OLLAMA_MODEL || 'llama2';
+            const ollamaModel = process.env.OLLAMA_MODEL || 'llama3.2:3b';
 
             const completion = await aiProvider.chat({
                 model: ollamaModel,
@@ -292,7 +292,7 @@ function getProviderInfo() {
         model: providerType === 'openai'
             ? (process.env.OPENAI_MODEL || 'gpt-4')
             : providerType === 'ollama'
-            ? (process.env.OLLAMA_MODEL || 'llama2')
+            ? (process.env.OLLAMA_MODEL || 'llama3.2:3b')
             : null
     };
 }
