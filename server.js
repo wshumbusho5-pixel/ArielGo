@@ -632,11 +632,22 @@ app.get('/api/assistant/tip', async (req, res) => {
 
 // Check if AI assistant is configured
 app.get('/api/assistant/status', (req, res) => {
+    const providerInfo = aiAssistant.getProviderInfo();
+
+    let message = '';
+    if (providerInfo.configured) {
+        if (providerInfo.provider === 'openai') {
+            message = `AI Assistant ready (OpenAI ${providerInfo.model})`;
+        } else if (providerInfo.provider === 'ollama') {
+            message = `AI Assistant ready (Ollama ${providerInfo.model})`;
+        }
+    } else {
+        message = 'AI Assistant not configured. Add OPENAI_API_KEY to .env or install Ollama.';
+    }
+
     res.json({
-        configured: aiAssistant.isConfigured(),
-        message: aiAssistant.isConfigured()
-            ? 'AI Assistant is ready'
-            : 'AI Assistant is not configured. Add OPENAI_API_KEY to .env file.'
+        ...providerInfo,
+        message: message
     });
 });
 
