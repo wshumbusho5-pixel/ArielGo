@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}Drivers - ArielGo Admin{% endblock %}
+
+{% block content %}
+<div class="drivers-page">
+    <div class="page-header">
+        <h2>Driver Management</h2>
+        <a href="{{ url_for('create_driver') }}" class="btn-primary">+ Create New Driver</a>
+    </div>
+
+    {% if drivers %}
+    <table class="bookings-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Full Name</th>
+                <th>Email</th>
+                <th>Status</th>
+                <th>Last Login</th>
+                <th>Created</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for driver in drivers %}
+            <tr>
+                <td>#{{ driver.id }}</td>
+                <td>{{ driver.username }}</td>
+                <td>{{ driver.full_name }}</td>
+                <td>{{ driver.email }}</td>
+                <td>
+                    {% if driver.is_active %}
+                        <span class="status-badge status-confirmed">Active</span>
+                    {% else %}
+                        <span class="status-badge status-cancelled">Inactive</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if driver.last_login %}
+                        {{ driver.last_login[:16] }}
+                    {% else %}
+                        Never
+                    {% endif %}
+                </td>
+                <td>{{ driver.created_at[:10] if driver.created_at else 'N/A' }}</td>
+                <td>
+                    <a href="{{ url_for('edit_driver', driver_id=driver.id) }}" class="btn-small">Edit</a>
+                    <form method="POST" action="{{ url_for('toggle_driver_status', driver_id=driver.id) }}" style="display:inline;">
+                        <button type="submit" class="btn-small btn-warning">
+                            {% if driver.is_active %}Deactivate{% else %}Activate{% endif %}
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <p>No drivers found.</p>
+        <a href="{{ url_for('create_driver') }}" class="btn-primary">Create First Driver</a>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    .drivers-page {
+        padding: 20px 0;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    .btn-primary {
+        background: #2563eb;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: background 0.3s;
+    }
+
+    .btn-primary:hover {
+        background: #1d4ed8;
+    }
+
+    .btn-warning {
+        background: #f59e0b;
+        color: white;
+    }
+
+    .btn-warning:hover {
+        background: #d97706;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        background: #f9fafb;
+        border-radius: 8px;
+    }
+
+    .empty-state p {
+        color: #6b7280;
+        margin-bottom: 20px;
+        font-size: 16px;
+    }
+</style>
+{% endblock %}

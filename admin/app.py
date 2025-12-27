@@ -8,6 +8,7 @@ from functools import wraps
 import sqlite3
 import os
 import hashlib
+import bcrypt
 from datetime import datetime
 from dotenv import load_dotenv
 
@@ -66,12 +67,20 @@ def get_db_connection():
     return conn
 
 def verify_password(password, password_hash):
-    """Verify password against hash"""
+    """
+    Verify password against hash
+    Supports both bcrypt (new) and SHA256 (legacy) for migration
+    """
+    # Check if it's a bcrypt hash (starts with $2a$, $2b$, or $2y$)
+    if password_hash.startswith('$2'):
+        return bcrypt.checkpw(password.encode('utf-8'), password_hash.encode('utf-8'))
+
+    # Legacy SHA256 support (for migration period)
     return hashlib.sha256(password.encode()).hexdigest() == password_hash
 
 def hash_password(password):
-    """Hash a password"""
-    return hashlib.sha256(password.encode()).hexdigest()
+    """Hash a password using bcrypt (secure password hashing)"""
+    return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
 def format_price(cents):
     """Convert cents to dollar string"""
@@ -312,6 +321,140 @@ def toggle_admin_status(user_id):
 
     conn.close()
     return redirect(url_for('admin_users'))
+
+# ==================================
+# DRIVER MANAGEMENT ROUTES
+# ==================================
+
+@app.route('/drivers')
+@login_required
+def drivers():
+    """View all drivers"""
+    conn = get_db_connection()
+    drivers = conn.execute(
+        'SELECT * FROM admin_users WHERE role = ? ORDER BY created_at DESC',
+        ('driver',)
+    ).fetchall()
+    conn.close()
+
+    return render_template('drivers.html', drivers=drivers)
+
+@app.route('/drivers/create', methods=['GET', 'POST'])
+@login_required
+def create_driver():
+    """Create new driver account"""
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        email = request.form.get('email')
+        full_name = request.form.get('full_name')
+
+        if not all([username, password, email, full_name]):
+            flash('All fields are required', 'error')
+            return redirect(url_for('create_driver'))
+
+        if len(password) < 6:
+            flash('Password must be at least 6 characters', 'error')
+            return redirect(url_for('create_driver'))
+
+        password_hash = hash_password(password)
+
+        try:
+            conn = get_db_connection()
+            conn.execute('''
+                INSERT INTO admin_users
+                (username, password_hash, email, full_name, role, is_active)
+                VALUES (?, ?, ?, ?, 'driver', 1)
+            ''', (username, password_hash, email, full_name))
+            conn.commit()
+            conn.close()
+
+            flash(f'Driver {username} created successfully', 'success')
+            return redirect(url_for('drivers'))
+
+        except sqlite3.IntegrityError:
+            flash('Username or email already exists', 'error')
+            return redirect(url_for('create_driver'))
+
+    return render_template('create_driver.html')
+
+@app.route('/drivers/<int:driver_id>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_driver(driver_id):
+    """Edit driver account"""
+    conn = get_db_connection()
+    driver = conn.execute(
+        'SELECT * FROM admin_users WHERE id = ? AND role = ?',
+        (driver_id, 'driver')
+    ).fetchone()
+
+    if not driver:
+        flash('Driver not found', 'error')
+        conn.close()
+        return redirect(url_for('drivers'))
+
+    if request.method == 'POST':
+        email = request.form.get('email')
+        full_name = request.form.get('full_name')
+        new_password = request.form.get('new_password')
+
+        if not all([email, full_name]):
+            flash('Email and full name are required', 'error')
+            return render_template('edit_driver.html', driver=driver)
+
+        try:
+            if new_password:
+                if len(new_password) < 6:
+                    flash('Password must be at least 6 characters', 'error')
+                    return render_template('edit_driver.html', driver=driver)
+
+                password_hash = hash_password(new_password)
+                conn.execute(
+                    'UPDATE admin_users SET email = ?, full_name = ?, password_hash = ? WHERE id = ?',
+                    (email, full_name, password_hash, driver_id)
+                )
+            else:
+                conn.execute(
+                    'UPDATE admin_users SET email = ?, full_name = ? WHERE id = ?',
+                    (email, full_name, driver_id)
+                )
+
+            conn.commit()
+            flash('Driver updated successfully', 'success')
+            conn.close()
+            return redirect(url_for('drivers'))
+
+        except sqlite3.IntegrityError:
+            flash('Email already exists', 'error')
+            return render_template('edit_driver.html', driver=driver)
+
+    conn.close()
+    return render_template('edit_driver.html', driver=driver)
+
+@app.route('/drivers/<int:driver_id>/toggle', methods=['POST'])
+@login_required
+def toggle_driver_status(driver_id):
+    """Toggle driver active status"""
+    conn = get_db_connection()
+    driver = conn.execute(
+        'SELECT * FROM admin_users WHERE id = ? AND role = ?',
+        (driver_id, 'driver')
+    ).fetchone()
+
+    if driver:
+        new_status = 0 if driver['is_active'] else 1
+        conn.execute(
+            'UPDATE admin_users SET is_active = ? WHERE id = ?',
+            (new_status, driver_id)
+        )
+        conn.commit()
+        flash(
+            f'Driver {driver["username"]} {"activated" if new_status else "deactivated"}',
+            'success'
+        )
+
+    conn.close()
+    return redirect(url_for('drivers'))
 
 # PROFILE ROUTE
 
