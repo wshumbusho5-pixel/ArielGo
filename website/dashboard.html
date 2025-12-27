@@ -17,27 +17,34 @@
         }
 
         :root {
-            --color-orange: #FF6B00;
-            --color-amber: #F59E0B;
-            --color-yellow: #FCD34D;
-            --gradient-primary: linear-gradient(135deg, #1A1A1A 0%, #FF6B00 50%, #FCD34D 100%);
+            --color-blue: #4EA9FF;
+            --color-blue-dark: #3A90E8;
+            --color-mint: #2EC4B6;
+            --color-dark: #0f172a;
+            --gradient-primary: linear-gradient(135deg, #4EA9FF 0%, #5FB3FF 100%);
+
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --shadow-glow: 0 0 20px rgba(78, 169, 255, 0.2);
         }
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: #111827;
-            color: white;
+            background: linear-gradient(135deg, #F9FBFF 0%, #EFF6FF 100%);
+            color: #0f172a;
             min-height: 100vh;
             padding: 2rem;
         }
 
         .navbar {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(24px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(78, 169, 255, 0.1);
             border-radius: 16px;
             padding: 1.5rem 2rem;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow-md);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -61,14 +68,14 @@
 
         .user-info {
             font-weight: 600;
-            color: rgba(255, 255, 255, 0.9);
+            color: #374151;
         }
 
         .btn-secondary {
             padding: 0.75rem 1.5rem;
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--color-orange);
-            border: 2px solid var(--color-orange);
+            background: #FFFFFF;
+            color: var(--color-blue);
+            border: 2px solid rgba(78, 169, 255, 0.2);
             border-radius: 10px;
             font-weight: 600;
             cursor: pointer;
@@ -78,8 +85,9 @@
         }
 
         .btn-secondary:hover {
-            background: var(--color-orange);
+            background: var(--gradient-primary);
             color: white;
+            border-color: var(--color-blue);
         }
 
         .btn-logout {
@@ -106,12 +114,12 @@
         h1 {
             font-size: 2rem;
             font-weight: 800;
-            color: white;
+            color: #0f172a;
             margin-bottom: 0.5rem;
         }
 
         .subtitle {
-            color: rgba(255, 255, 255, 0.7);
+            color: #64748b;
             font-size: 1.1rem;
         }
 
@@ -123,16 +131,23 @@
         }
 
         .stat-card {
-            background: rgba(255, 255, 255, 0.03);
+            background: #FFFFFF;
             backdrop-filter: blur(24px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(78, 169, 255, 0.1);
             border-radius: 16px;
             padding: 1.5rem;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl), var(--shadow-glow);
+            border-color: rgba(78, 169, 255, 0.3);
         }
 
         .stat-label {
-            color: rgba(255, 255, 255, 0.6);
+            color: #64748b;
             font-size: 0.9rem;
             margin-bottom: 0.5rem;
         }
@@ -146,12 +161,12 @@
         }
 
         .orders-section {
-            background: rgba(255, 255, 255, 0.03);
+            background: #FFFFFF;
             backdrop-filter: blur(24px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(78, 169, 255, 0.1);
             border-radius: 16px;
             padding: 2rem;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            box-shadow: var(--shadow-sm);
         }
 
         .section-header {
@@ -164,7 +179,7 @@
         .section-title {
             font-size: 1.5rem;
             font-weight: 700;
-            color: white;
+            color: #0f172a;
         }
 
         .btn-primary {
@@ -182,7 +197,7 @@
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(14, 165, 233, 0.4);
+            box-shadow: var(--shadow-xl), var(--shadow-glow);
         }
 
         .orders-list {
@@ -192,16 +207,17 @@
         }
 
         .order-card {
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            background: rgba(255, 255, 255, 0.02);
+            border: 2px solid rgba(78, 169, 255, 0.1);
+            background: #FFFFFF;
             border-radius: 12px;
             padding: 1.5rem;
             transition: all 0.3s;
         }
 
         .order-card:hover {
-            border-color: var(--color-orange);
-            box-shadow: 0 4px 12px rgba(255, 107, 0, 0.3);
+            border-color: var(--color-blue);
+            box-shadow: var(--shadow-lg), var(--shadow-glow);
+            transform: translateY(-2px);
         }
 
         .order-header {
@@ -213,7 +229,7 @@
 
         .order-id {
             font-weight: 700;
-            color: white;
+            color: #0f172a;
             font-size: 1.1rem;
         }
 
@@ -253,7 +269,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 1rem;
-            color: rgba(255, 255, 255, 0.6);
+            color: #64748b;
             font-size: 0.9rem;
         }
 
@@ -264,14 +280,14 @@
 
         .detail-label {
             font-weight: 600;
-            color: rgba(255, 255, 255, 0.9);
+            color: #0f172a;
             margin-bottom: 0.25rem;
         }
 
         .empty-state {
             text-align: center;
             padding: 4rem 2rem;
-            color: rgba(255, 255, 255, 0.5);
+            color: #64748b;
         }
 
         .empty-icon {
@@ -282,7 +298,7 @@
         .loading {
             text-align: center;
             padding: 3rem;
-            color: rgba(255, 255, 255, 0.6);
+            color: #64748b;
         }
 
         @media (max-width: 768px) {
@@ -457,7 +473,7 @@
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">Total</div>
-                            <div style="font-weight: 700; color: #FF6B00;">$${(order.totalPrice / 100).toFixed(2)}</div>
+                            <div style="font-weight: 700; color: #4EA9FF;">$${(order.totalPrice / 100).toFixed(2)}</div>
                         </div>
                     </div>
                 </div>

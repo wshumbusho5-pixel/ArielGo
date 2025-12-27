@@ -438,9 +438,10 @@
                 <p>Access your delivery dashboard</p>
             </div>
 
-            <div id="error-message" class="error-message"></div>
+            <div id="errorMessage" class="error-message"></div>
+            <div id="successMessage" class="error-message" style="background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3); color: #34D399;"></div>
 
-            <form id="loginForm">
+            <form id="driverLoginForm">
                 <div class="form-group">
                     <label for="username">Username</label>
                     <input type="text" id="username" name="username" required placeholder="Enter your username">
@@ -451,7 +452,7 @@
                     <input type="password" id="password" name="password" required placeholder="Enter your password">
                 </div>
 
-                <button type="submit" class="login-btn" id="loginBtn">
+                <button type="submit" class="login-btn" id="loginButton">
                     Login →
                 </button>
             </form>
