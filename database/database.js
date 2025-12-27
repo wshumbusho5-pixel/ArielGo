@@ -525,6 +525,54 @@ function updateUser(userId, updates) {
 }
 
 /**
+ * Assign driver to booking
+ */
+function assignDriverToBooking(bookingId, driverId) {
+    return new Promise((resolve, reject) => {
+        const sql = 'UPDATE bookings SET driver_id = ? WHERE id = ?';
+
+        db.run(sql, [driverId, bookingId], function(err) {
+            if (err) {
+                console.error('Error assigning driver to booking:', err);
+                reject(err);
+            } else if (this.changes === 0) {
+                resolve(null);
+            } else {
+                getBookingById(bookingId)
+                    .then(resolve)
+                    .catch(reject);
+            }
+        });
+    });
+}
+
+/**
+ * Get all orders assigned to a specific driver
+ */
+function getDriverOrders(driverId, status = null) {
+    return new Promise((resolve, reject) => {
+        let sql = 'SELECT * FROM bookings WHERE driver_id = ?';
+        let params = [driverId];
+
+        if (status) {
+            sql += ' AND status = ?';
+            params.push(status);
+        }
+
+        sql += ' ORDER BY pickupDate ASC, pickupTime ASC';
+
+        db.all(sql, params, (err, rows) => {
+            if (err) {
+                console.error('Error fetching driver orders:', err);
+                reject(err);
+            } else {
+                resolve(rows || []);
+            }
+        });
+    });
+}
+
+/**
  * Close database connection
  */
 function close() {
@@ -546,6 +594,8 @@ module.exports = {
     getBookingStats,
     getBookingsByDate,
     deleteBooking,
+    assignDriverToBooking,
+    getDriverOrders,
     createUser,
     getUserByEmail,
     getUserById,

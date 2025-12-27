@@ -715,24 +715,29 @@
                 <p>Route optimization & pickup management</p>
             </div>
 
-            <div class="date-card">
-                <label for="routeDate">Select Pickup Date</label>
-                <input type="date" id="routeDate" name="routeDate">
-                <button class="optimize-btn" id="optimizeBtn" onclick="loadRoutes()">
-                    Get Optimized Route
-                </button>
+            <div class="summary-card" id="ordersSummary">
+                <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 2rem; margin-bottom: 1rem;">My Assigned Orders</h3>
+                <div class="summary-grid" id="summaryGrid">
+                    <div class="summary-stat">
+                        <div class="value" id="totalOrders">0</div>
+                        <div class="label">Total Orders</div>
+                    </div>
+                    <div class="summary-stat">
+                        <div class="value" id="pendingOrders">0</div>
+                        <div class="label">Pending</div>
+                    </div>
+                    <div class="summary-stat">
+                        <div class="value" id="inProgressOrders">0</div>
+                        <div class="label">In Progress</div>
+                    </div>
+                </div>
             </div>
 
-            <div class="summary-card" id="routeSummary">
-                <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 2rem; margin-bottom: 1rem;">Route Summary</h3>
-                <div class="summary-grid" id="summaryGrid"></div>
-            </div>
-
-            <div id="routeWindows"></div>
+            <div id="ordersContainer"></div>
 
             <div id="emptyState" class="empty-state">
-                <div class="icon">📍</div>
-                <p>Select a date to view your optimized route</p>
+                <div class="icon">📦</div>
+                <p>No orders assigned yet</p>
             </div>
         </div>
     </div>
@@ -765,28 +770,13 @@
         }
 
         checkAuth();
+        loadOrders(); // Load assigned orders on page load
 
-        document.getElementById('routeDate').valueAsDate = new Date();
-
-        async function loadRoutes() {
-            const dateInput = document.getElementById('routeDate');
-            const date = dateInput.value;
-
-            if (!date) {
-                alert('Please select a date');
-                return;
-            }
-
-            const btn = document.getElementById('optimizeBtn');
-            btn.disabled = true;
-            btn.textContent = 'Loading...';
-
-            document.getElementById('routeSummary').classList.remove('visible');
-            document.getElementById('routeWindows').innerHTML = '';
+        async function loadOrders() {
             document.getElementById('emptyState').style.display = 'none';
 
             try {
-                const response = await fetch(`${API_BASE}/api/routes/optimize/${date}`);
+                const response = await fetch(`${API_BASE}/api/driver/orders`);
 
                 if (response.status === 401) {
                     window.location.href = '/driver-login.html';
@@ -796,103 +786,60 @@
                 const data = await response.json();
 
                 if (!data.success) {
-                    throw new Error(data.error || 'Failed to load routes');
+                    throw new Error(data.error || 'Failed to load orders');
                 }
 
-                if (data.routes.length === 0) {
-                    document.getElementById('emptyState').innerHTML = `
-                        <div class="icon">✅</div>
-                        <p>No pickups scheduled for ${formatDate(date)}</p>
-                    `;
+                if (data.orders.length === 0) {
                     document.getElementById('emptyState').style.display = 'block';
+                    document.getElementById('ordersContainer').innerHTML = '';
                     return;
                 }
 
-                displayRoutes(data);
+                displayOrders(data.orders);
 
             } catch (error) {
-                console.error('Error loading routes:', error);
-                alert('Failed to load routes: ' + error.message);
-            } finally {
-                btn.disabled = false;
-                btn.textContent = 'Get Optimized Route';
+                console.error('Error loading orders:', error);
+                alert('Failed to load orders: ' + error.message);
             }
         }
 
-        function displayRoutes(data) {
-            const totalStops = data.routes.reduce((sum, r) => sum + r.stops, 0);
-            const totalDistance = data.routes.reduce((sum, r) => sum + r.totalDistance, 0);
-            const totalTime = data.routes.reduce((sum, r) => sum + r.estimatedTime, 0);
+        function displayOrders(orders) {
+            // Update summary stats
+            const total = orders.length;
+            const pending = orders.filter(o => o.status === 'pending' || o.status === 'confirmed').length;
+            const inProgress = orders.filter(o => o.status === 'in_progress').length;
 
-            document.getElementById('summaryGrid').innerHTML = `
-                <div class="summary-stat">
-                    <div class="value">${totalStops}</div>
-                    <div class="label">Total Stops</div>
-                </div>
-                <div class="summary-stat">
-                    <div class="value">${totalDistance.toFixed(1)}</div>
-                    <div class="label">Miles</div>
-                </div>
-                <div class="summary-stat">
-                    <div class="value">${totalTime}</div>
-                    <div class="label">Minutes</div>
-                </div>
-                <div class="summary-stat">
-                    <div class="value">${data.routes.length}</div>
-                    <div class="label">Windows</div>
-                </div>
-            `;
-            document.getElementById('routeSummary').classList.add('visible');
+            document.getElementById('totalOrders').textContent = total;
+            document.getElementById('pendingOrders').textContent = pending;
+            document.getElementById('inProgressOrders').textContent = inProgress;
 
-            const windowsHtml = data.routes.map(window => `
-                <div class="time-window visible">
-                    <div class="time-window-header">
-                        <div>
-                            <div class="time-window-title">${capitalizeFirst(window.timeWindow)} Route</div>
-                            <div class="time-range">${window.timeRange}</div>
-                        </div>
+            // Display orders
+            const ordersHtml = orders.map((order, index) => `
+                <div class="stop-card">
+                    <div class="stop-header">
+                        <span class="stop-number">${index + 1}</span>
+                        <span class="stop-name">${order.name}</span>
+                        <span class="stop-status status-${order.status}">${order.status.replace('_', ' ')}</span>
                     </div>
-
-                    <div class="route-stats">
-                        <div class="route-stat">
-                            <div class="value">${window.stops}</div>
-                            <div class="label">Stops</div>
-                        </div>
-                        <div class="route-stat">
-                            <div class="value">${window.totalDistance.toFixed(1)}</div>
-                            <div class="label">Miles</div>
-                        </div>
-                        <div class="route-stat">
-                            <div class="value">${window.estimatedTime}</div>
-                            <div class="label">Mins</div>
-                        </div>
+                    <div class="stop-details">
+                        <div><span class="icon">📍</span>${order.address}</div>
+                        <div><span class="icon">📞</span>${order.phone}</div>
+                        <div><span class="icon">📧</span>${order.email}</div>
+                        <div><span class="icon">📅</span>Pickup: ${order.pickupDate} ${order.pickupTime || ''}</div>
+                        <div><span class="icon">🧺</span>${order.numberOfBags} bag(s) - ${order.service}</div>
+                        <div><span class="icon">💰</span>$${(order.totalPrice / 100).toFixed(2)}</div>
+                        ${order.notes ? `<div><span class="icon">📝</span>${order.notes}</div>` : ''}
                     </div>
-
-                    ${window.route.map((stop, index) => `
-                        <div class="stop-card">
-                            <div class="stop-header">
-                                <span class="stop-number">${index + 1}</span>
-                                <span class="stop-name">${stop.name}</span>
-                                <span class="stop-status status-${stop.status}">${stop.status.replace('_', ' ')}</span>
-                            </div>
-                            <div class="stop-details">
-                                <div><span class="icon">📍</span>${stop.address}</div>
-                                <div><span class="icon">📞</span>${stop.phone}</div>
-                                <div><span class="icon">🧺</span>${stop.numberOfBags} bag(s) - $${(stop.totalPrice / 100).toFixed(2)}</div>
-                                ${stop.notes ? `<div><span class="icon">📝</span>${stop.notes}</div>` : ''}
-                            </div>
-                            <div class="action-buttons">
-                                <button class="btn btn-call" onclick="callCustomer('${stop.phone}')">📞 Call</button>
-                                <button class="btn btn-navigate" onclick="navigate('${encodeURIComponent(stop.address)}')">🗺️ Navigate</button>
-                                <button class="btn btn-complete" onclick="markComplete(${stop.id})">✓ Complete</button>
-                                <button class="btn btn-issue" onclick="reportIssue(${stop.id})">⚠️ Issue</button>
-                            </div>
-                        </div>
-                    `).join('')}
+                    <div class="action-buttons">
+                        <button class="btn btn-call" onclick="callCustomer('${order.phone}')">📞 Call</button>
+                        <button class="btn btn-navigate" onclick="navigate('${encodeURIComponent(order.address)}')">🗺️ Navigate</button>
+                        ${order.status === 'confirmed' ? `<button class="btn btn-complete" onclick="updateStatus(${order.id}, 'in_progress')">▶️ Start</button>` : ''}
+                        ${order.status === 'in_progress' ? `<button class="btn btn-complete" onclick="updateStatus(${order.id}, 'completed')">✓ Complete</button>` : ''}
+                    </div>
                 </div>
             `).join('');
 
-            document.getElementById('routeWindows').innerHTML = windowsHtml;
+            document.getElementById('ordersContainer').innerHTML = ordersHtml;
         }
 
         function callCustomer(phone) {
@@ -903,14 +850,19 @@
             window.open(`https://www.google.com/maps/dir/?api=1&destination=${address}`, '_blank');
         }
 
-        async function markComplete(bookingId) {
-            if (!confirm('Mark this pickup as complete?')) return;
+        async function updateStatus(bookingId, newStatus) {
+            const messages = {
+                'in_progress': 'Start this pickup?',
+                'completed': 'Mark this pickup as complete?'
+            };
+
+            if (!confirm(messages[newStatus] || 'Update status?')) return;
 
             try {
                 const response = await fetch(`${API_BASE}/api/bookings/${bookingId}/status`, {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ status: 'in_progress' })
+                    body: JSON.stringify({ status: newStatus })
                 });
 
                 if (response.status === 401) {
@@ -920,8 +872,8 @@
 
                 if (!response.ok) throw new Error('Failed to update status');
 
-                alert('Pickup marked as complete!');
-                loadRoutes();
+                alert(`Order status updated to ${newStatus.replace('_', ' ')}!`);
+                loadOrders(); // Reload orders
 
             } catch (error) {
                 alert('Error: ' + error.message);

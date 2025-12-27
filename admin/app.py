@@ -226,14 +226,30 @@ def bookings():
 def booking_detail(booking_id):
     """View single booking details"""
     conn = get_db_connection()
-    booking = conn.execute('SELECT * FROM bookings WHERE id = ?', (booking_id,)).fetchone()
+
+    # Fetch booking with driver name if assigned
+    booking = conn.execute('''
+        SELECT b.*, u.full_name as driver_name
+        FROM bookings b
+        LEFT JOIN admin_users u ON b.driver_id = u.id
+        WHERE b.id = ?
+    ''', (booking_id,)).fetchone()
+
+    # Fetch all active drivers for assignment dropdown
+    drivers = conn.execute('''
+        SELECT id, username, full_name
+        FROM admin_users
+        WHERE role = 'driver' AND is_active = 1
+        ORDER BY full_name
+    ''').fetchall()
+
     conn.close()
 
     if booking is None:
         flash('Booking not found', 'error')
         return redirect(url_for('bookings'))
 
-    return render_template('booking_detail.html', booking=booking)
+    return render_template('booking_detail.html', booking=booking, drivers=drivers)
 
 @app.route('/bookings/<int:booking_id>/status', methods=['POST'])
 @login_required
@@ -254,6 +270,40 @@ def update_status(booking_id):
     conn.close()
 
     flash(f'Booking status updated to {new_status}', 'success')
+    return redirect(url_for('booking_detail', booking_id=booking_id))
+
+@app.route('/bookings/<int:booking_id>/assign-driver', methods=['POST'])
+@login_required
+def assign_driver(booking_id):
+    """Assign driver to booking"""
+    driver_id = request.form.get('driver_id')
+
+    if not driver_id:
+        flash('Please select a driver', 'error')
+        return redirect(url_for('booking_detail', booking_id=booking_id))
+
+    conn = get_db_connection()
+
+    # Verify driver exists and is active
+    driver = conn.execute(
+        'SELECT * FROM admin_users WHERE id = ? AND role = ? AND is_active = 1',
+        (driver_id, 'driver')
+    ).fetchone()
+
+    if not driver:
+        flash('Invalid driver selected', 'error')
+        conn.close()
+        return redirect(url_for('booking_detail', booking_id=booking_id))
+
+    # Assign driver to booking
+    conn.execute(
+        'UPDATE bookings SET driver_id = ?, updatedAt = ? WHERE id = ?',
+        (driver_id, datetime.now().isoformat(), booking_id)
+    )
+    conn.commit()
+    conn.close()
+
+    flash(f'Driver {driver["full_name"]} assigned successfully', 'success')
     return redirect(url_for('booking_detail', booking_id=booking_id))
 
 # ADMIN MANAGEMENT ROUTES (Super Admin Only)

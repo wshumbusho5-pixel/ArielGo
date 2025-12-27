@@ -85,7 +85,7 @@
 
         .chat-toggle {
             position: relative;
-            background: linear-gradient(135deg, #FF6B00 0%, #F59E0B 50%, #FCD34D 100%);
+            background: linear-gradient(135deg, #4EA9FF 0%, #5FB3FF 100%);
             color: white;
             border: none;
             border-radius: 30px;
@@ -93,7 +93,7 @@
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            box-shadow: 0 10px 30px rgba(255, 107, 0, 0.4);
+            box-shadow: 0 8px 20px rgba(78, 169, 255, 0.25);
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
@@ -102,7 +102,7 @@
 
         .chat-toggle:hover {
             transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(255, 107, 0, 0.6);
+            box-shadow: 0 12px 28px rgba(78, 169, 255, 0.35);
         }
 
         .chat-icon {
@@ -147,7 +147,7 @@
         }
 
         .chat-header {
-            background: linear-gradient(135deg, #FF6B00 0%, #F59E0B 50%, #FCD34D 100%);
+            background: linear-gradient(135deg, #4EA9FF 0%, #5FB3FF 100%);
             color: white;
             padding: 20px;
             display: flex;
@@ -233,7 +233,7 @@
         .message-avatar {
             width: 36px;
             height: 36px;
-            background: linear-gradient(135deg, #FF6B00 0%, #F59E0B 50%, #FCD34D 100%);
+            background: linear-gradient(135deg, #4EA9FF 0%, #5FB3FF 100%);
             border-radius: 10px;
             display: flex;
             align-items: center;
@@ -252,17 +252,19 @@
         }
 
         .message-bubble {
-            background: white;
+            background: rgba(78, 169, 255, 0.08);
             padding: 12px 16px;
             border-radius: 16px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(78, 169, 255, 0.15);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
             line-height: 1.6;
             color: #1a1a1a;
         }
 
         .user-message .message-bubble {
-            background: linear-gradient(135deg, #FF6B00 0%, #F59E0B 50%, #FCD34D 100%);
+            background: linear-gradient(135deg, #4EA9FF 0%, #5FB3FF 100%);
             color: white;
+            border: 1px solid rgba(78, 169, 255, 0.3);
         }
 
         .message-time {
@@ -316,12 +318,12 @@
 
         .chat-input:focus {
             outline: none;
-            border-color: #FF6B00;
-            box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.1);
+            border-color: #4EA9FF;
+            box-shadow: 0 0 0 3px rgba(78, 169, 255, 0.1);
         }
 
         .chat-send {
-            background: linear-gradient(135deg, #FF6B00 0%, #F59E0B 50%, #FCD34D 100%);
+            background: linear-gradient(135deg, #4EA9FF 0%, #5FB3FF 100%);
             border: none;
             color: white;
             width: 44px;
@@ -336,7 +338,7 @@
 
         .chat-send:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(255, 107, 0, 0.4);
+            box-shadow: 0 6px 12px rgba(78, 169, 255, 0.3);
         }
 
         @keyframes bounce {
@@ -489,15 +491,15 @@
             const msg = message.toLowerCase();
 
             if (msg.includes('book') || msg.includes('pickup') || msg.includes('schedule')) {
-                return 'Great! Let me help you schedule a pickup. <a href="/#booking" style="color: #FF6B00; font-weight: 600;">Click here to fill out the booking form</a>, or tell me your preferred date and I\'ll help you.';
+                return 'Great! Let me help you schedule a pickup. <a href="/#booking" style="color: #4EA9FF; font-weight: 600;">Click here to fill out the booking form</a>, or tell me your preferred date and I\'ll help you.';
             }
 
             if (msg.includes('track') || msg.includes('order') || msg.includes('status')) {
-                return 'I can help you track your order! <a href="/track.html" style="color: #FF6B00; font-weight: 600;">Click here to track your order</a>, or provide me your booking ID and email.';
+                return 'I can help you track your order! <a href="/track.html" style="color: #4EA9FF; font-weight: 600;">Click here to track your order</a>, or provide me your booking ID and email.';
             }
 
             if (msg.includes('price') || msg.includes('cost') || msg.includes('pricing')) {
-                return 'Our pricing is simple:<br>• Standard (24hrs): $32/bag<br>• Same-Day: $42/bag<br>• Rush (4hrs): $50/bag<br><br>All prices include free pickup and delivery! <a href="/#pricing" style="color: #FF6B00; font-weight: 600;">See full pricing details</a>';
+                return 'Our pricing is simple:<br>• Standard (24hrs): $32/bag<br>• Same-Day: $42/bag<br>• Rush (4hrs): $50/bag<br><br>All prices include free pickup and delivery! <a href="/#pricing" style="color: #4EA9FF; font-weight: 600;">See full pricing details</a>';
             }
 
             if (msg.includes('hi') || msg.includes('hello') || msg.includes('hey')) {

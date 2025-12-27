@@ -94,5 +94,25 @@
             <button type="submit" class="btn-primary">Update Status</button>
         </form>
     </div>
+
+    <div class="status-update-section">
+        <h3>Assign Driver</h3>
+        {% if booking.driver_name %}
+        <p style="color: var(--color-green-light); margin-bottom: 1rem;">
+            ✓ Currently assigned to: <strong>{{ booking.driver_name }}</strong>
+        </p>
+        {% endif %}
+        <form method="POST" action="{{ url_for('assign_driver', booking_id=booking.id) }}">
+            <select name="driver_id" class="status-select" required>
+                <option value="">Select a driver...</option>
+                {% for driver in drivers %}
+                <option value="{{ driver.id }}" {% if booking.driver_id == driver.id %}selected{% endif %}>
+                    {{ driver.full_name }} ({{ driver.username }})
+                </option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn-primary">Assign Driver</button>
+        </form>
+    </div>
 </div>
 {% endblock %}

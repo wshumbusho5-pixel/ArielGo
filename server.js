@@ -338,6 +338,74 @@ app.patch('/api/bookings/:id/status', requireDriverAuth, async (req, res) => {
     }
 });
 
+// Assign driver to booking (admin only - for now anyone can assign)
+app.patch('/api/bookings/:id/assign-driver', async (req, res) => {
+    try {
+        const bookingId = req.params.id;
+        const { driver_id } = req.body;
+
+        if (!driver_id) {
+            return res.status(400).json({
+                success: false,
+                error: 'Driver ID is required'
+            });
+        }
+
+        // Verify driver exists and is active
+        const driver = await driverDb.getDriverById(driver_id);
+        if (!driver || !driver.is_active) {
+            return res.status(400).json({
+                success: false,
+                error: 'Invalid or inactive driver'
+            });
+        }
+
+        // Update booking with driver assignment
+        const updated = await db.assignDriverToBooking(bookingId, driver_id);
+
+        if (!updated) {
+            return res.status(404).json({
+                success: false,
+                error: 'Booking not found'
+            });
+        }
+
+        res.json({
+            success: true,
+            message: 'Driver assigned successfully',
+            booking: updated
+        });
+    } catch (error) {
+        console.error('Error assigning driver:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to assign driver'
+        });
+    }
+});
+
+// Get driver's assigned orders (driver only)
+app.get('/api/driver/orders', requireDriverAuth, async (req, res) => {
+    try {
+        const driverId = req.session.driver.id;
+        const status = req.query.status; // Optional filter by status
+
+        const orders = await db.getDriverOrders(driverId, status);
+
+        res.json({
+            success: true,
+            orders: orders,
+            count: orders.length
+        });
+    } catch (error) {
+        console.error('Error fetching driver orders:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to fetch orders'
+        });
+    }
+});
+
 // Get booking statistics (for dashboard)
 app.get('/api/stats', async (req, res) => {
     try {
