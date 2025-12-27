@@ -131,8 +131,9 @@ async function handleBooking(formData) {
     submitButton.textContent = 'Processing...';
 
     try {
-        // Add number of bags to formData (default to 1 for now)
-        formData.numberOfBags = 1;
+        // Get number of bags from form field
+        const bagsInput = document.getElementById('bags') || document.querySelector('input[name="bags"]');
+        formData.numberOfBags = bagsInput ? parseInt(bagsInput.value) || 1 : 1;
 
         // Send booking to backend
         const response = await fetch('/api/bookings', {
@@ -140,6 +141,7 @@ async function handleBooking(formData) {
             headers: {
                 'Content-Type': 'application/json'
             },
+            credentials: 'same-origin',  // Send cookies to link booking to logged-in user
             body: JSON.stringify(formData)
         });
 

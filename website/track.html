@@ -247,14 +247,16 @@
         /* SPOTLIGHT CURSOR EFFECT */
         .spotlight {
             position: fixed;
-            width: 700px;
-            height: 700px;
-            background: radial-gradient(circle, rgba(255, 107, 0, 0.35) 0%, rgba(245, 158, 11, 0.2) 30%, transparent 70%);
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, rgba(37, 99, 235, 0.08) 30%, transparent 60%);
             pointer-events: none;
             transform: translate(-50%, -50%);
-            transition: opacity 0.3s;
-            z-index: 9998;
+            transition: opacity 0.15s ease-out;
+            z-index: 999999;
             opacity: 0;
+            filter: blur(40px);
+            mix-blend-mode: screen;
         }
 
         .content-wrapper {

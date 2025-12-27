@@ -21,6 +21,13 @@ const promoService = require('./services/promo-service');
 const routeOptimizer = require('./services/route-optimizer');
 const aiAssistant = require('./services/ai-assistant');
 
+// Import authentication modules
+const bcrypt = require('bcrypt');
+const session = require('express-session');
+const SQLiteStore = require('connect-sqlite3')(session);
+const { requireDriverAuth } = require('./middleware/auth');
+const driverDb = require('./database/driver-db');
+
 // Create Express application
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -35,6 +42,22 @@ app.use(cors());
 // Parse JSON request bodies
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+// Configure session middleware for driver authentication
+app.use(session({
+  store: new SQLiteStore({
+    db: 'sessions.db',
+    dir: './database'
+  }),
+  secret: process.env.EXPRESS_SESSION_SECRET || 'driver-session-secret-change-in-production',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    maxAge: 8 * 60 * 60 * 1000, // 8 hours (typical driver shift)
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production'
+  }
+}));
 
 // Serve static files (HTML, CSS, JS) from website folder
 app.use(express.static('website'));
@@ -120,7 +143,8 @@ app.post('/api/bookings', async (req, res) => {
             ...bookingData,
             pricePerBag: pricing.pricePerBag,
             totalPrice: pricing.total,
-            status: 'pending' // pending, confirmed, in_progress, completed, cancelled
+            status: 'pending', // pending, confirmed, in_progress, completed, cancelled
+            user_id: req.session && req.session.user ? req.session.user.id : null // Link to user if logged in
         };
 
         // Save to database
@@ -203,6 +227,31 @@ app.get('/api/bookings', async (req, res) => {
     }
 });
 
+// Get user's bookings (must be before :id route)
+app.get('/api/bookings/my-orders', async (req, res) => {
+    try {
+        if (!req.session || !req.session.user) {
+            return res.status(401).json({
+                success: false,
+                error: 'Authentication required'
+            });
+        }
+
+        const bookings = await db.getBookingsByUserId(req.session.user.id);
+
+        res.json({
+            success: true,
+            bookings: bookings
+        });
+    } catch (error) {
+        console.error('Error fetching user bookings:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to fetch bookings'
+        });
+    }
+});
+
 // Get a specific booking by ID
 app.get('/api/bookings/:id', async (req, res) => {
     try {
@@ -229,8 +278,8 @@ app.get('/api/bookings/:id', async (req, res) => {
     }
 });
 
-// Update booking status
-app.patch('/api/bookings/:id/status', async (req, res) => {
+// Update booking status (driver only)
+app.patch('/api/bookings/:id/status', requireDriverAuth, async (req, res) => {
     try {
         const bookingId = req.params.id;
         const newStatus = req.body.status;
@@ -303,6 +352,292 @@ app.get('/api/stats', async (req, res) => {
         res.status(500).json({
             success: false,
             error: 'Failed to fetch statistics'
+        });
+    }
+});
+
+// ==================================
+// DRIVER AUTHENTICATION ROUTES
+// ==================================
+
+// Driver login
+app.post('/api/driver/login', async (req, res) => {
+    try {
+        const { username, password } = req.body;
+
+        // Validate input
+        if (!username || !password) {
+            return res.status(400).json({
+                success: false,
+                error: 'Username and password are required'
+            });
+        }
+
+        // Verify credentials
+        const driver = await driverDb.verifyDriverCredentials(username, password);
+
+        if (!driver) {
+            return res.status(401).json({
+                success: false,
+                error: 'Invalid username or password'
+            });
+        }
+
+        // Update last login
+        await driverDb.updateLastLogin(driver.id);
+
+        // Create session
+        req.session.driver = {
+            id: driver.id,
+            username: driver.username,
+            email: driver.email,
+            full_name: driver.full_name,
+            role: driver.role,
+            is_active: driver.is_active
+        };
+
+        res.json({
+            success: true,
+            driver: {
+                id: driver.id,
+                username: driver.username,
+                email: driver.email,
+                full_name: driver.full_name
+            }
+        });
+    } catch (error) {
+        console.error('Driver login error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Login failed. Please try again.'
+        });
+    }
+});
+
+// Driver logout
+app.post('/api/driver/logout', (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            return res.status(500).json({
+                success: false,
+                error: 'Logout failed'
+            });
+        }
+
+        res.json({
+            success: true,
+            message: 'Logged out successfully'
+        });
+    });
+});
+
+// Check driver session
+app.get('/api/driver/session', (req, res) => {
+    if (req.session && req.session.driver && req.session.driver.is_active) {
+        res.json({
+            authenticated: true,
+            driver: {
+                id: req.session.driver.id,
+                username: req.session.driver.username,
+                email: req.session.driver.email,
+                full_name: req.session.driver.full_name
+            }
+        });
+    } else {
+        res.json({
+            authenticated: false
+        });
+    }
+});
+
+// ==================================
+// CUSTOMER USER AUTHENTICATION ROUTES
+// ==================================
+
+// User registration
+app.post('/api/auth/register', async (req, res) => {
+    try {
+        const { email, password, name, phone, address } = req.body;
+
+        // Validate input
+        if (!email || !password || !name) {
+            return res.status(400).json({
+                success: false,
+                error: 'Email, password, and name are required'
+            });
+        }
+
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({
+                success: false,
+                error: 'Invalid email format'
+            });
+        }
+
+        // Validate password strength
+        if (password.length < 6) {
+            return res.status(400).json({
+                success: false,
+                error: 'Password must be at least 6 characters long'
+            });
+        }
+
+        // Check if user already exists
+        const existingUser = await db.getUserByEmail(email);
+        if (existingUser) {
+            return res.status(409).json({
+                success: false,
+                error: 'Email already registered'
+            });
+        }
+
+        // Hash password
+        const password_hash = await bcrypt.hash(password, 10);
+
+        // Create user
+        const user = await db.createUser({
+            email,
+            password_hash,
+            name,
+            phone: phone || null,
+            address: address || null
+        });
+
+        // Create session
+        req.session.user = {
+            id: user.id,
+            email: user.email,
+            name: user.name
+        };
+
+        res.status(201).json({
+            success: true,
+            user: {
+                id: user.id,
+                email: user.email,
+                name: user.name,
+                phone: user.phone,
+                address: user.address
+            }
+        });
+    } catch (error) {
+        console.error('Registration error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Registration failed. Please try again.'
+        });
+    }
+});
+
+// User login
+app.post('/api/auth/login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        // Validate input
+        if (!email || !password) {
+            return res.status(400).json({
+                success: false,
+                error: 'Email and password are required'
+            });
+        }
+
+        // Get user by email
+        const user = await db.getUserByEmail(email);
+        if (!user) {
+            return res.status(401).json({
+                success: false,
+                error: 'Invalid email or password'
+            });
+        }
+
+        // Verify password
+        const isValid = await bcrypt.compare(password, user.password_hash);
+        if (!isValid) {
+            return res.status(401).json({
+                success: false,
+                error: 'Invalid email or password'
+            });
+        }
+
+        // Update last login
+        await db.updateLastLogin(user.id);
+
+        // Create session
+        req.session.user = {
+            id: user.id,
+            email: user.email,
+            name: user.name
+        };
+
+        res.json({
+            success: true,
+            user: {
+                id: user.id,
+                email: user.email,
+                name: user.name,
+                phone: user.phone,
+                address: user.address
+            }
+        });
+    } catch (error) {
+        console.error('Login error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Login failed. Please try again.'
+        });
+    }
+});
+
+// User logout
+app.post('/api/auth/logout', (req, res) => {
+    // Clear only user session, preserve driver session if exists
+    if (req.session.user) {
+        delete req.session.user;
+    }
+
+    res.json({
+        success: true,
+        message: 'Logged out successfully'
+    });
+});
+
+// Get current user
+app.get('/api/auth/me', async (req, res) => {
+    try {
+        if (!req.session || !req.session.user) {
+            return res.json({
+                authenticated: false
+            });
+        }
+
+        // Get fresh user data from database
+        const user = await db.getUserById(req.session.user.id);
+
+        if (!user) {
+            delete req.session.user;
+            return res.json({
+                authenticated: false
+            });
+        }
+
+        res.json({
+            authenticated: true,
+            user: {
+                id: user.id,
+                email: user.email,
+                name: user.name,
+                phone: user.phone,
+                address: user.address
+            }
+        });
+    } catch (error) {
+        console.error('Get user error:', error);
+        res.status(500).json({
+            authenticated: false,
+            error: 'Failed to get user information'
         });
     }
 });
@@ -655,8 +990,8 @@ app.get('/api/assistant/status', (req, res) => {
 // ROUTE OPTIMIZATION (Driver Tools)
 // ==================================
 
-// Get optimized route for a specific date
-app.get('/api/routes/optimize/:date', async (req, res) => {
+// Get optimized route for a specific date (driver only)
+app.get('/api/routes/optimize/:date', requireDriverAuth, async (req, res) => {
     try {
         const date = req.params.date;
 
@@ -697,8 +1032,8 @@ app.get('/api/routes/optimize/:date', async (req, res) => {
     }
 });
 
-// Get route for specific time window
-app.post('/api/routes/optimize', async (req, res) => {
+// Get route for specific time window (driver only)
+app.post('/api/routes/optimize', requireDriverAuth, async (req, res) => {
     try {
         const { bookingIds, startLocation } = req.body;
 

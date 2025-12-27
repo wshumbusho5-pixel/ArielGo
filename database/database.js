@@ -90,6 +90,32 @@ function initializeDatabase() {
     db.run(`
         CREATE INDEX IF NOT EXISTS idx_promo_code ON promo_codes(code)
     `);
+
+    // Create users table
+    db.run(`
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT NOT NULL UNIQUE,
+            password_hash TEXT NOT NULL,
+            name TEXT NOT NULL,
+            phone TEXT,
+            address TEXT,
+            createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
+            lastLogin TEXT
+        )
+    `, (err) => {
+        if (err) {
+            console.error('Error creating users table:', err);
+        } else {
+            console.log('✅ Users table ready');
+            addUserIdColumn();
+        }
+    });
+
+    // Create index on email for faster lookups
+    db.run(`
+        CREATE INDEX IF NOT EXISTS idx_user_email ON users(email)
+    `);
 }
 
 /**
@@ -132,6 +158,28 @@ function addPaymentColumns() {
 }
 
 /**
+ * Add user_id column to existing bookings table (migration)
+ */
+function addUserIdColumn() {
+    db.all("PRAGMA table_info(bookings)", [], (err, columns) => {
+        if (err) {
+            console.error('Error checking table schema:', err);
+            return;
+        }
+
+        const columnNames = columns.map(col => col.name);
+
+        // Add user_id if doesn't exist
+        if (!columnNames.includes('user_id')) {
+            db.run('ALTER TABLE bookings ADD COLUMN user_id INTEGER REFERENCES users(id)', (err) => {
+                if (err) console.error('Error adding user_id:', err);
+                else console.log('✅ Added user_id column to bookings');
+            });
+        }
+    });
+}
+
+/**
  * Create a new booking
  */
 function createBooking(bookingData) {
@@ -141,8 +189,8 @@ function createBooking(bookingData) {
                 name, phone, email, address, service,
                 pickupDate, pickupTime, numberOfBags,
                 pricePerBag, totalPrice, status, notes,
-                paymentIntentId, paymentStatus, stripeCustomerId
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                paymentIntentId, paymentStatus, stripeCustomerId, user_id
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
 
         const params = [
@@ -160,7 +208,8 @@ function createBooking(bookingData) {
             bookingData.notes || '',
             bookingData.paymentIntentId || null,
             bookingData.paymentStatus || 'pending',
-            bookingData.stripeCustomerId || null
+            bookingData.stripeCustomerId || null,
+            bookingData.user_id || null  // Allow anonymous bookings
         ];
 
         db.run(sql, params, function(err) {
@@ -333,6 +382,149 @@ function deleteBooking(id) {
 }
 
 /**
+ * Create a new user
+ */
+function createUser(userData) {
+    return new Promise((resolve, reject) => {
+        const sql = `
+            INSERT INTO users (email, password_hash, name, phone, address)
+            VALUES (?, ?, ?, ?, ?)
+        `;
+
+        const params = [
+            userData.email,
+            userData.password_hash,
+            userData.name,
+            userData.phone || null,
+            userData.address || null
+        ];
+
+        db.run(sql, params, function(err) {
+            if (err) {
+                console.error('Error creating user:', err);
+                if (err.message.includes('UNIQUE constraint failed')) {
+                    reject(new Error('Email already exists'));
+                } else {
+                    reject(err);
+                }
+            } else {
+                getUserById(this.lastID)
+                    .then(resolve)
+                    .catch(reject);
+            }
+        });
+    });
+}
+
+/**
+ * Get user by email
+ */
+function getUserByEmail(email) {
+    return new Promise((resolve, reject) => {
+        const sql = 'SELECT * FROM users WHERE email = ?';
+
+        db.get(sql, [email], (err, row) => {
+            if (err) {
+                console.error('Error fetching user by email:', err);
+                reject(err);
+            } else {
+                resolve(row || null);
+            }
+        });
+    });
+}
+
+/**
+ * Get user by ID
+ */
+function getUserById(id) {
+    return new Promise((resolve, reject) => {
+        const sql = 'SELECT * FROM users WHERE id = ?';
+
+        db.get(sql, [id], (err, row) => {
+            if (err) {
+                console.error('Error fetching user by ID:', err);
+                reject(err);
+            } else {
+                resolve(row || null);
+            }
+        });
+    });
+}
+
+/**
+ * Update user's last login timestamp
+ */
+function updateLastLogin(userId) {
+    return new Promise((resolve, reject) => {
+        const sql = 'UPDATE users SET lastLogin = CURRENT_TIMESTAMP WHERE id = ?';
+
+        db.run(sql, [userId], function(err) {
+            if (err) {
+                console.error('Error updating last login:', err);
+                reject(err);
+            } else {
+                resolve(this.changes > 0);
+            }
+        });
+    });
+}
+
+/**
+ * Get all bookings for a specific user
+ */
+function getBookingsByUserId(userId) {
+    return new Promise((resolve, reject) => {
+        const sql = 'SELECT * FROM bookings WHERE user_id = ? ORDER BY createdAt DESC';
+
+        db.all(sql, [userId], (err, rows) => {
+            if (err) {
+                console.error('Error fetching user bookings:', err);
+                reject(err);
+            } else {
+                resolve(rows);
+            }
+        });
+    });
+}
+
+/**
+ * Update user profile
+ */
+function updateUser(userId, updates) {
+    return new Promise((resolve, reject) => {
+        const allowedFields = ['name', 'phone', 'address'];
+        const setClause = [];
+        const params = [];
+
+        for (const [key, value] of Object.entries(updates)) {
+            if (allowedFields.includes(key)) {
+                setClause.push(`${key} = ?`);
+                params.push(value);
+            }
+        }
+
+        if (setClause.length === 0) {
+            return resolve(null);
+        }
+
+        params.push(userId);
+        const sql = `UPDATE users SET ${setClause.join(', ')} WHERE id = ?`;
+
+        db.run(sql, params, function(err) {
+            if (err) {
+                console.error('Error updating user:', err);
+                reject(err);
+            } else {
+                getUserById(userId)
+                    .then(resolve)
+                    .catch(reject);
+            }
+        });
+    });
+}
+
+/**
  * Close database connection
  */
 function close() {
@@ -354,5 +546,11 @@ module.exports = {
     getBookingStats,
     getBookingsByDate,
     deleteBooking,
+    createUser,
+    getUserByEmail,
+    getUserById,
+    updateLastLogin,
+    getBookingsByUserId,
+    updateUser,
     close
 };
