@@ -3,309 +3,764 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Track Your Order - ArielGo Laundry</title>
-    <link rel="stylesheet" href="/css/style.css">
-    <link rel="stylesheet" href="/css/ai-chat.css">
+    <title>Track Your Order - ArielGo</title>
+
+    <!-- Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
-        /* Navigation */
-        .top-nav {
-            background: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            padding: 15px 0;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-orange: #FF6B00;
+            --color-amber: #F59E0B;
+            --color-yellow: #FCD34D;
+            --color-teal: #14B8A6;
+            --color-cyan: #06B6D4;
+            --color-success: #10B981;
+            --color-warning: #F59E0B;
+            --color-danger: #EF4444;
+
+            --gradient-primary: linear-gradient(135deg, #1A1A1A 0%, #FF6B00 50%, #FCD34D 100%);
+            --gradient-mesh: radial-gradient(at 0% 0%, rgba(255, 107, 0, 0.15) 0px, transparent 50%),
+                            radial-gradient(at 100% 0%, rgba(245, 158, 11, 0.15) 0px, transparent 50%),
+                            radial-gradient(at 100% 100%, rgba(252, 211, 77, 0.15) 0px, transparent 50%),
+                            radial-gradient(at 0% 100%, rgba(26, 26, 26, 0.15) 0px, transparent 50%);
+
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            --shadow-glow: 0 0 40px rgba(255, 107, 0, 0.3);
+
+            --blur-md: 8px;
+            --blur-lg: 16px;
+            --blur-xl: 24px;
+
+            --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0a0a0a;
+            color: white;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .gradient-mesh-bg {
             position: fixed;
             top: 0;
             left: 0;
-            right: 0;
-            z-index: 1000;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background: var(--gradient-mesh);
+            animation: meshMove 20s ease-in-out infinite;
         }
 
-        .top-nav .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
+        .gradient-mesh-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+            z-index: -1;
+        }
+
+        @keyframes meshMove {
+            0%, 100% {
+                background-position: 0% 0%, 100% 0%, 100% 100%, 0% 100%;
+            }
+            50% {
+                background-position: 100% 100%, 0% 100%, 0% 0%, 100% 0%;
+            }
+        }
+
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* MASSIVE VISIBLE GRADIENT ORBS */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.4;
+            animation: float 25s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .orb-1 {
+            width: 700px;
+            height: 700px;
+            background: radial-gradient(circle, #FF6B00 0%, rgba(255, 107, 0, 0.4) 50%, transparent 70%);
+            top: -200px;
+            left: -200px;
+            animation-delay: 0s;
+        }
+
+        .orb-2 {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, #F59E0B 0%, rgba(245, 158, 11, 0.4) 50%, transparent 70%);
+            top: 10%;
+            right: -150px;
+            animation-delay: -8s;
+        }
+
+        .orb-3 {
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, #FCD34D 0%, rgba(252, 211, 77, 0.4) 50%, transparent 70%);
+            bottom: -250px;
+            left: 15%;
+            animation-delay: -16s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+            }
+            25% {
+                transform: translate(80px, -80px) scale(1.15);
+            }
+            50% {
+                transform: translate(-50px, 50px) scale(0.95);
+            }
+            75% {
+                transform: translate(50px, 80px) scale(1.08);
+            }
+        }
+
+        /* ANIMATED ROLLING GRID */
+        .grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(rgba(255, 107, 0, 0.04) 2px, transparent 2px),
+                linear-gradient(90deg, rgba(255, 107, 0, 0.04) 2px, transparent 2px);
+            background-size: 60px 60px;
+            animation: gridMove 25s linear infinite;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(60px, 60px); }
+        }
+
+        /* FLOATING LAUNDRY ITEMS */
+        .shapes-container {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .shape {
+            position: absolute;
+            opacity: 0.15;
+            animation: floatShape 20s ease-in-out infinite;
+            font-size: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            filter: drop-shadow(0 10px 30px rgba(255, 107, 0, 0.3));
+        }
+
+        .shape-1 {
+            top: 12%;
+            left: 6%;
+            animation-delay: 0s;
+        }
+
+        .shape-2 {
+            top: 58%;
+            right: 10%;
+            animation-delay: -7s;
+        }
+
+        .shape-3 {
+            bottom: 22%;
+            left: 13%;
+            animation-delay: -14s;
+        }
+
+        .shape-4 {
+            top: 38%;
+            right: 22%;
+            animation-delay: -3s;
+        }
+
+        .shape-5 {
+            bottom: 40%;
+            left: 25%;
+            animation-delay: -9s;
+        }
+
+        .shape-6 {
+            top: 25%;
+            right: 35%;
+            animation-delay: -5s;
+        }
+
+        .shape-7 {
+            bottom: 10%;
+            right: 18%;
+            animation-delay: -11s;
+        }
+
+        @keyframes floatShape {
+            0%, 100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            33% {
+                transform: translate(100px, -100px) rotate(120deg);
+            }
+            66% {
+                transform: translate(-50px, 50px) rotate(240deg);
+            }
+        }
+
+        /* SPOTLIGHT CURSOR EFFECT */
+        .spotlight {
+            position: fixed;
+            width: 700px;
+            height: 700px;
+            background: radial-gradient(circle, rgba(255, 107, 0, 0.35) 0%, rgba(245, 158, 11, 0.2) 30%, transparent 70%);
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            transition: opacity 0.3s;
+            z-index: 9998;
+            opacity: 0;
+        }
+
+        .content-wrapper {
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            width: calc(100% - 40px);
+            max-width: 1400px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(var(--blur-xl)) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: var(--shadow-lg);
         }
 
-        .top-nav .logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: #2563eb;
+        .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             text-decoration: none;
         }
 
-        .top-nav .nav-links {
+        .nav-links {
             display: flex;
-            gap: 25px;
+            gap: 2rem;
             list-style: none;
-            margin: 0;
-            padding: 0;
+            align-items: center;
         }
 
-        .top-nav .nav-links a {
+        .nav-links a {
             text-decoration: none;
-            color: #64748b;
+            color: rgba(255, 255, 255, 0.8);
             font-weight: 500;
-            transition: color 0.2s;
+            transition: color 0.3s var(--ease-smooth);
         }
 
-        .top-nav .nav-links a:hover {
-            color: #2563eb;
+        .nav-links a:hover {
+            color: white;
         }
 
-    </style>
-    <style>
+        /* Track Container */
         .track-container {
-            max-width: 600px;
-            margin: 80px auto 40px;
-            padding: 0 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 140px 2rem 80px;
         }
 
-        .track-card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            padding: 40px;
+        .track-header {
+            text-align: center;
+            margin-bottom: 4rem;
+            animation: fadeInUp 0.6s var(--ease-smooth);
         }
 
-        .track-card h1 {
-            color: #2563eb;
-            margin-bottom: 10px;
-            font-size: 28px;
+        .track-header h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 4rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #FFFFFF 0%, rgba(255, 255, 255, 0.7) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .track-card .subtitle {
-            color: #64748b;
-            margin-bottom: 30px;
+        .track-header p {
+            font-size: 1.25rem;
+            color: rgba(255, 255, 255, 0.6);
         }
 
-        .search-section {
-            margin-bottom: 30px;
+        /* Search Card */
+        .search-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(var(--blur-xl));
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 32px;
+            padding: 3rem;
+            box-shadow: var(--shadow-xl);
+            margin-bottom: 3rem;
+            animation: fadeInUp 0.6s var(--ease-smooth) 0.2s both;
+            transition: all 0.5s var(--ease-smooth);
         }
 
-        .input-group {
-            margin-bottom: 20px;
+        .search-card:hover {
+            transform: translateY(-30px) scale(1.05);
+            border-color: rgba(255, 107, 0, 0.6);
+            box-shadow: 0 50px 100px rgba(0, 0, 0, 0.5),
+                        0 0 80px rgba(255, 107, 0, 0.6);
+            background: rgba(255, 255, 255, 0.08);
         }
 
-        .input-group label {
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        .form-group label {
             display: block;
-            margin-bottom: 8px;
-            color: #475569;
-            font-weight: 500;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
         }
 
-        .input-group input {
+        .form-group input {
             width: 100%;
-            padding: 12px;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 16px;
+            padding: 1.25rem 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            color: white;
+            font-size: 1.1rem;
+            transition: all 0.3s var(--ease-smooth);
         }
 
-        .input-group input:focus {
+        .form-group input:focus {
             outline: none;
-            border-color: #2563eb;
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--color-orange);
+            box-shadow: 0 0 0 4px rgba(255, 107, 0, 0.1);
+        }
+
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
         }
 
         .track-button {
             width: 100%;
-            padding: 14px;
-            background: #2563eb;
+            padding: 1.5rem;
+            background: var(--gradient-primary);
             color: white;
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
+            border-radius: 16px;
+            font-size: 1.125rem;
             font-weight: 600;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: all 0.3s var(--ease-smooth);
+            box-shadow: var(--shadow-xl);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .track-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .track-button:hover::before {
+            left: 100%;
         }
 
         .track-button:hover {
-            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-2xl), var(--shadow-glow);
         }
 
-        .track-button:disabled {
-            background: #cbd5e1;
-            cursor: not-allowed;
-        }
-
-        .order-details {
+        /* Result Card */
+        .result-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(var(--blur-xl));
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 32px;
+            padding: 3rem;
+            box-shadow: var(--shadow-xl);
             display: none;
-            margin-top: 30px;
-            padding-top: 30px;
-            border-top: 1px solid #e2e8f0;
+            animation: fadeInUp 0.6s var(--ease-smooth);
+            transition: all 0.5s var(--ease-smooth);
         }
 
-        .order-details.visible {
+        .result-card:hover {
+            transform: translateY(-35px) scale(1.06);
+            border-color: rgba(255, 107, 0, 0.7);
+            box-shadow: 0 55px 110px rgba(0, 0, 0, 0.5),
+                        0 0 90px rgba(255, 107, 0, 0.7);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .result-card.show {
             display: block;
         }
 
         .order-header {
             display: flex;
             justify-content: space-between;
-            align-items: start;
-            margin-bottom: 25px;
+            align-items: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
 
         .order-id {
-            font-size: 18px;
-            font-weight: 600;
-            color: #1e293b;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
         }
 
         .status-badge {
-            padding: 6px 12px;
+            padding: 0.75rem 1.5rem;
             border-radius: 20px;
-            font-size: 14px;
             font-weight: 600;
+            font-size: 0.95rem;
             text-transform: capitalize;
+            animation: pulse 2s ease-in-out infinite;
         }
 
-        .status-pending { background: #fef3c7; color: #92400e; }
-        .status-confirmed { background: #dbeafe; color: #1e40af; }
-        .status-in_progress { background: #e0e7ff; color: #4338ca; }
-        .status-completed { background: #d1fae5; color: #065f46; }
-        .status-cancelled { background: #fee2e2; color: #991b1b; }
+        .status-pending {
+            background: rgba(245, 158, 11, 0.2);
+            color: #F59E0B;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
 
+        .status-confirmed {
+            background: rgba(6, 182, 212, 0.2);
+            color: #06B6D4;
+            border: 1px solid rgba(6, 182, 212, 0.3);
+        }
+
+        .status-in_progress {
+            background: rgba(255, 107, 0, 0.2);
+            color: #FF6B00;
+            border: 1px solid rgba(255, 107, 0, 0.3);
+        }
+
+        .status-completed {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10B981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        /* Progress Tracker */
         .progress-tracker {
-            margin: 30px 0;
-        }
-
-        .progress-step {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
+            margin: 3rem 0;
             position: relative;
         }
 
-        .progress-step:not(:last-child)::after {
+        .progress-steps {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            position: relative;
+        }
+
+        .progress-line {
+            position: absolute;
+            top: 40px;
+            left: 12.5%;
+            right: 12.5%;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            z-index: 0;
+            border-radius: 2px;
+        }
+
+        .progress-line-fill {
+            height: 100%;
+            background: var(--gradient-primary);
+            transition: width 0.8s var(--ease-smooth);
+            border-radius: 2px;
+            position: relative;
+        }
+
+        .progress-line-fill::after {
             content: '';
             position: absolute;
-            left: 20px;
-            top: 50px;
-            width: 2px;
-            height: 40px;
-            background: #e2e8f0;
-        }
-
-        .progress-step.completed::after {
-            background: #10b981;
-        }
-
-        .step-icon {
-            width: 40px;
-            height: 40px;
+            right: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 12px;
+            height: 12px;
+            background: var(--color-yellow);
             border-radius: 50%;
-            background: #e2e8f0;
-            color: #64748b;
+            box-shadow: 0 0 20px var(--color-yellow);
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .step {
+            position: relative;
+            text-align: center;
+            z-index: 1;
+        }
+
+        .step-circle {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1rem;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 2rem;
+            transition: all 0.5s var(--ease-smooth);
+        }
+
+        .step.active .step-circle {
+            border-color: var(--color-orange);
+            background: rgba(255, 107, 0, 0.2);
+            transform: scale(1.1);
+            box-shadow: 0 0 30px rgba(255, 107, 0, 0.4);
+        }
+
+        .step.completed .step-circle {
+            border-color: var(--color-success);
+            background: rgba(16, 185, 129, 0.2);
+        }
+
+        .step-label {
             font-weight: 600;
-            margin-right: 15px;
-            flex-shrink: 0;
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.5);
         }
 
-        .progress-step.completed .step-icon {
-            background: #10b981;
-            color: white;
+        .step.active .step-label,
+        .step.completed .step-label {
+            color: rgba(255, 255, 255, 0.9);
         }
 
-        .progress-step.current .step-icon {
-            background: #2563eb;
-            color: white;
+        /* Order Details */
+        .order-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-top: 3rem;
         }
 
-        .step-content {
-            flex: 1;
+        .detail-group {
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            transition: all 0.3s var(--ease-smooth);
         }
 
-        .step-title {
-            font-weight: 600;
-            color: #1e293b;
-            margin-bottom: 4px;
-        }
-
-        .step-time {
-            font-size: 14px;
-            color: #64748b;
-        }
-
-        .detail-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px solid #f1f5f9;
-        }
-
-        .detail-row:last-child {
-            border-bottom: none;
+        .detail-group:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 107, 0, 0.7);
+            transform: translateY(-25px) scale(1.15);
+            box-shadow: 0 35px 70px rgba(0, 0, 0, 0.4),
+                        0 0 50px rgba(255, 107, 0, 0.5);
         }
 
         .detail-label {
-            color: #64748b;
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 0.5rem;
+            font-weight: 500;
         }
 
         .detail-value {
+            font-size: 1.25rem;
             font-weight: 600;
-            color: #1e293b;
-            text-align: right;
+            color: white;
         }
 
+        /* Error Message */
         .error-message {
-            background: #fee2e2;
-            color: #991b1b;
-            padding: 12px 16px;
-            border-radius: 8px;
-            margin-top: 15px;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #EF4444;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
             display: none;
+            animation: shake 0.5s ease;
         }
 
-        .error-message.visible {
+        .error-message.show {
             display: block;
         }
 
-        .loading {
-            text-align: center;
-            padding: 20px;
-            color: #64748b;
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .track-header h1 {
+                font-size: 2.5rem;
+            }
+
+            .navbar {
+                padding: 1rem 1.5rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .progress-steps {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .progress-line {
+                left: 40px;
+                top: 12.5%;
+                bottom: 12.5%;
+                width: 3px;
+                height: auto;
+            }
+
+            .order-details {
+                grid-template-columns: 1fr;
+            }
+
+            .search-card,
+            .result-card {
+                padding: 2rem;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="top-nav">
-        <div class="container">
+    <!-- Animated Background -->
+    <div class="gradient-mesh-bg"></div>
+
+    <!-- MASSIVE GRADIENT ORBS -->
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <!-- FLOATING LAUNDRY ITEMS -->
+    <div class="shapes-container">
+        <div class="shape shape-1">🧺</div>
+        <div class="shape shape-2">👕</div>
+        <div class="shape shape-3">🧴</div>
+        <div class="shape shape-4">🪣</div>
+        <div class="shape shape-5">🧦</div>
+        <div class="shape shape-6">👖</div>
+        <div class="shape shape-7">🩳</div>
+    </div>
+
+    <!-- SPOTLIGHT CURSOR EFFECT -->
+    <div class="spotlight" id="spotlight"></div>
+
+    <!-- Content -->
+    <div class="content-wrapper">
+        <!-- Navigation -->
+        <nav class="navbar">
             <a href="/" class="logo">ArielGo</a>
             <ul class="nav-links">
                 <li><a href="/">Home</a></li>
-                <li><a href="/track.html">Track Order</a></li>
-                <li><a href="/driver.html">Driver App</a></li>
-                <li><a href="http://localhost:5002" target="_blank">Admin</a></li>
+                <li><a href="/#features">Features</a></li>
+                <li><a href="/track.html" style="color: white;">Track Order</a></li>
             </ul>
-        </div>
-    </nav>
+        </nav>
 
-    <div class="track-container">
-        <div class="track-card">
-            <h1>Track Your Order</h1>
-            <p class="subtitle">Enter your booking ID and email to track your laundry delivery</p>
+        <!-- Track Container -->
+        <div class="track-container">
+            <div class="track-header">
+                <h1>Track Your Order</h1>
+                <p>Enter your booking details to see real-time status</p>
+            </div>
 
-            <div class="search-section">
-                <form id="trackForm">
-                    <div class="input-group">
-                        <label for="bookingId">Booking ID</label>
+            <!-- Search Card -->
+            <div class="search-card">
+                <div id="error-message" class="error-message"></div>
+
+                <form id="track-form">
+                    <div class="form-group">
+                        <label for="booking-id">Booking ID</label>
                         <input
                             type="text"
-                            id="bookingId"
-                            name="bookingId"
+                            id="booking-id"
+                            name="booking-id"
                             placeholder="e.g., 12345"
                             required
                         >
                     </div>
 
-                    <div class="input-group">
+                    <div class="form-group">
                         <label for="email">Email Address</label>
                         <input
                             type="email"
@@ -316,52 +771,69 @@
                         >
                     </div>
 
-                    <button type="submit" class="track-button" id="trackButton">
-                        Track Order
+                    <button type="submit" class="track-button">
+                        Track My Order →
                     </button>
                 </form>
-
-                <div class="error-message" id="errorMessage"></div>
             </div>
 
-            <div class="order-details" id="orderDetails">
+            <!-- Result Card -->
+            <div class="result-card" id="result-card">
                 <div class="order-header">
-                    <div class="order-id" id="orderId">Order #12345</div>
-                    <span class="status-badge" id="statusBadge">Pending</span>
+                    <div class="order-id">Order #<span id="order-number"></span></div>
+                    <div class="status-badge" id="status-badge"></div>
                 </div>
 
-                <div class="progress-tracker" id="progressTracker">
-                    <!-- Progress steps will be inserted here -->
+                <!-- Progress Tracker -->
+                <div class="progress-tracker">
+                    <div class="progress-line">
+                        <div class="progress-line-fill" id="progress-fill"></div>
+                    </div>
+                    <div class="progress-steps">
+                        <div class="step" id="step-1">
+                            <div class="step-circle">📝</div>
+                            <div class="step-label">Received</div>
+                        </div>
+                        <div class="step" id="step-2">
+                            <div class="step-circle">✅</div>
+                            <div class="step-label">Confirmed</div>
+                        </div>
+                        <div class="step" id="step-3">
+                            <div class="step-circle">🧺</div>
+                            <div class="step-label">Processing</div>
+                        </div>
+                        <div class="step" id="step-4">
+                            <div class="step-circle">🚗</div>
+                            <div class="step-label">Delivered</div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="detail-section">
-                    <div class="detail-row">
-                        <span class="detail-label">Customer Name</span>
-                        <span class="detail-value" id="customerName">-</span>
+                <!-- Order Details -->
+                <div class="order-details">
+                    <div class="detail-group">
+                        <div class="detail-label">Customer Name</div>
+                        <div class="detail-value" id="customer-name"></div>
                     </div>
-                    <div class="detail-row">
-                        <span class="detail-label">Service Type</span>
-                        <span class="detail-value" id="serviceType">-</span>
+                    <div class="detail-group">
+                        <div class="detail-label">Service Type</div>
+                        <div class="detail-value" id="service-type"></div>
                     </div>
-                    <div class="detail-row">
-                        <span class="detail-label">Number of Bags</span>
-                        <span class="detail-value" id="numberOfBags">-</span>
+                    <div class="detail-group">
+                        <div class="detail-label">Number of Bags</div>
+                        <div class="detail-value" id="num-bags"></div>
                     </div>
-                    <div class="detail-row">
-                        <span class="detail-label">Pickup Date</span>
-                        <span class="detail-value" id="pickupDate">-</span>
+                    <div class="detail-group">
+                        <div class="detail-label">Total Price</div>
+                        <div class="detail-value" id="total-price"></div>
                     </div>
-                    <div class="detail-row">
-                        <span class="detail-label">Pickup Time</span>
-                        <span class="detail-value" id="pickupTime">-</span>
+                    <div class="detail-group">
+                        <div class="detail-label">Pickup Date</div>
+                        <div class="detail-value" id="pickup-date"></div>
                     </div>
-                    <div class="detail-row">
-                        <span class="detail-label">Address</span>
-                        <span class="detail-value" id="address">-</span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label">Total Price</span>
-                        <span class="detail-value" id="totalPrice">-</span>
+                    <div class="detail-group">
+                        <div class="detail-label">Pickup Time</div>
+                        <div class="detail-value" id="pickup-time"></div>
                     </div>
                 </div>
             </div>
@@ -369,22 +841,119 @@
     </div>
 
     <script>
+        // Particle System
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const particles = [];
+        const particleCount = 60;
+        const connectionDistance = 150;
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.radius = Math.random() * 2 + 1;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255, 107, 0, 0.4)';
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < particleCount; i++) {
+            particles.push(new Particle());
+        }
+
+        function connectParticles() {
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < connectionDistance) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(255, 107, 0, ${0.15 * (1 - distance / connectionDistance)})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+
+            connectParticles();
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // SPOTLIGHT CURSOR EFFECT
+        const spotlight = document.getElementById('spotlight');
+        let mouseX = 0, mouseY = 0;
+        let spotlightX = 0, spotlightY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            spotlight.style.opacity = '1';
+        });
+
+        function animateSpotlight() {
+            spotlightX += (mouseX - spotlightX) * 0.1;
+            spotlightY += (mouseY - spotlightY) * 0.1;
+
+            spotlight.style.left = spotlightX + 'px';
+            spotlight.style.top = spotlightY + 'px';
+
+            requestAnimationFrame(animateSpotlight);
+        }
+        animateSpotlight();
+
+        // Track Order Logic
         const API_BASE = window.location.origin;
 
-        document.getElementById('trackForm').addEventListener('submit', async (e) => {
+        document.getElementById('track-form').addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const bookingId = document.getElementById('bookingId').value;
-            const email = document.getElementById('email').value;
-            const button = document.getElementById('trackButton');
-            const errorMessage = document.getElementById('errorMessage');
-            const orderDetails = document.getElementById('orderDetails');
+            const bookingId = document.getElementById('booking-id').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const errorMessage = document.getElementById('error-message');
+            const resultCard = document.getElementById('result-card');
 
-            // Reset
-            errorMessage.classList.remove('visible');
-            orderDetails.classList.remove('visible');
-            button.disabled = true;
-            button.textContent = 'Tracking...';
+            resultCard.classList.remove('show');
+            errorMessage.classList.remove('show');
 
             try {
                 const response = await fetch(`${API_BASE}/api/bookings/${bookingId}`);
@@ -394,111 +963,67 @@
                 }
 
                 const data = await response.json();
-                const booking = data.booking;
 
-                // Verify email matches
-                if (booking.email.toLowerCase() !== email.toLowerCase()) {
+                if (data.booking.email.toLowerCase() !== email.toLowerCase()) {
                     throw new Error('Email does not match our records');
                 }
 
                 // Display order details
-                displayOrderDetails(booking);
+                document.getElementById('order-number').textContent = data.booking.id;
+                document.getElementById('customer-name').textContent = data.booking.name;
+                document.getElementById('service-type').textContent = capitalizeFirst(data.booking.service);
+                document.getElementById('num-bags').textContent = data.booking.numberOfBags + ' bag(s)';
+                document.getElementById('total-price').textContent = '$' + (data.booking.totalPrice / 100).toFixed(2);
+                document.getElementById('pickup-date').textContent = data.booking.pickupDate;
+                document.getElementById('pickup-time').textContent = capitalizeFirst(data.booking.pickupTime);
+
+                const status = data.booking.status;
+                const statusBadge = document.getElementById('status-badge');
+                statusBadge.textContent = capitalizeFirst(status.replace('_', ' '));
+                statusBadge.className = 'status-badge status-' + status;
+
+                updateProgress(status);
+
+                resultCard.classList.add('show');
+
+                setTimeout(() => {
+                    resultCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }, 100);
 
             } catch (error) {
-                errorMessage.textContent = error.message || 'Failed to track order. Please check your details and try again.';
-                errorMessage.classList.add('visible');
-            } finally {
-                button.disabled = false;
-                button.textContent = 'Track Order';
+                errorMessage.textContent = error.message || 'Unable to find your order. Please check your details.';
+                errorMessage.classList.add('show');
             }
         });
 
-        function displayOrderDetails(booking) {
-            document.getElementById('orderId').textContent = `Order #${booking.id}`;
-            document.getElementById('statusBadge').textContent = booking.status.replace('_', ' ');
-            document.getElementById('statusBadge').className = `status-badge status-${booking.status}`;
+        function updateProgress(status) {
+            const steps = ['pending', 'confirmed', 'in_progress', 'completed'];
+            const currentIndex = steps.indexOf(status);
 
-            document.getElementById('customerName').textContent = booking.name;
-            document.getElementById('serviceType').textContent = formatService(booking.service);
-            document.getElementById('numberOfBags').textContent = booking.numberOfBags;
-            document.getElementById('pickupDate').textContent = formatDate(booking.pickupDate);
-            document.getElementById('pickupTime').textContent = booking.pickupTime || 'TBD';
-            document.getElementById('address').textContent = booking.address;
-            document.getElementById('totalPrice').textContent = `$${(booking.totalPrice / 100).toFixed(2)}`;
-
-            // Build progress tracker
-            buildProgressTracker(booking.status);
-
-            document.getElementById('orderDetails').classList.add('visible');
-
-            // Update AI chat with user email
-            if (typeof aiChat !== 'undefined' && aiChat) {
-                window.userEmail = booking.email;
-                aiChat.setUserEmail(booking.email);
+            for (let i = 1; i <= 4; i++) {
+                const step = document.getElementById('step-' + i);
+                step.classList.remove('active', 'completed');
             }
-        }
 
-        function buildProgressTracker(currentStatus) {
-            const steps = [
-                { id: 'pending', title: 'Order Received', icon: '1' },
-                { id: 'confirmed', title: 'Order Confirmed', icon: '2' },
-                { id: 'in_progress', title: 'Pickup & Processing', icon: '3' },
-                { id: 'completed', title: 'Delivered', icon: '4' }
-            ];
-
-            const statusOrder = ['pending', 'confirmed', 'in_progress', 'completed'];
-            const currentIndex = statusOrder.indexOf(currentStatus);
-
-            const html = steps.map((step, index) => {
-                let className = 'progress-step';
-                if (index < currentIndex) {
-                    className += ' completed';
-                } else if (index === currentIndex) {
-                    className += ' current';
+            for (let i = 0; i <= currentIndex; i++) {
+                const step = document.getElementById('step-' + (i + 1));
+                if (i < currentIndex) {
+                    step.classList.add('completed');
+                } else if (i === currentIndex) {
+                    step.classList.add('active');
                 }
+            }
 
-                return `
-                    <div class="${className}">
-                        <div class="step-icon">${step.icon}</div>
-                        <div class="step-content">
-                            <div class="step-title">${step.title}</div>
-                            ${index === currentIndex ? '<div class="step-time">Current Status</div>' : ''}
-                        </div>
-                    </div>
-                `;
-            }).join('');
-
-            document.getElementById('progressTracker').innerHTML = html;
+            const progressFill = document.getElementById('progress-fill');
+            const percentage = (currentIndex / 3) * 100;
+            progressFill.style.width = percentage + '%';
         }
 
-        function formatService(service) {
-            const serviceMap = {
-                'standard': 'Standard (24-hour)',
-                'same-day': 'Same-Day Service',
-                'rush': 'Rush (4-hour)'
-            };
-            return serviceMap[service] || service;
-        }
-
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            return date.toLocaleDateString('en-US', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            });
-        }
-
-        // Auto-fill from URL parameters if present
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('id')) {
-            document.getElementById('bookingId').value = urlParams.get('id');
-        }
-        if (urlParams.get('email')) {
-            document.getElementById('email').value = urlParams.get('email');
+        function capitalizeFirst(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
         }
     </script>
-    <script src="/js/ai-chat.js"></script>
+
+    <script src="js/floating-chat.js"></script>
 </body>
 </html>
