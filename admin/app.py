@@ -9,6 +9,7 @@ import sqlite3
 import os
 import hashlib
 import bcrypt
+import json
 from datetime import datetime
 from dotenv import load_dotenv
 
@@ -91,9 +92,25 @@ def get_service_name(service_code):
     service_map = {
         'standard': 'Standard (24-hour)',
         'same-day': 'Same-Day',
-        'rush': 'Rush (4-hour)'
+        'rush': 'Rush (4-hour)',
+        'dry-cleaning': 'Dry Cleaning',
+        'specialty': 'Specialty Items'
     }
     return service_map.get(service_code, service_code)
+
+def process_booking(booking_row):
+    """Convert SQLite Row to dict and parse itemsJson"""
+    booking = dict(booking_row)
+    if booking.get('itemsJson'):
+        try:
+            booking['itemsJson'] = json.loads(booking['itemsJson'])
+        except (json.JSONDecodeError, TypeError):
+            booking['itemsJson'] = None
+    return booking
+
+def process_bookings(booking_rows):
+    """Process multiple bookings"""
+    return [process_booking(b) for b in booking_rows]
 
 # AUTHORIZATION DECORATORS
 def role_required(*roles):
@@ -199,7 +216,10 @@ def dashboard():
         'completed': completed
     }
 
-    return render_template('dashboard.html', stats=stats, bookings=recent_bookings)
+    # Process bookings to parse itemsJson
+    processed_bookings = process_bookings(recent_bookings)
+
+    return render_template('dashboard.html', stats=stats, bookings=processed_bookings)
 
 @app.route('/bookings')
 @login_required
@@ -219,7 +239,10 @@ def bookings():
 
     conn.close()
 
-    return render_template('bookings.html', bookings=all_bookings, status_filter=status_filter)
+    # Process bookings to parse itemsJson
+    processed_bookings = process_bookings(all_bookings)
+
+    return render_template('bookings.html', bookings=processed_bookings, status_filter=status_filter)
 
 @app.route('/bookings/<int:booking_id>')
 @login_required
@@ -249,7 +272,10 @@ def booking_detail(booking_id):
         flash('Booking not found', 'error')
         return redirect(url_for('bookings'))
 
-    return render_template('booking_detail.html', booking=booking, drivers=drivers)
+    # Process booking to parse itemsJson
+    processed_booking = process_booking(booking)
+
+    return render_template('booking_detail.html', booking=processed_booking, drivers=drivers)
 
 @app.route('/bookings/<int:booking_id>/status', methods=['POST'])
 @login_required

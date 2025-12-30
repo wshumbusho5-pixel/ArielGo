@@ -126,7 +126,7 @@
                     <th>Order ID</th>
                     <th>Customer</th>
                     <th>Service</th>
-                    <th>Bags</th>
+                    <th>Items</th>
                     <th>Total</th>
                     <th>Status</th>
                     <th>Date</th>
@@ -143,7 +143,16 @@
                         </div>
                     </td>
                     <td>{{ booking.service }}</td>
-                    <td>{{ booking.numberOfBags }}</td>
+                    <td>
+                        {% if booking.service in ['dry-cleaning', 'specialty'] and booking.itemsJson %}
+                            {% set items = booking.itemsJson | tojson | safe %}
+                            <span class="items-count" title="Click to view items">{{ booking.itemsJson | length }} items</span>
+                        {% elif booking.service in ['dry-cleaning', 'specialty'] %}
+                            <span class="items-count">Per item</span>
+                        {% else %}
+                            {{ booking.numberOfBags }} bag{{ 's' if booking.numberOfBags != 1 else '' }}
+                        {% endif %}
+                    </td>
                     <td class="price-cell">${{ "%.2f"|format(booking.totalPrice / 100) }}</td>
                     <td><span class="status-badge status-{{ booking.status }}">{{ booking.status.replace('_', ' ') }}</span></td>
                     <td>{{ booking.createdAt[:10] }}</td>

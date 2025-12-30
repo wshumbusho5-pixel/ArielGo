@@ -52,12 +52,32 @@
                 <span class="label">Service Type</span>
                 <span class="value service-value">{{ booking.service }}</span>
             </div>
+            {% if booking.service in ['dry-cleaning', 'specialty'] and booking.itemsJson %}
+            <div class="detail-row items-row">
+                <span class="label">Items</span>
+                <div class="items-list">
+                    {% for item in booking.itemsJson %}
+                    <div class="item-line">
+                        <span class="item-name">{{ item.name }}</span>
+                        <span class="item-qty">x{{ item.quantity }}</span>
+                        <span class="item-price">${{ "%.2f"|format(item.total / 100) }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% elif booking.service in ['dry-cleaning', 'specialty'] %}
+            <div class="detail-row">
+                <span class="label">Pricing</span>
+                <span class="value">Per item</span>
+            </div>
+            {% else %}
             <div class="detail-row">
                 <span class="label">Number of Bags</span>
                 <span class="value">
                     <span class="bags-badge">{{ booking.numberOfBags }}</span>
                 </span>
             </div>
+            {% endif %}
             <div class="detail-row total-row">
                 <span class="label">Total Amount</span>
                 <span class="value total-value">${{ "%.2f"|format(booking.totalPrice / 100) }}</span>
@@ -242,6 +262,66 @@
         color: var(--primary-600);
         border-radius: var(--radius-md);
         font-weight: 700;
+    }
+
+    /* Items List for Dry Cleaning/Specialty */
+    .items-row {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 0.5rem;
+    }
+
+    .items-list {
+        width: 100%;
+        background: var(--gray-50);
+        border-radius: var(--radius-md);
+        padding: 0.75rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .item-line {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid var(--gray-200);
+    }
+
+    .item-line:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .item-name {
+        flex: 1;
+        font-weight: 500;
+        color: var(--gray-700);
+    }
+
+    .item-qty {
+        margin: 0 1rem;
+        color: var(--gray-500);
+        font-size: 0.875rem;
+    }
+
+    .item-price {
+        font-weight: 600;
+        color: var(--primary-600);
+        font-family: var(--font-mono);
+    }
+
+    .items-count {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.25rem 0.5rem;
+        background: var(--primary-50);
+        color: var(--primary-600);
+        border-radius: var(--radius-sm);
+        font-size: 0.8125rem;
+        font-weight: 500;
     }
 
     /* Total Row */
