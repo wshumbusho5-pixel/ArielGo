@@ -45,7 +45,7 @@
                     <th>Customer</th>
                     <th>Contact</th>
                     <th>Service</th>
-                    <th>Bags</th>
+                    <th>Items</th>
                     <th>Total</th>
                     <th>Status</th>
                     <th>Pickup</th>
@@ -74,7 +74,13 @@
                         <span class="service-type">{{ booking.service }}</span>
                     </td>
                     <td>
-                        <span class="bags-count">{{ booking.numberOfBags }}</span>
+                        {% if booking.service in ['dry-cleaning', 'specialty'] and booking.itemsJson %}
+                            <span class="items-count">{{ booking.itemsJson | length }} items</span>
+                        {% elif booking.service in ['dry-cleaning', 'specialty'] %}
+                            <span class="items-count">Per item</span>
+                        {% else %}
+                            <span class="bags-count">{{ booking.numberOfBags }} bag{{ 's' if booking.numberOfBags != 1 else '' }}</span>
+                        {% endif %}
                     </td>
                     <td>
                         <span class="price">${{ "%.2f"|format(booking.totalPrice / 100) }}</span>
