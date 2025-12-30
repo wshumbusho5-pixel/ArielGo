@@ -137,6 +137,7 @@ app.post('/api/bookings', async (req, res) => {
             pickupDate: req.body.pickupDate,
             pickupTime: req.body.pickupTime,
             numberOfBags: req.body.numberOfBags || 1, // Default to 1 bag
+            items: req.body.items || [], // Per-item services (dry-cleaning, specialty)
             notes: req.body.notes || ''
         };
 
@@ -149,10 +150,11 @@ app.post('/api/bookings', async (req, res) => {
             });
         }
 
-        // Calculate total price
+        // Calculate total price (handles both per-bag and per-item pricing)
         const pricing = pricingService.calculateBookingTotal(
             bookingData.service,
-            bookingData.numberOfBags
+            bookingData.numberOfBags,
+            bookingData.items
         );
 
         if (!pricing.success) {
@@ -165,8 +167,10 @@ app.post('/api/bookings', async (req, res) => {
         // Add pricing to booking data
         const fullBookingData = {
             ...bookingData,
-            pricePerBag: pricing.pricePerBag,
+            pricePerBag: pricing.pricePerBag || 0, // 0 for per-item services
             totalPrice: pricing.total,
+            pricingType: pricing.pricingType, // 'per-bag' or 'per-item'
+            itemsJson: pricing.pricingType === 'per-item' ? JSON.stringify(pricing.items) : null, // Store items breakdown
             status: 'pending', // pending, confirmed, in_progress, completed, cancelled
             user_id: req.session && req.session.user ? req.session.user.id : null // Link to user if logged in
         };
