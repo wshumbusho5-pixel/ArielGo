@@ -15,8 +15,8 @@
         gsap.registerPlugin(ScrollTrigger);
 
         // ============================================
-        // HERO ZOOM EFFECT - CONTAINED IMAGE VERSION
-        // Like Rinse.com - image zooms within its frame
+        // HERO ZOOM EFFECT - REACTIVE OPPOSITE ZOOM
+        // Image zooms OUT (bigger), Text zooms IN (smaller)
         // ============================================
 
         const heroImage = document.querySelector('.hero-banner-image');
@@ -25,43 +25,45 @@
         const heroText = document.querySelector('.hero-text');
 
         if (heroImage && heroBanner && heroFrame) {
-            // Set initial state
+            // Set initial states
             gsap.set(heroImage, { scale: 1 });
+            gsap.set(heroText, { scale: 1, opacity: 1 });
 
-            // Create timeline for the contained zoom effect
+            // Create timeline for reactive zoom effect
             const heroTimeline = gsap.timeline({
                 scrollTrigger: {
                     trigger: heroBanner,
                     start: 'top top',
                     end: 'bottom top',
-                    scrub: 0.5
+                    scrub: 0.4
                 }
             });
 
-            // Image zooms dramatically within the frame
+            // IMAGE ZOOMS OUT (gets bigger, comes toward you)
             heroTimeline.to(heroImage, {
-                scale: 2.5,
-                ease: 'none'
+                scale: 3,
+                ease: 'power1.in'
             }, 0);
 
-            // Frame slightly moves up and grows
+            // Frame grows and lifts dramatically
             heroTimeline.to(heroFrame, {
-                y: -30,
-                scale: 1.05,
+                y: -60,
+                scale: 1.15,
                 ease: 'none'
             }, 0);
 
-            // Text fades and moves up
+            // TEXT ZOOMS IN (gets smaller, recedes away) - OPPOSITE!
             if (heroText) {
                 heroTimeline.to(heroText, {
+                    scale: 0.7,
                     opacity: 0,
-                    y: -100,
+                    y: -80,
                     ease: 'power1.in'
                 }, 0);
             }
         }
 
-        // NO parallax on other images - only hero gets the zoom
+        // NO parallax on other images - only hero gets the effect
 
         // ============================================
         // 3D CARD TILT ON HOVER
