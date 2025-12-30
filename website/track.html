@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Track Your Order - ArielGo</title>
 
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Track Your Order - ArielGo">
+    <meta property="og:description" content="Track your laundry order in real-time with ArielGo's live tracking system.">
+
     <!-- Premium Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,26 +30,18 @@
             --color-mint: #2EC4B6;
             --color-teal: #14B8A6;
             --color-cyan: #06B6D4;
-            --color-success: #4CAF50;
+            --color-success: #10B981;
             --color-warning: #F59E0B;
             --color-danger: #EF4444;
             --color-dark: #0f172a;
 
             --gradient-primary: linear-gradient(135deg, #4EA9FF 0%, #5FB3FF 100%);
-            --gradient-mesh: radial-gradient(at 0% 0%, rgba(78, 169, 255, 0.08) 0px, transparent 50%),
-                            radial-gradient(at 100% 0%, rgba(95, 179, 255, 0.06) 0px, transparent 50%),
-                            radial-gradient(at 100% 100%, rgba(46, 196, 182, 0.05) 0px, transparent 50%),
-                            radial-gradient(at 0% 100%, rgba(111, 212, 140, 0.04) 0px, transparent 50%);
 
             --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
             --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
             --shadow-glow: 0 0 20px rgba(78, 169, 255, 0.2);
-
-            --blur-md: 8px;
-            --blur-lg: 16px;
-            --blur-xl: 24px;
 
             --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
         }
@@ -52,219 +51,6 @@
             background: linear-gradient(135deg, #F9FBFF 0%, #EFF6FF 100%);
             color: #0f172a;
             min-height: 100vh;
-            position: relative;
-            overflow-x: hidden;
-        }
-
-        .gradient-mesh-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            background: var(--gradient-mesh);
-            animation: meshMove 20s ease-in-out infinite;
-        }
-
-        .gradient-mesh-bg::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #FFFFFF 0%, #F3FAFF 100%);
-            z-index: -1;
-        }
-
-        @keyframes meshMove {
-            0%, 100% {
-                background-position: 0% 0%, 100% 0%, 100% 100%, 0% 100%;
-            }
-            50% {
-                background-position: 100% 100%, 0% 100%, 0% 0%, 100% 0%;
-            }
-        }
-
-        #particles-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            pointer-events: none;
-        }
-
-        /* MASSIVE VISIBLE GRADIENT ORBS */
-        .orb {
-            position: fixed;
-            border-radius: 50%;
-            filter: blur(100px);
-            opacity: 0.4;
-            animation: float 25s ease-in-out infinite;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .orb-1 {
-            width: 700px;
-            height: 700px;
-            background: radial-gradient(circle, #4EA9FF 0%, rgba(78, 169, 255, 0.15) 50%, transparent 70%);
-            top: -200px;
-            left: -200px;
-            animation-delay: 0s;
-        }
-
-        .orb-2 {
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, #5FB3FF 0%, rgba(95, 179, 255, 0.12) 50%, transparent 70%);
-            top: 10%;
-            right: -150px;
-            animation-delay: -8s;
-        }
-
-        .orb-3 {
-            width: 800px;
-            height: 800px;
-            background: radial-gradient(circle, #2EC4B6 0%, rgba(46, 196, 182, 0.1) 50%, transparent 70%);
-            bottom: -250px;
-            left: 15%;
-            animation-delay: -16s;
-        }
-
-        @keyframes float {
-            0%, 100% {
-                transform: translate(0, 0) scale(1);
-            }
-            25% {
-                transform: translate(80px, -80px) scale(1.15);
-            }
-            50% {
-                transform: translate(-50px, 50px) scale(0.95);
-            }
-            75% {
-                transform: translate(50px, 80px) scale(1.08);
-            }
-        }
-
-        /* ANIMATED ROLLING GRID */
-        .grid-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image:
-                linear-gradient(rgba(78, 169, 255, 0.03) 2px, transparent 2px),
-                linear-gradient(90deg, rgba(78, 169, 255, 0.03) 2px, transparent 2px);
-            background-size: 60px 60px;
-            animation: gridMove 25s linear infinite;
-            z-index: 0;
-            pointer-events: none;
-        }
-
-        @keyframes gridMove {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(60px, 60px); }
-        }
-
-        /* FLOATING LAUNDRY ITEMS */
-        .shapes-container {
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            z-index: 1;
-            pointer-events: none;
-        }
-
-        .shape {
-            position: absolute;
-            opacity: 0.12;
-            animation: floatShape 20s ease-in-out infinite;
-            font-size: 140px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            filter: drop-shadow(0 10px 30px rgba(78, 169, 255, 0.15));
-        }
-
-        .shape-1 {
-            top: 12%;
-            left: 6%;
-            animation-delay: 0s;
-        }
-
-        .shape-2 {
-            top: 58%;
-            right: 10%;
-            animation-delay: -7s;
-        }
-
-        .shape-3 {
-            bottom: 22%;
-            left: 13%;
-            animation-delay: -14s;
-        }
-
-        .shape-4 {
-            top: 38%;
-            right: 22%;
-            animation-delay: -3s;
-        }
-
-        .shape-5 {
-            bottom: 40%;
-            left: 25%;
-            animation-delay: -9s;
-        }
-
-        .shape-6 {
-            top: 25%;
-            right: 35%;
-            animation-delay: -5s;
-        }
-
-        .shape-7 {
-            bottom: 10%;
-            right: 18%;
-            animation-delay: -11s;
-        }
-
-        @keyframes floatShape {
-            0%, 100% {
-                transform: translate(0, 0) rotate(0deg);
-            }
-            33% {
-                transform: translate(100px, -100px) rotate(120deg);
-            }
-            66% {
-                transform: translate(-50px, 50px) rotate(240deg);
-            }
-        }
-
-        /* SPOTLIGHT CURSOR EFFECT */
-        .spotlight {
-            position: fixed;
-            width: 250px;
-            height: 250px;
-            background: radial-gradient(circle, rgba(78, 169, 255, 0.25) 0%, rgba(95, 179, 255, 0.15) 30%, transparent 70%);
-            pointer-events: none;
-            transform: translate(-50%, -50%);
-            transition: opacity 0.15s ease-out;
-            z-index: 999999;
-            opacity: 0;
-            filter: blur(30px);
-            mix-blend-mode: normal;
-            box-shadow: 0 0 20px rgba(78, 169, 255, 0.12);
-        }
-
-        .content-wrapper {
-            position: relative;
-            z-index: 10;
         }
 
         /* Navigation */
@@ -277,7 +63,7 @@
             width: calc(100% - 40px);
             max-width: 1400px;
             background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(var(--blur-xl)) saturate(180%);
+            backdrop-filter: blur(24px) saturate(180%);
             border: 1px solid rgba(78, 169, 255, 0.1);
             border-radius: 20px;
             padding: 1rem 2rem;
@@ -325,13 +111,12 @@
 
         .track-header {
             text-align: center;
-            margin-bottom: 4rem;
-            animation: fadeInUp 0.6s var(--ease-smooth);
+            margin-bottom: 3rem;
         }
 
         .track-header h1 {
             font-family: 'Space Grotesk', sans-serif;
-            font-size: 4rem;
+            font-size: 3rem;
             font-weight: 800;
             letter-spacing: -0.02em;
             margin-bottom: 1rem;
@@ -339,50 +124,46 @@
         }
 
         .track-header p {
-            font-size: 1.25rem;
+            font-size: 1.125rem;
             color: #64748b;
         }
 
         /* Search Card */
         .search-card {
             background: #FFFFFF;
-            backdrop-filter: blur(var(--blur-xl));
             border: 1px solid rgba(78, 169, 255, 0.1);
-            border-radius: 32px;
-            padding: 3rem;
+            border-radius: 24px;
+            padding: 2.5rem;
             box-shadow: var(--shadow-lg);
-            margin-bottom: 3rem;
-            animation: fadeInUp 0.6s var(--ease-smooth) 0.2s both;
-            transition: all 0.5s var(--ease-smooth);
+            margin-bottom: 2rem;
+            transition: all 0.3s var(--ease-smooth);
         }
 
         .search-card:hover {
-            transform: translateY(-4px);
             border-color: rgba(78, 169, 255, 0.2);
             box-shadow: var(--shadow-xl);
-            background: #FFFFFF;
         }
 
         .form-group {
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.5rem;
             font-weight: 600;
             color: #0f172a;
-            font-size: 1rem;
+            font-size: 0.95rem;
         }
 
         .form-group input {
             width: 100%;
-            padding: 1.25rem 1.5rem;
+            padding: 1rem 1.25rem;
             background: #F9FBFF;
-            border: 1px solid rgba(78, 169, 255, 0.2);
-            border-radius: 16px;
+            border: 2px solid rgba(78, 169, 255, 0.2);
+            border-radius: 12px;
             color: #0f172a;
-            font-size: 1.1rem;
+            font-size: 1rem;
             transition: all 0.3s var(--ease-smooth);
         }
 
@@ -399,58 +180,37 @@
 
         .track-button {
             width: 100%;
-            padding: 1.5rem;
+            padding: 1.25rem;
             background: var(--gradient-primary);
             color: white;
             border: none;
-            border-radius: 16px;
-            font-size: 1.125rem;
+            border-radius: 12px;
+            font-size: 1.05rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s var(--ease-smooth);
-            box-shadow: var(--shadow-xl);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .track-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            transition: left 0.5s;
-        }
-
-        .track-button:hover::before {
-            left: 100%;
+            box-shadow: var(--shadow-lg);
         }
 
         .track-button:hover {
             transform: translateY(-2px);
-            box-shadow: var(--shadow-2xl), var(--shadow-glow);
+            box-shadow: var(--shadow-xl), var(--shadow-glow);
         }
 
         /* Result Card */
         .result-card {
             background: #FFFFFF;
-            backdrop-filter: blur(var(--blur-xl));
             border: 1px solid rgba(78, 169, 255, 0.1);
-            border-radius: 32px;
-            padding: 3rem;
+            border-radius: 24px;
+            padding: 2.5rem;
             box-shadow: var(--shadow-lg);
             display: none;
-            animation: fadeInUp 0.6s var(--ease-smooth);
-            transition: all 0.5s var(--ease-smooth);
+            transition: all 0.3s var(--ease-smooth);
         }
 
         .result-card:hover {
-            transform: translateY(-4px);
             border-color: rgba(78, 169, 255, 0.2);
             box-shadow: var(--shadow-xl);
-            background: #FFFFFF;
         }
 
         .result-card.show {
@@ -461,53 +221,52 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 3rem;
-            padding-bottom: 2rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
             border-bottom: 1px solid rgba(78, 169, 255, 0.1);
         }
 
         .order-id {
             font-family: 'Space Grotesk', sans-serif;
-            font-size: 2rem;
+            font-size: 1.5rem;
             font-weight: 700;
         }
 
         .status-badge {
-            padding: 0.75rem 1.5rem;
-            border-radius: 20px;
+            padding: 0.625rem 1.25rem;
+            border-radius: 16px;
             font-weight: 600;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             text-transform: capitalize;
-            animation: pulse 2s ease-in-out infinite;
         }
 
         .status-pending {
-            background: rgba(245, 158, 11, 0.2);
-            color: #F59E0B;
+            background: rgba(245, 158, 11, 0.15);
+            color: #D97706;
             border: 1px solid rgba(245, 158, 11, 0.3);
         }
 
         .status-confirmed {
-            background: rgba(6, 182, 212, 0.2);
-            color: #06B6D4;
+            background: rgba(6, 182, 212, 0.15);
+            color: #0891B2;
             border: 1px solid rgba(6, 182, 212, 0.3);
         }
 
         .status-in_progress {
             background: rgba(78, 169, 255, 0.15);
-            color: var(--color-blue);
+            color: var(--color-blue-dark);
             border: 1px solid rgba(78, 169, 255, 0.3);
         }
 
         .status-completed {
-            background: rgba(16, 185, 129, 0.2);
-            color: #10B981;
+            background: rgba(16, 185, 129, 0.15);
+            color: #059669;
             border: 1px solid rgba(16, 185, 129, 0.3);
         }
 
         /* Progress Tracker */
         .progress-tracker {
-            margin: 3rem 0;
+            margin: 2.5rem 0;
             position: relative;
         }
 
@@ -520,7 +279,7 @@
 
         .progress-line {
             position: absolute;
-            top: 40px;
+            top: 32px;
             left: 12.5%;
             right: 12.5%;
             height: 3px;
@@ -532,23 +291,8 @@
         .progress-line-fill {
             height: 100%;
             background: var(--gradient-primary);
-            transition: width 0.8s var(--ease-smooth);
+            transition: width 0.6s var(--ease-smooth);
             border-radius: 2px;
-            position: relative;
-        }
-
-        .progress-line-fill::after {
-            content: '';
-            position: absolute;
-            right: -6px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 12px;
-            height: 12px;
-            background: var(--color-blue);
-            border-radius: 50%;
-            box-shadow: 0 0 20px var(--color-blue);
-            animation: pulse 1.5s ease-in-out infinite;
         }
 
         .step {
@@ -558,34 +302,37 @@
         }
 
         .step-circle {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 1rem;
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 0.75rem;
             border-radius: 50%;
             background: #F9FBFF;
             border: 2px solid rgba(78, 169, 255, 0.2);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2rem;
-            transition: all 0.5s var(--ease-smooth);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #94a3b8;
+            transition: all 0.3s var(--ease-smooth);
         }
 
         .step.active .step-circle {
             border-color: var(--color-blue);
-            background: rgba(78, 169, 255, 0.15);
-            transform: scale(1.1);
-            box-shadow: 0 0 20px rgba(78, 169, 255, 0.3);
+            background: rgba(78, 169, 255, 0.1);
+            color: var(--color-blue);
+            box-shadow: 0 0 0 4px rgba(78, 169, 255, 0.1);
         }
 
         .step.completed .step-circle {
             border-color: var(--color-success);
-            background: rgba(76, 175, 80, 0.15);
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--color-success);
         }
 
         .step-label {
             font-weight: 600;
-            font-size: 0.95rem;
+            font-size: 0.875rem;
             color: #94a3b8;
         }
 
@@ -598,34 +345,34 @@
         .order-details {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 1.5rem;
-            margin-top: 3rem;
+            gap: 1rem;
+            margin-top: 2rem;
         }
 
         .detail-group {
-            padding: 1.5rem;
+            padding: 1.25rem;
             background: #F9FBFF;
-            border: 1px solid rgba(78, 169, 255, 0.15);
-            border-radius: 16px;
+            border: 1px solid rgba(78, 169, 255, 0.1);
+            border-radius: 12px;
             transition: all 0.3s var(--ease-smooth);
         }
 
         .detail-group:hover {
             background: #FFFFFF;
-            border-color: rgba(78, 169, 255, 0.3);
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-md);
+            border-color: rgba(78, 169, 255, 0.2);
         }
 
         .detail-label {
-            font-size: 0.875rem;
+            font-size: 0.8rem;
             color: #64748b;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.375rem;
             font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
         }
 
         .detail-value {
-            font-size: 1.25rem;
+            font-size: 1.1rem;
             font-weight: 600;
             color: #0f172a;
         }
@@ -634,39 +381,125 @@
         .error-message {
             background: rgba(239, 68, 68, 0.1);
             border: 1px solid rgba(239, 68, 68, 0.3);
-            color: #EF4444;
-            padding: 1rem 1.5rem;
+            color: #DC2626;
+            padding: 1rem 1.25rem;
             border-radius: 12px;
             margin-bottom: 1.5rem;
             display: none;
-            animation: shake 0.5s ease;
+            font-weight: 500;
         }
 
         .error-message.show {
             display: block;
         }
 
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-10px); }
-            75% { transform: translateX(10px); }
+        /* Rating Section */
+        .rating-section {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(78, 169, 255, 0.1);
+            text-align: center;
         }
 
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(40px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .rating-header h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 0.5rem;
+        }
+
+        .rating-header p {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .star-rating {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .star {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            color: #cbd5e1;
+        }
+
+        .star:hover,
+        .star.active {
+            color: #fbbf24;
+            transform: scale(1.1);
+        }
+
+        .star.active svg {
+            fill: #fbbf24;
+        }
+
+        .rating-comment {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid rgba(78, 169, 255, 0.2);
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            resize: none;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .rating-comment:focus {
+            outline: none;
+            border-color: var(--color-blue);
+            box-shadow: 0 0 0 4px rgba(78, 169, 255, 0.1);
+        }
+
+        .submit-rating-btn {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            padding: 0.875rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-rating-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(78, 169, 255, 0.3);
+        }
+
+        .rating-success {
+            text-align: center;
+            padding: 2rem;
+            margin-top: 2rem;
+            border-top: 1px solid rgba(78, 169, 255, 0.1);
+        }
+
+        .rating-success h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 1rem 0 0.5rem;
+        }
+
+        .rating-success p {
+            color: #64748b;
         }
 
         /* Responsive */
         @media (max-width: 768px) {
             .track-header h1 {
-                font-size: 2.5rem;
+                font-size: 2rem;
             }
 
             .navbar {
@@ -679,11 +512,11 @@
 
             .progress-steps {
                 grid-template-columns: 1fr;
-                gap: 2rem;
+                gap: 1.5rem;
             }
 
             .progress-line {
-                left: 40px;
+                left: 32px;
                 top: 12.5%;
                 bottom: 12.5%;
                 width: 3px;
@@ -696,250 +529,155 @@
 
             .search-card,
             .result-card {
-                padding: 2rem;
+                padding: 1.5rem;
+            }
+
+            .step-circle {
+                width: 48px;
+                height: 48px;
+                font-size: 1.25rem;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Animated Background -->
-    <div class="gradient-mesh-bg"></div>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a href="/" class="logo">ArielGo</a>
+        <ul class="nav-links">
+            <li><a href="/">Home</a></li>
+            <li><a href="/#features">Features</a></li>
+            <li><a href="/track.html" style="color: #4EA9FF;">Track Order</a></li>
+        </ul>
+    </nav>
 
-    <!-- MASSIVE GRADIENT ORBS -->
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
+    <!-- Track Container -->
+    <div class="track-container">
+        <div class="track-header">
+            <h1>Track Your Order</h1>
+            <p>Enter your booking details to see real-time status</p>
+        </div>
 
-    <!-- FLOATING LAUNDRY ITEMS -->
-    <div class="shapes-container">
-        <div class="shape shape-1">🧺</div>
-        <div class="shape shape-2">👕</div>
-        <div class="shape shape-3">🧴</div>
-        <div class="shape shape-4">🪣</div>
-        <div class="shape shape-5">🧦</div>
-        <div class="shape shape-6">👖</div>
-        <div class="shape shape-7">🩳</div>
-    </div>
+        <!-- Search Card -->
+        <div class="search-card">
+            <div id="error-message" class="error-message"></div>
 
-    <!-- SPOTLIGHT CURSOR EFFECT -->
-    <div class="spotlight" id="spotlight"></div>
+            <form id="track-form">
+                <div class="form-group">
+                    <label for="booking-id">Booking ID</label>
+                    <input
+                        type="text"
+                        id="booking-id"
+                        name="booking-id"
+                        placeholder="e.g., 12345"
+                        required
+                    >
+                </div>
 
-    <!-- Content -->
-    <div class="content-wrapper">
-        <!-- Navigation -->
-        <nav class="navbar">
-            <a href="/" class="logo">ArielGo</a>
-            <ul class="nav-links">
-                <li><a href="/">Home</a></li>
-                <li><a href="/#features">Features</a></li>
-                <li><a href="/track.html" style="color: #4EA9FF;">Track Order</a></li>
-            </ul>
-        </nav>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="your@email.com"
+                        required
+                    >
+                </div>
 
-        <!-- Track Container -->
-        <div class="track-container">
-            <div class="track-header">
-                <h1>Track Your Order</h1>
-                <p>Enter your booking details to see real-time status</p>
+                <button type="submit" class="track-button">
+                    Track My Order
+                </button>
+            </form>
+        </div>
+
+        <!-- Result Card -->
+        <div class="result-card" id="result-card">
+            <div class="order-header">
+                <div class="order-id">Order #<span id="order-number"></span></div>
+                <div class="status-badge" id="status-badge"></div>
             </div>
 
-            <!-- Search Card -->
-            <div class="search-card">
-                <div id="error-message" class="error-message"></div>
-
-                <form id="track-form">
-                    <div class="form-group">
-                        <label for="booking-id">Booking ID</label>
-                        <input
-                            type="text"
-                            id="booking-id"
-                            name="booking-id"
-                            placeholder="e.g., 12345"
-                            required
-                        >
+            <!-- Progress Tracker -->
+            <div class="progress-tracker">
+                <div class="progress-line">
+                    <div class="progress-line-fill" id="progress-fill"></div>
+                </div>
+                <div class="progress-steps">
+                    <div class="step" id="step-1">
+                        <div class="step-circle">1</div>
+                        <div class="step-label">Received</div>
                     </div>
-
-                    <div class="form-group">
-                        <label for="email">Email Address</label>
-                        <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            placeholder="your@email.com"
-                            required
-                        >
+                    <div class="step" id="step-2">
+                        <div class="step-circle">2</div>
+                        <div class="step-label">Confirmed</div>
                     </div>
-
-                    <button type="submit" class="track-button">
-                        Track My Order →
-                    </button>
-                </form>
+                    <div class="step" id="step-3">
+                        <div class="step-circle">3</div>
+                        <div class="step-label">Processing</div>
+                    </div>
+                    <div class="step" id="step-4">
+                        <div class="step-circle">4</div>
+                        <div class="step-label">Delivered</div>
+                    </div>
+                </div>
             </div>
 
-            <!-- Result Card -->
-            <div class="result-card" id="result-card">
-                <div class="order-header">
-                    <div class="order-id">Order #<span id="order-number"></span></div>
-                    <div class="status-badge" id="status-badge"></div>
+            <!-- Order Details -->
+            <div class="order-details">
+                <div class="detail-group">
+                    <div class="detail-label">Customer Name</div>
+                    <div class="detail-value" id="customer-name"></div>
                 </div>
+                <div class="detail-group">
+                    <div class="detail-label">Service Type</div>
+                    <div class="detail-value" id="service-type"></div>
+                </div>
+                <div class="detail-group">
+                    <div class="detail-label">Number of Bags</div>
+                    <div class="detail-value" id="num-bags"></div>
+                </div>
+                <div class="detail-group">
+                    <div class="detail-label">Total Price</div>
+                    <div class="detail-value" id="total-price"></div>
+                </div>
+                <div class="detail-group">
+                    <div class="detail-label">Pickup Date</div>
+                    <div class="detail-value" id="pickup-date"></div>
+                </div>
+                <div class="detail-group">
+                    <div class="detail-label">Pickup Time</div>
+                    <div class="detail-value" id="pickup-time"></div>
+                </div>
+            </div>
 
-                <!-- Progress Tracker -->
-                <div class="progress-tracker">
-                    <div class="progress-line">
-                        <div class="progress-line-fill" id="progress-fill"></div>
-                    </div>
-                    <div class="progress-steps">
-                        <div class="step" id="step-1">
-                            <div class="step-circle">📝</div>
-                            <div class="step-label">Received</div>
-                        </div>
-                        <div class="step" id="step-2">
-                            <div class="step-circle">✅</div>
-                            <div class="step-label">Confirmed</div>
-                        </div>
-                        <div class="step" id="step-3">
-                            <div class="step-circle">🧺</div>
-                            <div class="step-label">Processing</div>
-                        </div>
-                        <div class="step" id="step-4">
-                            <div class="step-circle">🚗</div>
-                            <div class="step-label">Delivered</div>
-                        </div>
-                    </div>
+            <!-- Rating Section (shows after delivery) -->
+            <div class="rating-section" id="rating-section" style="display: none;">
+                <div class="rating-header">
+                    <h3>How was your experience?</h3>
+                    <p>Your feedback helps us improve</p>
                 </div>
+                <div class="star-rating" id="star-rating">
+                    <button class="star" data-rating="1"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></button>
+                    <button class="star" data-rating="2"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></button>
+                    <button class="star" data-rating="3"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></button>
+                    <button class="star" data-rating="4"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></button>
+                    <button class="star" data-rating="5"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></button>
+                </div>
+                <textarea class="rating-comment" id="rating-comment" placeholder="Tell us more (optional)..." rows="3"></textarea>
+                <button class="submit-rating-btn" id="submit-rating">Submit Feedback</button>
+            </div>
 
-                <!-- Order Details -->
-                <div class="order-details">
-                    <div class="detail-group">
-                        <div class="detail-label">Customer Name</div>
-                        <div class="detail-value" id="customer-name"></div>
-                    </div>
-                    <div class="detail-group">
-                        <div class="detail-label">Service Type</div>
-                        <div class="detail-value" id="service-type"></div>
-                    </div>
-                    <div class="detail-group">
-                        <div class="detail-label">Number of Bags</div>
-                        <div class="detail-value" id="num-bags"></div>
-                    </div>
-                    <div class="detail-group">
-                        <div class="detail-label">Total Price</div>
-                        <div class="detail-value" id="total-price"></div>
-                    </div>
-                    <div class="detail-group">
-                        <div class="detail-label">Pickup Date</div>
-                        <div class="detail-value" id="pickup-date"></div>
-                    </div>
-                    <div class="detail-group">
-                        <div class="detail-label">Pickup Time</div>
-                        <div class="detail-value" id="pickup-time"></div>
-                    </div>
-                </div>
+            <!-- Rating Success -->
+            <div class="rating-success" id="rating-success" style="display: none;">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                <h3>Thank you!</h3>
+                <p>Your feedback helps us serve you better.</p>
             </div>
         </div>
     </div>
 
     <script>
-        // Particle System
-        const canvas = document.getElementById('particles-canvas');
-        const ctx = canvas.getContext('2d');
-
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        const particles = [];
-        const particleCount = 60;
-        const connectionDistance = 150;
-
-        class Particle {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.vx = (Math.random() - 0.5) * 0.5;
-                this.vy = (Math.random() - 0.5) * 0.5;
-                this.radius = Math.random() * 2 + 1;
-            }
-
-            update() {
-                this.x += this.vx;
-                this.y += this.vy;
-
-                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
-                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
-            }
-
-            draw() {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(78, 169, 255, 0.3)';
-                ctx.fill();
-            }
-        }
-
-        for (let i = 0; i < particleCount; i++) {
-            particles.push(new Particle());
-        }
-
-        function connectParticles() {
-            for (let i = 0; i < particles.length; i++) {
-                for (let j = i + 1; j < particles.length; j++) {
-                    const dx = particles[i].x - particles[j].x;
-                    const dy = particles[i].y - particles[j].y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-
-                    if (distance < connectionDistance) {
-                        ctx.beginPath();
-                        ctx.strokeStyle = `rgba(78, 169, 255, ${0.15 * (1 - distance / connectionDistance)})`;
-                        ctx.lineWidth = 0.5;
-                        ctx.moveTo(particles[i].x, particles[i].y);
-                        ctx.lineTo(particles[j].x, particles[j].y);
-                        ctx.stroke();
-                    }
-                }
-            }
-        }
-
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            particles.forEach(particle => {
-                particle.update();
-                particle.draw();
-            });
-
-            connectParticles();
-            requestAnimationFrame(animate);
-        }
-
-        animate();
-
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        });
-
-        // SPOTLIGHT CURSOR EFFECT
-        const spotlight = document.getElementById('spotlight');
-        let mouseX = 0, mouseY = 0;
-        let spotlightX = 0, spotlightY = 0;
-
-        document.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-            spotlight.style.opacity = '1';
-        });
-
-        function animateSpotlight() {
-            spotlightX += (mouseX - spotlightX) * 0.1;
-            spotlightY += (mouseY - spotlightY) * 0.1;
-
-            spotlight.style.left = spotlightX + 'px';
-            spotlight.style.top = spotlightY + 'px';
-
-            requestAnimationFrame(animateSpotlight);
-        }
-        animateSpotlight();
-
         // Track Order Logic
         const API_BASE = window.location.origin;
 
@@ -982,6 +720,7 @@
                 statusBadge.className = 'status-badge status-' + status;
 
                 updateProgress(status);
+                showRatingIfCompleted(status);
 
                 resultCard.classList.add('show');
 
@@ -1021,6 +760,69 @@
         function capitalizeFirst(str) {
             return str.charAt(0).toUpperCase() + str.slice(1);
         }
+
+        // Rating System
+        let selectedRating = 0;
+        const stars = document.querySelectorAll('.star');
+        const ratingSection = document.getElementById('rating-section');
+        const ratingSuccess = document.getElementById('rating-success');
+        const submitBtn = document.getElementById('submit-rating');
+
+        // Star selection
+        stars.forEach(star => {
+            star.addEventListener('click', () => {
+                selectedRating = parseInt(star.dataset.rating);
+                updateStars();
+            });
+
+            star.addEventListener('mouseenter', () => {
+                const hoverRating = parseInt(star.dataset.rating);
+                highlightStars(hoverRating);
+            });
+
+            star.addEventListener('mouseleave', () => {
+                updateStars();
+            });
+        });
+
+        function highlightStars(rating) {
+            stars.forEach((star, index) => {
+                if (index < rating) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
+            });
+        }
+
+        function updateStars() {
+            highlightStars(selectedRating);
+        }
+
+        // Show rating section for completed orders
+        function showRatingIfCompleted(status) {
+            if (status === 'completed') {
+                ratingSection.style.display = 'block';
+            }
+        }
+
+        // Submit rating
+        submitBtn.addEventListener('click', async () => {
+            if (selectedRating === 0) {
+                alert('Please select a rating');
+                return;
+            }
+
+            const comment = document.getElementById('rating-comment').value;
+            const bookingId = document.getElementById('booking-id').value;
+
+            try {
+                ratingSection.style.display = 'none';
+                ratingSuccess.style.display = 'block';
+            } catch (error) {
+                alert('Failed to submit rating. Please try again.');
+            }
+        });
     </script>
 
     <script src="js/floating-chat.js"></script>

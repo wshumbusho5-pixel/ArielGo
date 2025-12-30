@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Driver Login - ArielGo</title>
 
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -17,115 +20,60 @@
         }
 
         :root {
-            --color-orange: #FF6B00;
-            --color-amber: #F59E0B;
-            --color-yellow: #FCD34D;
+            --color-blue: #4EA9FF;
+            --color-blue-dark: #3A90E8;
+            --color-success: #10B981;
             --color-danger: #EF4444;
+            --color-dark: #0f172a;
 
-            --gradient-primary: linear-gradient(135deg, #1A1A1A 0%, #FF6B00 50%, #FCD34D 100%);
-            --gradient-mesh: radial-gradient(at 0% 0%, rgba(255, 107, 0, 0.15) 0px, transparent 50%),
-                            radial-gradient(at 100% 0%, rgba(245, 158, 11, 0.15) 0px, transparent 50%),
-                            radial-gradient(at 100% 100%, rgba(252, 211, 77, 0.15) 0px, transparent 50%),
-                            radial-gradient(at 0% 100%, rgba(26, 26, 26, 0.15) 0px, transparent 50%);
+            --gradient-primary: linear-gradient(135deg, #4EA9FF 0%, #5FB3FF 100%);
 
-            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-            --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-            --shadow-glow: 0 0 40px rgba(255, 107, 0, 0.3);
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --shadow-glow: 0 0 20px rgba(78, 169, 255, 0.2);
 
-            --blur-xl: 24px;
             --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: #0a0a0a;
-            color: white;
+            background: linear-gradient(135deg, #F9FBFF 0%, #EFF6FF 100%);
+            color: #0f172a;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative;
-        }
-
-        .gradient-mesh-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            background: var(--gradient-mesh);
-            animation: meshMove 20s ease-in-out infinite;
-        }
-
-        .gradient-mesh-bg::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
-            z-index: -1;
-        }
-
-        @keyframes meshMove {
-            0%, 100% {
-                background-position: 0% 0%, 100% 0%, 100% 100%, 0% 100%;
-            }
-            50% {
-                background-position: 100% 100%, 0% 100%, 0% 0%, 100% 0%;
-            }
-        }
-
-        .grain-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            opacity: 0.03;
-            pointer-events: none;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            padding: 2rem;
         }
 
         .login-container {
-            position: relative;
-            z-index: 10;
             width: 100%;
-            max-width: 500px;
-            padding: 2rem;
-            animation: fadeInUp 0.6s var(--ease-smooth);
+            max-width: 480px;
         }
 
         .login-card {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(var(--blur-xl)) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 32px;
+            background: #FFFFFF;
+            border: 1px solid rgba(78, 169, 255, 0.1);
+            border-radius: 24px;
             padding: 3rem;
-            box-shadow: var(--shadow-2xl);
-            transition: all 0.5s var(--ease-smooth);
+            box-shadow: var(--shadow-xl);
+            transition: all 0.3s var(--ease-smooth);
         }
 
         .login-card:hover {
-            transform: translateY(-40px) scale(1.08);
-            border-color: rgba(255, 107, 0, 0.7);
-            box-shadow: 0 60px 120px rgba(0, 0, 0, 0.6),
-                        0 0 100px rgba(255, 107, 0, 0.8),
-                        0 0 180px rgba(252, 211, 77, 0.4);
-            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(78, 169, 255, 0.2);
         }
 
         .login-header {
             text-align: center;
-            margin-bottom: 3rem;
+            margin-bottom: 2.5rem;
         }
 
         .logo {
             font-family: 'Space Grotesk', sans-serif;
-            font-size: 2.5rem;
+            font-size: 2rem;
             font-weight: 800;
             background: var(--gradient-primary);
             -webkit-background-clip: text;
@@ -136,300 +84,154 @@
 
         .login-header h1 {
             font-family: 'Space Grotesk', sans-serif;
-            font-size: 2rem;
+            font-size: 1.75rem;
             font-weight: 700;
+            color: #0f172a;
             margin-bottom: 0.5rem;
         }
 
         .login-header p {
-            color: rgba(255, 255, 255, 0.6);
+            color: #64748b;
             font-size: 1rem;
         }
 
         .form-group {
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.5rem;
             font-weight: 600;
-            color: rgba(255, 255, 255, 0.9);
+            color: #0f172a;
+            font-size: 0.95rem;
         }
 
         .form-group input {
             width: 100%;
-            padding: 1.25rem 1.5rem;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            color: white;
+            padding: 1rem 1.25rem;
+            background: #F9FBFF;
+            border: 2px solid rgba(78, 169, 255, 0.2);
+            border-radius: 12px;
+            color: #0f172a;
             font-size: 1rem;
             transition: all 0.3s var(--ease-smooth);
         }
 
         .form-group input:focus {
             outline: none;
-            background: rgba(255, 255, 255, 0.08);
-            border-color: var(--color-orange);
-            box-shadow: 0 0 0 4px rgba(255, 107, 0, 0.1);
+            background: #FFFFFF;
+            border-color: var(--color-blue);
+            box-shadow: 0 0 0 4px rgba(78, 169, 255, 0.1);
         }
 
         .form-group input::placeholder {
-            color: rgba(255, 255, 255, 0.4);
+            color: #94a3b8;
         }
 
         .login-btn {
             width: 100%;
-            padding: 1.5rem;
+            padding: 1.25rem;
             background: var(--gradient-primary);
             color: white;
             border: none;
-            border-radius: 16px;
-            font-size: 1.125rem;
+            border-radius: 12px;
+            font-size: 1.05rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s var(--ease-smooth);
-            box-shadow: var(--shadow-xl);
+            box-shadow: var(--shadow-lg);
+            margin-top: 0.5rem;
         }
 
         .login-btn:hover {
             transform: translateY(-2px);
-            box-shadow: var(--shadow-2xl), var(--shadow-glow);
+            box-shadow: var(--shadow-xl), var(--shadow-glow);
         }
 
         .login-btn:disabled {
-            opacity: 0.5;
+            opacity: 0.6;
             cursor: not-allowed;
+            transform: none;
         }
 
         .error-message {
             background: rgba(239, 68, 68, 0.1);
             border: 1px solid rgba(239, 68, 68, 0.3);
-            color: var(--color-danger);
-            padding: 1rem 1.5rem;
+            color: #DC2626;
+            padding: 1rem 1.25rem;
             border-radius: 12px;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
             display: none;
-            animation: shake 0.5s ease;
+            font-weight: 500;
         }
 
         .error-message.show {
             display: block;
         }
 
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-10px); }
-            75% { transform: translateX(10px); }
+        .success-message {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #059669;
+            padding: 1rem 1.25rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            display: none;
+            font-weight: 500;
+        }
+
+        .success-message.show {
+            display: block;
         }
 
         .back-home {
             text-align: center;
-            margin-top: 2rem;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(78, 169, 255, 0.1);
         }
 
         .back-home a {
-            color: rgba(255, 255, 255, 0.6);
+            color: #64748b;
             text-decoration: none;
+            font-size: 0.95rem;
             transition: color 0.3s;
         }
 
         .back-home a:hover {
-            color: white;
+            color: var(--color-blue);
         }
 
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(40px);
+        @media (max-width: 640px) {
+            body {
+                padding: 1rem;
             }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
 
-        /* MASSIVE VISIBLE GRADIENT ORBS */
-        .orb {
-            position: fixed;
-            border-radius: 50%;
-            filter: blur(100px);
-            opacity: 0.4;
-            animation: float 25s ease-in-out infinite;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .orb-1 {
-            width: 700px;
-            height: 700px;
-            background: radial-gradient(circle, #FF6B00 0%, rgba(255, 107, 0, 0.4) 50%, transparent 70%);
-            top: -200px;
-            left: -200px;
-            animation-delay: 0s;
-        }
-
-        .orb-2 {
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, #F59E0B 0%, rgba(245, 158, 11, 0.4) 50%, transparent 70%);
-            top: 10%;
-            right: -150px;
-            animation-delay: -8s;
-        }
-
-        .orb-3 {
-            width: 800px;
-            height: 800px;
-            background: radial-gradient(circle, #FCD34D 0%, rgba(252, 211, 77, 0.4) 50%, transparent 70%);
-            bottom: -250px;
-            left: 15%;
-            animation-delay: -16s;
-        }
-
-        @keyframes float {
-            0%, 100% {
-                transform: translate(0, 0) scale(1);
-            }
-            25% {
-                transform: translate(80px, -80px) scale(1.15);
-            }
-            50% {
-                transform: translate(-50px, 50px) scale(0.95);
-            }
-            75% {
-                transform: translate(50px, 80px) scale(1.08);
-            }
-        }
-
-        /* ANIMATED ROLLING GRID */
-        .grid-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image:
-                linear-gradient(rgba(255, 107, 0, 0.04) 2px, transparent 2px),
-                linear-gradient(90deg, rgba(255, 107, 0, 0.04) 2px, transparent 2px);
-            background-size: 60px 60px;
-            animation: gridMove 25s linear infinite;
-            z-index: 0;
-            pointer-events: none;
-        }
-
-        @keyframes gridMove {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(60px, 60px); }
-        }
-
-        /* FLOATING LAUNDRY ITEMS */
-        .shapes-container {
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            z-index: 1;
-            pointer-events: none;
-        }
-
-        .shape {
-            position: absolute;
-            opacity: 0.12;
-            animation: floatShape 20s ease-in-out infinite;
-            font-size: 110px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            filter: drop-shadow(0 10px 30px rgba(255, 107, 0, 0.3));
-        }
-
-        .shape-1 {
-            top: 18%;
-            left: 10%;
-            animation-delay: 0s;
-        }
-
-        .shape-2 {
-            bottom: 22%;
-            right: 12%;
-            animation-delay: -8s;
-        }
-
-        .shape-3 {
-            top: 60%;
-            left: 15%;
-            animation-delay: -4s;
-        }
-
-        .shape-4 {
-            top: 35%;
-            right: 25%;
-            animation-delay: -12s;
-        }
-
-        .shape-5 {
-            bottom: 45%;
-            left: 28%;
-            animation-delay: -6s;
-        }
-
-        @keyframes floatShape {
-            0%, 100% {
-                transform: translate(0, 0) rotate(0deg);
-            }
-            33% {
-                transform: translate(60px, -60px) rotate(120deg);
-            }
-            66% {
-                transform: translate(-30px, 30px) rotate(240deg);
-            }
-        }
-
-        /* SPOTLIGHT CURSOR EFFECT */
-        .spotlight {
-            position: fixed;
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, rgba(37, 99, 235, 0.08) 30%, transparent 60%);
-            pointer-events: none;
-            transform: translate(-50%, -50%);
-            transition: opacity 0.15s ease-out;
-            z-index: 999999;
-            opacity: 0;
-            filter: blur(40px);
-            mix-blend-mode: screen;
-        }
-
-        @media (max-width: 768px) {
             .login-card {
-                padding: 2rem;
+                padding: 2rem 1.5rem;
+            }
+
+            .login-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .logo {
+                font-size: 1.75rem;
+            }
+
+            .form-group input {
+                padding: 0.875rem 1rem;
+                font-size: 16px;
+            }
+
+            .login-btn {
+                padding: 1rem;
             }
         }
     </style>
 </head>
 <body>
-    <div class="gradient-mesh-bg"></div>
-    <div class="grain-overlay"></div>
-
-    <!-- MASSIVE GRADIENT ORBS -->
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
-
-    <!-- FLOATING LAUNDRY ITEMS -->
-    <div class="shapes-container">
-        <div class="shape shape-1">🧴</div>
-        <div class="shape shape-2">🧺</div>
-        <div class="shape shape-3">👕</div>
-        <div class="shape shape-4">🪣</div>
-        <div class="shape shape-5">🧦</div>
-    </div>
-
-    <!-- SPOTLIGHT CURSOR EFFECT -->
-    <div class="spotlight" id="spotlight"></div>
-
     <div class="login-container">
         <div class="login-card">
             <div class="login-header">
@@ -439,7 +241,7 @@
             </div>
 
             <div id="errorMessage" class="error-message"></div>
-            <div id="successMessage" class="error-message" style="background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3); color: #34D399;"></div>
+            <div id="successMessage" class="success-message"></div>
 
             <form id="driverLoginForm">
                 <div class="form-group">
@@ -453,39 +255,16 @@
                 </div>
 
                 <button type="submit" class="login-btn" id="loginButton">
-                    Login →
+                    Login
                 </button>
             </form>
 
             <div class="back-home">
-                <a href="/">← Back to Home</a>
+                <a href="/">Back to Home</a>
             </div>
         </div>
     </div>
 
     <script src="js/driver-login.js"></script>
-    <script>
-        // SPOTLIGHT CURSOR EFFECT
-        const spotlight = document.getElementById('spotlight');
-        let mouseX = 0, mouseY = 0;
-        let spotlightX = 0, spotlightY = 0;
-
-        document.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-            spotlight.style.opacity = '1';
-        });
-
-        function animateSpotlight() {
-            spotlightX += (mouseX - spotlightX) * 0.1;
-            spotlightY += (mouseY - spotlightY) * 0.1;
-
-            spotlight.style.left = spotlightX + 'px';
-            spotlight.style.top = spotlightY + 'px';
-
-            requestAnimationFrame(animateSpotlight);
-        }
-        animateSpotlight();
-    </script>
 </body>
 </html>

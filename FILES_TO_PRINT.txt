@@ -1,0 +1,41 @@
+🖨️ PRINT THESE FILES FOR WEDNESDAY PITCH
+==========================================
+
+PRIORITY 1 - MUST PRINT:
+------------------------
+1. PITCH_CHEAT_SHEET.md
+   └─ One-page quick reference (keep in pocket)
+
+2. WEDNESDAY_QUICK_START.md
+   └─ Morning-of checklist
+
+PRIORITY 2 - SHOULD PRINT:
+---------------------------
+3. DEMO_SCRIPT_WEDNESDAY.md
+   └─ Full demo walkthrough (backup if you forget)
+
+4. ARCHITECTURE_VISUAL.md
+   └─ Technical diagrams (for Q&A)
+
+PRIORITY 3 - NICE TO HAVE:
+---------------------------
+5. PITCH_DECK_TECH_STATUS.md
+   └─ Technical status details
+
+6. MASTER_REFERENCE.md
+   └─ Complete guide
+
+PRINTING TIPS:
+--------------
+□ Print double-sided to save paper
+□ Staple each document separately
+□ Bring to pitch in folder
+□ Have digital backups on phone/tablet
+□ Mark up with highlighter if helpful
+
+BACKUP PLAN:
+------------
+If you can't print:
+- Load all PDFs on phone
+- Bookmark in browser
+- Have offline access ready

@@ -1,41 +1,27 @@
 // ==================================
 // AI ASSISTANT SERVICE
 // Personal AI assistant for each user
-// Supports both OpenAI and Ollama
+// OpenAI GPT-3.5-Turbo (Cost-optimized)
+// Rate-limited to 5 questions per user per day
 // ==================================
 
 require('dotenv').config();
 const OpenAI = require('openai');
-const { Ollama } = require('ollama');
 
 let aiProvider = null;
 let providerType = 'none';
 
-// Try to initialize AI providers in order of preference
-// 1. OpenAI (if API key provided)
-// 2. Ollama (if running locally)
-
+// Initialize OpenAI (required)
 if (process.env.OPENAI_API_KEY) {
-    // Use OpenAI
     aiProvider = new OpenAI({
         apiKey: process.env.OPENAI_API_KEY
     });
     providerType = 'openai';
-    console.log('✅ AI Assistant service initialized (OpenAI GPT-4)');
+    console.log('✅ AI Assistant service initialized (OpenAI GPT-3.5-Turbo)');
+    console.log('💰 Cost-optimized: ~$0.002 per conversation');
 } else {
-    // Try Ollama as fallback
-    try {
-        aiProvider = new Ollama({
-            host: process.env.OLLAMA_HOST || 'http://localhost:11434'
-        });
-        providerType = 'ollama';
-        console.log('✅ AI Assistant service initialized (Ollama)');
-        console.log('💡 Using local Ollama with model: llama3.2:3b');
-    } catch (error) {
-        console.log('⚠️  No AI provider configured - AI Assistant disabled');
-        console.log('   Option 1: Add OPENAI_API_KEY to .env for OpenAI');
-        console.log('   Option 2: Install Ollama from https://ollama.ai');
-    }
+    console.log('⚠️  AI Assistant disabled - OPENAI_API_KEY not configured');
+    console.log('   Add OPENAI_API_KEY to .env to enable AI features');
 }
 
 /**
@@ -55,49 +41,26 @@ async function chat(userMessage, context = {}) {
     try {
         const systemPrompt = buildSystemPrompt(context);
 
-        let response;
-        let tokensUsed = 0;
+        // Use OpenAI GPT-3.5-Turbo (cost-optimized)
+        const completion = await aiProvider.chat.completions.create({
+            model: "gpt-3.5-turbo",
+            messages: [
+                { role: "system", content: systemPrompt },
+                { role: "user", content: userMessage }
+            ],
+            temperature: 0.7,
+            max_tokens: 300  // Reduced to control costs
+        });
 
-        if (providerType === 'openai') {
-            // Use OpenAI
-            const completion = await aiProvider.chat.completions.create({
-                model: process.env.OPENAI_MODEL || "gpt-4",
-                messages: [
-                    { role: "system", content: systemPrompt },
-                    { role: "user", content: userMessage }
-                ],
-                temperature: 0.7,
-                max_tokens: 500
-            });
-
-            response = completion.choices[0].message.content;
-            tokensUsed = completion.usage.total_tokens;
-
-        } else if (providerType === 'ollama') {
-            // Use Ollama
-            const ollamaModel = process.env.OLLAMA_MODEL || 'llama3.2:3b';
-
-            const completion = await aiProvider.chat({
-                model: ollamaModel,
-                messages: [
-                    { role: "system", content: systemPrompt },
-                    { role: "user", content: userMessage }
-                ],
-                options: {
-                    temperature: 0.7,
-                    num_predict: 500
-                }
-            });
-
-            response = completion.message.content;
-            tokensUsed = 0; // Ollama doesn't return token count
-        }
+        const response = completion.choices[0].message.content;
+        const tokensUsed = completion.usage.total_tokens;
 
         return {
             success: true,
             message: response,
             tokensUsed: tokensUsed,
-            provider: providerType
+            provider: 'openai',
+            model: 'gpt-3.5-turbo'
         };
 
     } catch (error) {
@@ -215,55 +178,30 @@ async function getLaundryCareTip(topic = null) {
         : `Give a random helpful laundry care tip. Keep it to 2-3 sentences.`;
 
     try {
-        let tip;
-
-        if (providerType === 'openai') {
-            const completion = await aiProvider.chat.completions.create({
-                model: process.env.OPENAI_MODEL || "gpt-4",
-                messages: [
-                    {
-                        role: "system",
-                        content: "You are a laundry expert. Give practical, helpful laundry tips."
-                    },
-                    {
-                        role: "user",
-                        content: prompt
-                    }
-                ],
-                temperature: 0.8,
-                max_tokens: 150
-            });
-
-            tip = completion.choices[0].message.content;
-
-        } else if (providerType === 'ollama') {
-            const ollamaModel = process.env.OLLAMA_MODEL || 'llama3.2:3b';
-
-            const completion = await aiProvider.chat({
-                model: ollamaModel,
-                messages: [
-                    {
-                        role: "system",
-                        content: "You are a laundry expert. Give practical, helpful laundry tips."
-                    },
-                    {
-                        role: "user",
-                        content: prompt
-                    }
-                ],
-                options: {
-                    temperature: 0.8,
-                    num_predict: 150
+        // Use OpenAI GPT-3.5-Turbo
+        const completion = await aiProvider.chat.completions.create({
+            model: "gpt-3.5-turbo",
+            messages: [
+                {
+                    role: "system",
+                    content: "You are a laundry expert. Give practical, helpful laundry tips."
+                },
+                {
+                    role: "user",
+                    content: prompt
                 }
-            });
+            ],
+            temperature: 0.8,
+            max_tokens: 100  // Reduced to control costs
+        });
 
-            tip = completion.message.content;
-        }
+        const tip = completion.choices[0].message.content;
 
         return {
             success: true,
             tip: tip,
-            provider: providerType
+            provider: 'openai',
+            model: 'gpt-3.5-turbo'
         };
 
     } catch (error) {
@@ -289,11 +227,7 @@ function getProviderInfo() {
     return {
         configured: !!aiProvider,
         provider: providerType,
-        model: providerType === 'openai'
-            ? (process.env.OPENAI_MODEL || 'gpt-4')
-            : providerType === 'ollama'
-            ? (process.env.OLLAMA_MODEL || 'llama3.2:3b')
-            : null
+        model: 'gpt-3.5-turbo'
     };
 }
 
