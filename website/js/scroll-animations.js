@@ -15,8 +15,8 @@
         gsap.registerPlugin(ScrollTrigger);
 
         // ============================================
-        // HERO ZOOM EFFECT - FULL SCREEN PARALLAX ZOOM
-        // Image zooms in dramatically as you scroll
+        // HERO ZOOM EFFECT - "COMING AT YOU" 3D PULL
+        // Image starts deep and rushes toward viewer
         // ============================================
 
         const heroImage = document.querySelector('.hero-banner-image');
@@ -24,31 +24,36 @@
         const heroContent = document.querySelector('.hero-banner-content');
 
         if (heroImage && heroBanner) {
-            // Set initial state
-            gsap.set(heroImage, { scale: 1 });
+            // Start slightly pulled back - like it's deep in the screen
+            gsap.set(heroImage, {
+                scale: 0.95,
+                filter: 'brightness(0.9)'
+            });
 
-            // Create timeline for the zoom effect
+            // Create timeline for the "coming at you" effect
             const heroTimeline = gsap.timeline({
                 scrollTrigger: {
                     trigger: heroBanner,
                     start: 'top top',
                     end: 'bottom top',
-                    scrub: 0.5
+                    scrub: 0.3
                 }
             });
 
-            // Image zooms in as you scroll
+            // Image RUSHES toward you - like coming out of the screen
             heroTimeline.to(heroImage, {
-                scale: 1.3,
-                ease: 'none'
+                scale: 1.8,
+                filter: 'brightness(1.1)',
+                ease: 'power2.in'
             }, 0);
 
-            // Content fades out and moves up
+            // Content gets pushed back/swallowed as image rushes forward
             if (heroContent) {
                 heroTimeline.to(heroContent, {
-                    y: -100,
+                    scale: 0.8,
                     opacity: 0,
-                    ease: 'none'
+                    y: 50,
+                    ease: 'power1.in'
                 }, 0);
             }
         }
