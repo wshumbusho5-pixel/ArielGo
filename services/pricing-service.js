@@ -5,23 +5,67 @@
 
 // Pricing in cents (to avoid floating point errors)
 const PRICING = {
+    // === WASH & FOLD (Per Bag) ===
     standard: {
         name: 'Standard (24-hour)',
+        category: 'wash-fold',
+        pricingType: 'per-bag',
         pricePerBag: 3200, // $32.00 in cents
         displayPrice: '$32',
         turnaround: '24 hours'
     },
     'same-day': {
         name: 'Same-Day',
+        category: 'wash-fold',
+        pricingType: 'per-bag',
         pricePerBag: 4200, // $42.00 in cents
         displayPrice: '$42',
         turnaround: 'Same day'
     },
     rush: {
         name: 'Rush (4-hour)',
+        category: 'wash-fold',
+        pricingType: 'per-bag',
         pricePerBag: 5000, // $50.00 in cents
         displayPrice: '$50',
         turnaround: '4 hours'
+    },
+
+    // === DRY CLEANING (Per Item) ===
+    'dry-cleaning': {
+        name: 'Dry Cleaning',
+        category: 'dry-cleaning',
+        pricingType: 'per-item',
+        turnaround: '3-5 days',
+        expressMultiplier: 1.5, // +50% for express
+        items: {
+            'dress-shirt': { name: 'Dress Shirt', price: 450 },
+            'pants': { name: 'Pants / Trousers', price: 750 },
+            'suit-2pc': { name: 'Suit (2-piece)', price: 1800 },
+            'dress': { name: 'Dress', price: 1400 },
+            'blouse': { name: 'Blouse', price: 700 },
+            'sweater': { name: 'Sweater', price: 800 },
+            'coat-jacket': { name: 'Coat / Jacket', price: 2000 },
+            'tie': { name: 'Tie', price: 500 }
+        }
+    },
+
+    // === SPECIALTY ITEMS (Per Item) ===
+    'specialty': {
+        name: 'Specialty Items',
+        category: 'specialty',
+        pricingType: 'per-item',
+        turnaround: '3-5 days',
+        items: {
+            'comforter-twin': { name: 'Comforter (Twin/Full)', price: 2500 },
+            'comforter-queen': { name: 'Comforter (Queen)', price: 3000 },
+            'comforter-king': { name: 'Comforter (King)', price: 3800 },
+            'blanket': { name: 'Blanket', price: 1800 },
+            'duvet-cover': { name: 'Duvet Cover', price: 2000 },
+            'sheet-set': { name: 'Sheet Set', price: 1800 },
+            'pillow': { name: 'Pillow', price: 1000 },
+            'mattress-pad': { name: 'Mattress Pad', price: 2200 }
+        }
     }
 };
 

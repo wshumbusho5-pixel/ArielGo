@@ -1,239 +1,43 @@
 /**
- * ArielGo Premium Scroll Animations CSS
- * Supporting styles for GSAP-powered scroll effects
+ * ArielGo Premium Scroll Effects CSS
+ * Clean, no fade-in dependencies
  */
 
 /* ============================================
-   BASE SETUP
+   BASE - GPU ACCELERATION
    ============================================ */
 
-/* Smooth scrolling for the whole page */
-html {
-    scroll-behavior: smooth;
-}
-
-/* GPU acceleration for animated elements */
-[data-reveal],
-[data-parallax],
-[data-scrub],
-[data-stagger] > *,
-[data-tilt],
-[data-magnetic],
-[data-float],
-[data-mask-reveal] {
-    will-change: transform, opacity;
+.feature-card,
+.stat-card,
+.trust-badge,
+.how-step,
+.order-card,
+.speed-card,
+.story-value,
+.testimonial-card {
+    will-change: transform;
     backface-visibility: hidden;
-    -webkit-font-smoothing: antialiased;
-}
-
-/* Initial states for reveal animations */
-[data-reveal="up"],
-[data-reveal="left"],
-[data-reveal="right"],
-[data-reveal="scale"],
-[data-reveal="flip"] {
-    opacity: 0;
-}
-
-[data-stagger] > * {
-    opacity: 0;
 }
 
 /* ============================================
-   TEXT ANIMATION STYLES
+   HOVER LIFT EFFECT
    ============================================ */
 
-[data-text-reveal] {
-    overflow: hidden;
-}
-
-.word-wrapper {
-    display: inline-block;
-    overflow: hidden;
-    vertical-align: top;
-}
-
-.word {
-    display: inline-block;
-}
-
-.char {
-    display: inline-block;
-    transform-style: preserve-3d;
-}
-
-.line-wrapper {
-    display: block;
-    overflow: hidden;
-}
-
-.line {
-    display: block;
-}
-
-/* ============================================
-   3D CARD STYLES
-   ============================================ */
-
-[data-tilt] {
-    transform-style: preserve-3d;
-    transition: box-shadow 0.3s ease;
-}
-
-[data-tilt]:hover {
-    box-shadow:
-        0 25px 50px -12px rgba(0, 0, 0, 0.15),
-        0 0 0 1px rgba(37, 99, 235, 0.1);
-}
-
-[data-tilt] > * {
-    transform: translateZ(20px);
-}
-
-/* ============================================
-   MAGNETIC BUTTON STYLES
-   ============================================ */
-
-[data-magnetic] {
-    position: relative;
-    display: inline-block;
-}
-
-/* ============================================
-   SCROLL PROGRESS BAR
-   ============================================ */
-
-[data-scroll-progress] {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 3px;
-    background: linear-gradient(90deg, #2563eb, #3b82f6, #60a5fa);
-    transform-origin: left;
-    transform: scaleX(0);
-    z-index: 9999;
-}
-
-/* ============================================
-   PARALLAX IMAGE CONTAINERS
-   ============================================ */
-
-[data-parallax="image"] {
-    overflow: hidden;
-    position: relative;
-}
-
-[data-parallax="image"] img {
-    width: 100%;
-    height: 120%;
-    object-fit: cover;
-    position: absolute;
-    top: -10%;
-    left: 0;
-}
-
-/* ============================================
-   MASK REVEAL STYLES
-   ============================================ */
-
-[data-mask-reveal] {
-    overflow: hidden;
-}
-
-/* ============================================
-   FLOATING ELEMENTS
-   ============================================ */
-
-[data-float] {
-    transform-origin: center center;
-}
-
-/* ============================================
-   SECTION TRANSITIONS
-   ============================================ */
-
-body {
-    transition: background-color 0.5s ease;
-}
-
-/* ============================================
-   NAVBAR SCROLL BEHAVIOR
-   ============================================ */
-
-[data-navbar-scroll] {
-    transition: transform 0.3s ease, background-color 0.3s ease;
-}
-
-/* ============================================
-   PREMIUM HOVER EFFECTS
-   ============================================ */
-
-/* Lift effect on hover */
 .hover-lift {
-    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
-                box-shadow 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .hover-lift:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.15);
-}
-
-/* Glow effect on hover */
-.hover-glow {
-    transition: box-shadow 0.3s ease;
-}
-
-.hover-glow:hover {
-    box-shadow:
-        0 0 20px rgba(37, 99, 235, 0.3),
-        0 0 40px rgba(37, 99, 235, 0.1);
-}
-
-/* Scale effect on hover */
-.hover-scale {
-    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.hover-scale:hover {
-    transform: scale(1.05);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
 }
 
 /* ============================================
-   STAGGER DELAY UTILITIES
+   SMOOTH TRANSITIONS
    ============================================ */
 
-[data-stagger] > *:nth-child(1) { --stagger-delay: 0; }
-[data-stagger] > *:nth-child(2) { --stagger-delay: 1; }
-[data-stagger] > *:nth-child(3) { --stagger-delay: 2; }
-[data-stagger] > *:nth-child(4) { --stagger-delay: 3; }
-[data-stagger] > *:nth-child(5) { --stagger-delay: 4; }
-[data-stagger] > *:nth-child(6) { --stagger-delay: 5; }
-[data-stagger] > *:nth-child(7) { --stagger-delay: 6; }
-[data-stagger] > *:nth-child(8) { --stagger-delay: 7; }
-[data-stagger] > *:nth-child(9) { --stagger-delay: 8; }
-[data-stagger] > *:nth-child(10) { --stagger-delay: 9; }
-
-/* ============================================
-   RESPONSIVE ADJUSTMENTS
-   ============================================ */
-
-@media (max-width: 768px) {
-    /* Reduce animation intensity on mobile */
-    [data-parallax] {
-        --parallax-intensity: 0.5;
-    }
-
-    [data-tilt] {
-        /* Disable tilt on touch devices */
-        transform: none !important;
-    }
-
-    [data-magnetic] {
-        /* Disable magnetic effect on touch devices */
-        transform: none !important;
-    }
+.navbar {
+    transition: padding 0.3s ease, backdrop-filter 0.3s ease;
 }
 
 /* ============================================
@@ -247,154 +51,5 @@ body {
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
-        scroll-behavior: auto !important;
-    }
-
-    [data-reveal],
-    [data-stagger] > *,
-    [data-parallax],
-    [data-scrub],
-    [data-text-reveal] .word,
-    [data-text-reveal] .char,
-    [data-text-reveal] .line {
-        opacity: 1 !important;
-        transform: none !important;
-    }
-}
-
-/* ============================================
-   LOADING STATE
-   ============================================ */
-
-.animations-loading {
-    opacity: 0;
-}
-
-.animations-loaded {
-    opacity: 1;
-    transition: opacity 0.5s ease;
-}
-
-/* ============================================
-   CUSTOM EASING CURVES
-   ============================================ */
-
-:root {
-    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
-    --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
-    --ease-in-out-circ: cubic-bezier(0.85, 0, 0.15, 1);
-    --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-/* ============================================
-   SPECIAL EFFECTS
-   ============================================ */
-
-/* Gradient text that animates */
-.gradient-text-animated {
-    background: linear-gradient(
-        90deg,
-        #2563eb,
-        #3b82f6,
-        #60a5fa,
-        #3b82f6,
-        #2563eb
-    );
-    background-size: 200% auto;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    animation: gradient-shift 3s ease infinite;
-}
-
-@keyframes gradient-shift {
-    0% { background-position: 0% center; }
-    100% { background-position: 200% center; }
-}
-
-/* Subtle shimmer effect */
-.shimmer {
-    position: relative;
-    overflow: hidden;
-}
-
-.shimmer::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(255, 255, 255, 0.2),
-        transparent
-    );
-    animation: shimmer 2s infinite;
-}
-
-@keyframes shimmer {
-    100% {
-        left: 100%;
-    }
-}
-
-/* Pulse ring effect */
-.pulse-ring {
-    position: relative;
-}
-
-.pulse-ring::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 100%;
-    height: 100%;
-    border: 2px solid currentColor;
-    border-radius: inherit;
-    transform: translate(-50%, -50%);
-    animation: pulse-ring 2s ease-out infinite;
-    opacity: 0;
-}
-
-@keyframes pulse-ring {
-    0% {
-        transform: translate(-50%, -50%) scale(1);
-        opacity: 0.5;
-    }
-    100% {
-        transform: translate(-50%, -50%) scale(1.5);
-        opacity: 0;
-    }
-}
-
-/* Morphing blob background */
-.blob-bg {
-    position: absolute;
-    width: 500px;
-    height: 500px;
-    background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(59, 130, 246, 0.05));
-    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
-    animation: blob-morph 8s ease-in-out infinite;
-    filter: blur(40px);
-    pointer-events: none;
-}
-
-@keyframes blob-morph {
-    0%, 100% {
-        border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
-        transform: rotate(0deg) scale(1);
-    }
-    25% {
-        border-radius: 58% 42% 75% 25% / 76% 46% 54% 24%;
-    }
-    50% {
-        border-radius: 50% 50% 33% 67% / 55% 27% 73% 45%;
-        transform: rotate(90deg) scale(1.1);
-    }
-    75% {
-        border-radius: 33% 67% 58% 42% / 63% 68% 32% 37%;
     }
 }
