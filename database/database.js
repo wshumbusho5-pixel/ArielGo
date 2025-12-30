@@ -214,8 +214,8 @@ function createBooking(bookingData) {
                 name, phone, email, address, service,
                 pickupDate, pickupTime, numberOfBags,
                 pricePerBag, totalPrice, status, notes,
-                paymentIntentId, paymentStatus, stripeCustomerId, user_id
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                paymentIntentId, paymentStatus, stripeCustomerId, user_id, itemsJson
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
 
         const params = [
@@ -226,15 +226,16 @@ function createBooking(bookingData) {
             bookingData.service,
             bookingData.pickupDate,
             bookingData.pickupTime,
-            bookingData.numberOfBags || 1,
-            bookingData.pricePerBag,
+            bookingData.numberOfBags || 0, // 0 for per-item services
+            bookingData.pricePerBag || 0, // 0 for per-item services
             bookingData.totalPrice,
             bookingData.status || 'pending',
             bookingData.notes || '',
             bookingData.paymentIntentId || null,
             bookingData.paymentStatus || 'pending',
             bookingData.stripeCustomerId || null,
-            bookingData.user_id || null  // Allow anonymous bookings
+            bookingData.user_id || null, // Allow anonymous bookings
+            bookingData.itemsJson || null // JSON string of items for per-item services
         ];
 
         db.run(sql, params, function(err) {
