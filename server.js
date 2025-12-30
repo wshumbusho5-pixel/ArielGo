@@ -1334,30 +1334,7 @@ app.post('/api/messages/:bookingId', async (req, res) => {
             });
         }
 
-        // Determine sender (driver, logged-in customer, or anonymous tracker)
-        let senderType = null;
-        let senderId = null;
-        let isAnonymousTracker = false;
-
-        if (req.session.driver) {
-            senderType = 'driver';
-            senderId = req.session.driver.id;
-        } else if (req.session.user) {
-            senderType = 'customer';
-            senderId = req.session.user.id;
-        } else if (req.session.trackedBookings && req.session.trackedBookings.includes(bookingId)) {
-            // Anonymous user who has tracked this booking
-            senderType = 'customer';
-            senderId = 0; // Anonymous sender
-            isAnonymousTracker = true;
-        } else {
-            return res.status(401).json({
-                success: false,
-                error: 'Authentication required. Please track your order first.'
-            });
-        }
-
-        // Get the booking to verify access and status
+        // Get the booking first to determine proper sender type
         const booking = await db.getBookingById(bookingId);
         if (!booking) {
             return res.status(404).json({
@@ -1374,8 +1351,42 @@ app.post('/api/messages/:bookingId', async (req, res) => {
             });
         }
 
-        // Verify access (skip for anonymous trackers - they verified by tracking)
-        if (senderType === 'customer' && !isAnonymousTracker && booking.user_id !== senderId) {
+        // Determine sender based on booking ownership (not just session)
+        // This handles the case where someone has both driver and customer sessions
+        let senderType = null;
+        let senderId = null;
+        let isAnonymousTracker = false;
+
+        // Check if logged-in user OWNS this booking (they're the customer)
+        if (req.session.user && booking.user_id === req.session.user.id) {
+            senderType = 'customer';
+            senderId = req.session.user.id;
+        }
+        // Check if driver is ASSIGNED to this booking
+        else if (req.session.driver && booking.driver_id === req.session.driver.id) {
+            senderType = 'driver';
+            senderId = req.session.driver.id;
+        }
+        // Anonymous tracker (customer who tracked without login)
+        else if (req.session.trackedBookings && req.session.trackedBookings.includes(bookingId)) {
+            senderType = 'customer';
+            senderId = 0; // Anonymous sender
+            isAnonymousTracker = true;
+        }
+        // Fallback: logged-in user messaging their own order (user_id might be null for old bookings)
+        else if (req.session.user) {
+            senderType = 'customer';
+            senderId = req.session.user.id;
+        }
+        else {
+            return res.status(401).json({
+                success: false,
+                error: 'Authentication required. Please track your order first.'
+            });
+        }
+
+        // Verify access
+        if (senderType === 'customer' && !isAnonymousTracker && booking.user_id && booking.user_id !== senderId) {
             return res.status(403).json({
                 success: false,
                 error: 'Access denied'
