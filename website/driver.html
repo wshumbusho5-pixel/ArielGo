@@ -570,6 +570,22 @@
             align-items: flex-start;
         }
 
+        .message-sender {
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .message-item.sent .message-sender {
+            color: var(--color-blue);
+        }
+
+        .message-item.received .message-sender {
+            color: var(--color-gray-500);
+        }
+
         .message-bubble {
             max-width: 80%;
             padding: 0.75rem 1rem;
@@ -585,9 +601,10 @@
         }
 
         .message-item.received .message-bubble {
-            background: var(--color-gray-100);
+            background: #e5e7eb;
             color: var(--color-gray-900);
             border-bottom-left-radius: 4px;
+            border: 1px solid var(--color-gray-200);
         }
 
         .message-time {
@@ -1073,12 +1090,14 @@
 
                 const messagesHtml = data.messages.map(msg => {
                     const isSent = msg.sender_type === 'driver';
+                    const senderLabel = isSent ? 'You' : 'Customer';
                     const time = new Date(msg.createdAt).toLocaleTimeString('en-US', {
                         hour: 'numeric',
                         minute: '2-digit'
                     });
                     return `
                         <div class="message-item ${isSent ? 'sent' : 'received'}">
+                            <div class="message-sender">${senderLabel}</div>
                             <div class="message-bubble">${escapeHtml(msg.message)}</div>
                             <div class="message-time">${time}</div>
                         </div>
