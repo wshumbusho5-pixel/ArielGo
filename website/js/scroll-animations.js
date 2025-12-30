@@ -15,53 +15,53 @@
         gsap.registerPlugin(ScrollTrigger);
 
         // ============================================
-        // HERO ZOOM EFFECT - EXTREME VERSION
-        // The clean laundry RUSHES toward you as you scroll
-        // This is the ONE dramatic moment on the page
+        // HERO ZOOM EFFECT - CONTAINED IMAGE VERSION
+        // Like Rinse.com - image zooms within its frame
         // ============================================
 
         const heroImage = document.querySelector('.hero-banner-image');
-        const heroContent = document.querySelector('.hero-banner-content');
+        const heroFrame = document.querySelector('.hero-image-frame');
         const heroBanner = document.querySelector('.hero-banner');
+        const heroText = document.querySelector('.hero-text');
 
-        if (heroImage && heroBanner) {
-            // Set initial state - image starts normal
-            gsap.set(heroImage, {
-                scale: 1,
-                xPercent: -50,
-                yPercent: -50
-            });
+        if (heroImage && heroBanner && heroFrame) {
+            // Set initial state
+            gsap.set(heroImage, { scale: 1 });
 
-            // Create a timeline for the EXTREME hero zoom effect
+            // Create timeline for the contained zoom effect
             const heroTimeline = gsap.timeline({
                 scrollTrigger: {
                     trigger: heroBanner,
                     start: 'top top',
-                    end: '80% top',  // Faster - completes before fully scrolled
-                    scrub: 0.3      // Snappier response
+                    end: 'bottom top',
+                    scrub: 0.5
                 }
             });
 
-            // EXTREME ZOOM - image scales to 3x size
-            // This creates that "coming at you" feeling
+            // Image zooms dramatically within the frame
             heroTimeline.to(heroImage, {
-                scale: 3,
-                ease: 'power1.in'  // Accelerates as it zooms
+                scale: 2.5,
+                ease: 'none'
             }, 0);
 
-            // Content fades out quickly
-            if (heroContent) {
-                heroTimeline.to(heroContent, {
+            // Frame slightly moves up and grows
+            heroTimeline.to(heroFrame, {
+                y: -30,
+                scale: 1.05,
+                ease: 'none'
+            }, 0);
+
+            // Text fades and moves up
+            if (heroText) {
+                heroTimeline.to(heroText, {
                     opacity: 0,
-                    y: -200,
-                    scale: 0.9,
-                    ease: 'power2.in'
+                    y: -100,
+                    ease: 'power1.in'
                 }, 0);
             }
         }
 
-        // NO parallax on other images - keep them static
-        // Only the hero gets the dramatic effect
+        // NO parallax on other images - only hero gets the zoom
 
         // ============================================
         // 3D CARD TILT ON HOVER
