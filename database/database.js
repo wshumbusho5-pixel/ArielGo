@@ -680,6 +680,129 @@ function getAIUsageStats(userId) {
     });
 }
 
+// ==================================
+// MESSAGING FUNCTIONS
+// ==================================
+
+/**
+ * Create a new message
+ */
+function createMessage(messageData) {
+    return new Promise((resolve, reject) => {
+        const sql = `
+            INSERT INTO messages (booking_id, sender_type, sender_id, message)
+            VALUES (?, ?, ?, ?)
+        `;
+
+        const params = [
+            messageData.booking_id,
+            messageData.sender_type, // 'customer', 'driver', 'admin'
+            messageData.sender_id,
+            messageData.message
+        ];
+
+        db.run(sql, params, function(err) {
+            if (err) {
+                console.error('Error creating message:', err);
+                reject(err);
+            } else {
+                getMessageById(this.lastID)
+                    .then(resolve)
+                    .catch(reject);
+            }
+        });
+    });
+}
+
+/**
+ * Get message by ID
+ */
+function getMessageById(id) {
+    return new Promise((resolve, reject) => {
+        const sql = 'SELECT * FROM messages WHERE id = ?';
+
+        db.get(sql, [id], (err, row) => {
+            if (err) {
+                console.error('Error fetching message:', err);
+                reject(err);
+            } else {
+                resolve(row || null);
+            }
+        });
+    });
+}
+
+/**
+ * Get all messages for a booking
+ */
+function getMessagesByBookingId(bookingId) {
+    return new Promise((resolve, reject) => {
+        const sql = `
+            SELECT * FROM messages
+            WHERE booking_id = ?
+            ORDER BY createdAt ASC
+        `;
+
+        db.all(sql, [bookingId], (err, rows) => {
+            if (err) {
+                console.error('Error fetching messages:', err);
+                reject(err);
+            } else {
+                resolve(rows || []);
+            }
+        });
+    });
+}
+
+/**
+ * Mark messages as read
+ */
+function markMessagesAsRead(bookingId, readerType) {
+    return new Promise((resolve, reject) => {
+        // Mark messages as read where sender is NOT the reader
+        const sql = `
+            UPDATE messages
+            SET read_at = CURRENT_TIMESTAMP
+            WHERE booking_id = ?
+            AND sender_type != ?
+            AND read_at IS NULL
+        `;
+
+        db.run(sql, [bookingId, readerType], function(err) {
+            if (err) {
+                console.error('Error marking messages as read:', err);
+                reject(err);
+            } else {
+                resolve(this.changes);
+            }
+        });
+    });
+}
+
+/**
+ * Get unread message count for a booking
+ */
+function getUnreadMessageCount(bookingId, readerType) {
+    return new Promise((resolve, reject) => {
+        const sql = `
+            SELECT COUNT(*) as count
+            FROM messages
+            WHERE booking_id = ?
+            AND sender_type != ?
+            AND read_at IS NULL
+        `;
+
+        db.get(sql, [bookingId, readerType], (err, row) => {
+            if (err) {
+                console.error('Error counting unread messages:', err);
+                reject(err);
+            } else {
+                resolve(row ? row.count : 0);
+            }
+        });
+    });
+}
+
 /**
  * Close database connection
  */
@@ -713,5 +836,11 @@ module.exports = {
     logAIUsage,
     checkAIUsageLimit,
     getAIUsageStats,
+    // Messaging functions
+    createMessage,
+    getMessageById,
+    getMessagesByBookingId,
+    markMessagesAsRead,
+    getUnreadMessageCount,
     close
 };

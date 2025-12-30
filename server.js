@@ -69,6 +69,30 @@ app.use((req, res, next) => {
 });
 
 // ==================================
+// HELPER FUNCTIONS
+// ==================================
+
+// Mask phone number (show last 4 digits only)
+function maskPhone(phone) {
+    if (!phone || phone.length < 4) return '***';
+    return '***-***-' + phone.slice(-4);
+}
+
+// Mask address (show area only, not full address)
+function maskAddress(address) {
+    if (!address) return 'Address hidden';
+    const parts = address.split(',');
+    if (parts.length > 1) {
+        return parts[parts.length - 1].trim() + ' area';
+    }
+    const words = address.split(' ');
+    if (words.length > 2) {
+        return words.slice(-2).join(' ') + ' area';
+    }
+    return 'Address hidden';
+}
+
+// ==================================
 // API ROUTES
 // ==================================
 
@@ -392,9 +416,24 @@ app.get('/api/driver/orders', requireDriverAuth, async (req, res) => {
 
         const orders = await db.getDriverOrders(driverId, status);
 
+        // Mask contact info based on order status
+        const maskedOrders = orders.map(order => {
+            // For completed orders, mask sensitive info
+            if (order.status === 'completed') {
+                return {
+                    ...order,
+                    phone: maskPhone(order.phone),
+                    address: maskAddress(order.address),
+                    email: '***@***.com'
+                };
+            }
+            // For active orders, show full info
+            return order;
+        });
+
         res.json({
             success: true,
-            orders: orders,
+            orders: maskedOrders,
             count: orders.length
         });
     } catch (error) {
@@ -1179,6 +1218,216 @@ app.post('/api/routes/optimize', requireDriverAuth, async (req, res) => {
         res.status(500).json({
             success: false,
             error: 'Failed to optimize route'
+        });
+    }
+});
+
+// ==================================
+// MESSAGING ROUTES
+// ==================================
+
+// Get messages for a booking (driver or customer)
+app.get('/api/messages/:bookingId', async (req, res) => {
+    try {
+        const bookingId = parseInt(req.params.bookingId);
+
+        // Determine who is requesting (driver or customer)
+        let readerType = null;
+        let readerId = null;
+
+        if (req.session.driver) {
+            readerType = 'driver';
+            readerId = req.session.driver.id;
+        } else if (req.session.user) {
+            readerType = 'customer';
+            readerId = req.session.user.id;
+        } else {
+            return res.status(401).json({
+                success: false,
+                error: 'Authentication required'
+            });
+        }
+
+        // Get the booking to verify access
+        const booking = await db.getBookingById(bookingId);
+        if (!booking) {
+            return res.status(404).json({
+                success: false,
+                error: 'Booking not found'
+            });
+        }
+
+        // Verify access: drivers assigned to order, or customer who owns order
+        if (readerType === 'customer' && booking.user_id !== readerId) {
+            return res.status(403).json({
+                success: false,
+                error: 'Access denied'
+            });
+        }
+
+        if (readerType === 'driver' && booking.driver_id !== readerId) {
+            return res.status(403).json({
+                success: false,
+                error: 'Access denied'
+            });
+        }
+
+        // Get messages
+        const messages = await db.getMessagesByBookingId(bookingId);
+
+        // Mark messages as read
+        await db.markMessagesAsRead(bookingId, readerType);
+
+        res.json({
+            success: true,
+            messages: messages,
+            booking: {
+                id: booking.id,
+                status: booking.status,
+                // Mask contact info for drivers on completed orders
+                customerName: booking.name,
+                phone: (readerType === 'driver' && booking.status === 'completed')
+                    ? maskPhone(booking.phone)
+                    : booking.phone,
+                address: (readerType === 'driver' && booking.status === 'completed')
+                    ? maskAddress(booking.address)
+                    : booking.address
+            }
+        });
+
+    } catch (error) {
+        console.error('Error fetching messages:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to fetch messages'
+        });
+    }
+});
+
+// Send a message (driver or customer)
+app.post('/api/messages/:bookingId', async (req, res) => {
+    try {
+        const bookingId = parseInt(req.params.bookingId);
+        const { message } = req.body;
+
+        if (!message || message.trim().length === 0) {
+            return res.status(400).json({
+                success: false,
+                error: 'Message is required'
+            });
+        }
+
+        // Determine sender
+        let senderType = null;
+        let senderId = null;
+
+        if (req.session.driver) {
+            senderType = 'driver';
+            senderId = req.session.driver.id;
+        } else if (req.session.user) {
+            senderType = 'customer';
+            senderId = req.session.user.id;
+        } else {
+            return res.status(401).json({
+                success: false,
+                error: 'Authentication required'
+            });
+        }
+
+        // Get the booking to verify access and status
+        const booking = await db.getBookingById(bookingId);
+        if (!booking) {
+            return res.status(404).json({
+                success: false,
+                error: 'Booking not found'
+            });
+        }
+
+        // Don't allow messaging on completed orders
+        if (booking.status === 'completed' || booking.status === 'cancelled') {
+            return res.status(403).json({
+                success: false,
+                error: 'Cannot send messages on completed or cancelled orders'
+            });
+        }
+
+        // Verify access
+        if (senderType === 'customer' && booking.user_id !== senderId) {
+            return res.status(403).json({
+                success: false,
+                error: 'Access denied'
+            });
+        }
+
+        if (senderType === 'driver' && booking.driver_id !== senderId) {
+            return res.status(403).json({
+                success: false,
+                error: 'Access denied'
+            });
+        }
+
+        // Create message
+        const newMessage = await db.createMessage({
+            booking_id: bookingId,
+            sender_type: senderType,
+            sender_id: senderId,
+            message: message.trim()
+        });
+
+        res.status(201).json({
+            success: true,
+            message: newMessage
+        });
+
+    } catch (error) {
+        console.error('Error sending message:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to send message'
+        });
+    }
+});
+
+// Get unread message count for driver dashboard
+app.get('/api/messages/unread/count', async (req, res) => {
+    try {
+        if (!req.session.driver) {
+            return res.status(401).json({
+                success: false,
+                error: 'Driver authentication required'
+            });
+        }
+
+        const driverId = req.session.driver.id;
+
+        // Get all orders assigned to this driver
+        const orders = await db.getDriverOrders(driverId);
+
+        // Count unread messages across all orders
+        let totalUnread = 0;
+        const unreadByOrder = {};
+
+        for (const order of orders) {
+            if (order.status !== 'completed' && order.status !== 'cancelled') {
+                const count = await db.getUnreadMessageCount(order.id, 'driver');
+                if (count > 0) {
+                    totalUnread += count;
+                    unreadByOrder[order.id] = count;
+                }
+            }
+        }
+
+        res.json({
+            success: true,
+            totalUnread: totalUnread,
+            unreadByOrder: unreadByOrder
+        });
+
+    } catch (error) {
+        console.error('Error counting unread messages:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to count unread messages'
         });
     }
 });

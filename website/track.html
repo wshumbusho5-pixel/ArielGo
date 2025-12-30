@@ -5,17 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Track Your Order - ArielGo</title>
 
-    <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
-
-    <!-- Open Graph -->
     <meta property="og:title" content="Track Your Order - ArielGo">
-    <meta property="og:description" content="Track your laundry order in real-time with ArielGo's live tracking system.">
+    <meta property="og:description" content="Track your laundry order in real-time with ArielGo.">
 
-    <!-- Premium Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
         * {
@@ -25,439 +21,192 @@
         }
 
         :root {
-            --color-blue: #4EA9FF;
-            --color-blue-dark: #3A90E8;
-            --color-mint: #2EC4B6;
-            --color-teal: #14B8A6;
-            --color-cyan: #06B6D4;
-            --color-success: #4CAF50;
-            --color-warning: #F59E0B;
-            --color-danger: #EF4444;
-            --color-dark: #0f172a;
+            --color-blue: #2563eb;
+            --color-blue-light: #3b82f6;
+            --color-blue-dark: #1d4ed8;
+            --color-success: #22c55e;
+            --color-warning: #f59e0b;
+            --color-danger: #ef4444;
+            --color-gray-50: #f9fafb;
+            --color-gray-100: #f3f4f6;
+            --color-gray-200: #e5e7eb;
+            --color-gray-300: #d1d5db;
+            --color-gray-400: #9ca3af;
+            --color-gray-500: #6b7280;
+            --color-gray-600: #4b5563;
+            --color-gray-700: #374151;
+            --color-gray-800: #1f2937;
+            --color-gray-900: #111827;
 
-            --gradient-primary: linear-gradient(135deg, #4EA9FF 0%, #5FB3FF 100%);
-            --gradient-mesh: radial-gradient(at 0% 0%, rgba(78, 169, 255, 0.08) 0px, transparent 50%),
-                            radial-gradient(at 100% 0%, rgba(95, 179, 255, 0.06) 0px, transparent 50%),
-                            radial-gradient(at 100% 100%, rgba(46, 196, 182, 0.05) 0px, transparent 50%),
-                            radial-gradient(at 0% 100%, rgba(111, 212, 140, 0.04) 0px, transparent 50%);
-
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-            --shadow-glow: 0 0 20px rgba(78, 169, 255, 0.2);
-
-            --blur-md: 8px;
-            --blur-lg: 16px;
-            --blur-xl: 24px;
-
-            --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.15);
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #F9FBFF 0%, #EFF6FF 100%);
-            color: #0f172a;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(180deg, #F8FAFC 0%, #EFF6FF 100%);
+            color: var(--color-gray-900);
             min-height: 100vh;
-            position: relative;
-            overflow-x: hidden;
         }
 
-        .gradient-mesh-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            background: var(--gradient-mesh);
-            animation: meshMove 20s ease-in-out infinite;
-        }
-
-        .gradient-mesh-bg::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #FFFFFF 0%, #F3FAFF 100%);
-            z-index: -1;
-        }
-
-        @keyframes meshMove {
-            0%, 100% {
-                background-position: 0% 0%, 100% 0%, 100% 100%, 0% 100%;
-            }
-            50% {
-                background-position: 100% 100%, 0% 100%, 0% 0%, 100% 0%;
-            }
-        }
-
-        #particles-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            pointer-events: none;
-        }
-
-        /* MASSIVE VISIBLE GRADIENT ORBS */
-        .orb {
-            position: fixed;
-            border-radius: 50%;
-            filter: blur(100px);
-            opacity: 0.4;
-            animation: float 25s ease-in-out infinite;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .orb-1 {
-            width: 700px;
-            height: 700px;
-            background: radial-gradient(circle, #4EA9FF 0%, rgba(78, 169, 255, 0.15) 50%, transparent 70%);
-            top: -200px;
-            left: -200px;
-            animation-delay: 0s;
-        }
-
-        .orb-2 {
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, #5FB3FF 0%, rgba(95, 179, 255, 0.12) 50%, transparent 70%);
-            top: 10%;
-            right: -150px;
-            animation-delay: -8s;
-        }
-
-        .orb-3 {
-            width: 800px;
-            height: 800px;
-            background: radial-gradient(circle, #2EC4B6 0%, rgba(46, 196, 182, 0.1) 50%, transparent 70%);
-            bottom: -250px;
-            left: 15%;
-            animation-delay: -16s;
-        }
-
-        @keyframes float {
-            0%, 100% {
-                transform: translate(0, 0) scale(1);
-            }
-            25% {
-                transform: translate(80px, -80px) scale(1.15);
-            }
-            50% {
-                transform: translate(-50px, 50px) scale(0.95);
-            }
-            75% {
-                transform: translate(50px, 80px) scale(1.08);
-            }
-        }
-
-        /* ANIMATED ROLLING GRID */
-        .grid-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image:
-                linear-gradient(rgba(78, 169, 255, 0.03) 2px, transparent 2px),
-                linear-gradient(90deg, rgba(78, 169, 255, 0.03) 2px, transparent 2px);
-            background-size: 60px 60px;
-            animation: gridMove 25s linear infinite;
-            z-index: 0;
-            pointer-events: none;
-        }
-
-        @keyframes gridMove {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(60px, 60px); }
-        }
-
-        /* FLOATING LAUNDRY ITEMS */
-        .shapes-container {
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            z-index: 1;
-            pointer-events: none;
-        }
-
-        .shape {
-            position: absolute;
-            opacity: 0.12;
-            animation: floatShape 20s ease-in-out infinite;
-            font-size: 140px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            filter: drop-shadow(0 10px 30px rgba(78, 169, 255, 0.15));
-        }
-
-        .shape-1 {
-            top: 12%;
-            left: 6%;
-            animation-delay: 0s;
-        }
-
-        .shape-2 {
-            top: 58%;
-            right: 10%;
-            animation-delay: -7s;
-        }
-
-        .shape-3 {
-            bottom: 22%;
-            left: 13%;
-            animation-delay: -14s;
-        }
-
-        .shape-4 {
-            top: 38%;
-            right: 22%;
-            animation-delay: -3s;
-        }
-
-        .shape-5 {
-            bottom: 40%;
-            left: 25%;
-            animation-delay: -9s;
-        }
-
-        .shape-6 {
-            top: 25%;
-            right: 35%;
-            animation-delay: -5s;
-        }
-
-        .shape-7 {
-            bottom: 10%;
-            right: 18%;
-            animation-delay: -11s;
-        }
-
-        @keyframes floatShape {
-            0%, 100% {
-                transform: translate(0, 0) rotate(0deg);
-            }
-            33% {
-                transform: translate(100px, -100px) rotate(120deg);
-            }
-            66% {
-                transform: translate(-50px, 50px) rotate(240deg);
-            }
-        }
-
-        /* SPOTLIGHT CURSOR EFFECT */
-        .spotlight {
-            position: fixed;
-            width: 250px;
-            height: 250px;
-            background: radial-gradient(circle, rgba(78, 169, 255, 0.25) 0%, rgba(95, 179, 255, 0.15) 30%, transparent 70%);
-            pointer-events: none;
-            transform: translate(-50%, -50%);
-            transition: opacity 0.15s ease-out;
-            z-index: 999999;
-            opacity: 0;
-            filter: blur(30px);
-            mix-blend-mode: normal;
-            box-shadow: 0 0 20px rgba(78, 169, 255, 0.12);
-        }
-
-        .content-wrapper {
-            position: relative;
-            z-index: 10;
-        }
-
-        /* Navigation */
+        /* Navbar */
         .navbar {
             position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
+            top: 0;
+            left: 0;
+            right: 0;
             z-index: 1000;
-            width: calc(100% - 40px);
-            max-width: 1400px;
             background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(var(--blur-xl)) saturate(180%);
-            border: 1px solid rgba(78, 169, 255, 0.1);
-            border-radius: 20px;
-            padding: 1rem 2rem;
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--color-gray-200);
+            padding: 0.875rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: var(--shadow-md);
         }
 
         .logo {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 1.75rem;
-            font-weight: 700;
-            background: var(--gradient-primary);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            font-size: 1.375rem;
+            font-weight: 800;
+            color: var(--color-blue);
             text-decoration: none;
+            letter-spacing: -0.02em;
         }
 
         .nav-links {
             display: flex;
             gap: 2rem;
             list-style: none;
-            align-items: center;
         }
 
         .nav-links a {
+            color: var(--color-gray-600);
             text-decoration: none;
-            color: #374151;
             font-weight: 500;
-            transition: color 0.3s var(--ease-smooth);
+            font-size: 0.9rem;
+            transition: color 0.2s;
         }
 
-        .nav-links a:hover {
+        .nav-links a:hover,
+        .nav-links a.active {
             color: var(--color-blue);
         }
 
-        /* Track Container */
-        .track-container {
-            max-width: 1000px;
+        /* Main Container */
+        .container {
+            max-width: 600px;
             margin: 0 auto;
-            padding: 140px 2rem 80px;
+            padding: 6rem 1.5rem 3rem;
         }
 
-        .track-header {
+        /* Header */
+        .page-header {
             text-align: center;
-            margin-bottom: 4rem;
-            animation: fadeInUp 0.6s var(--ease-smooth);
+            margin-bottom: 2rem;
         }
 
-        .track-header h1 {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 4rem;
-            font-weight: 800;
-            letter-spacing: -0.02em;
-            margin-bottom: 1rem;
-            color: #0f172a;
+        .page-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--color-gray-900);
+            margin-bottom: 0.5rem;
         }
 
-        .track-header p {
-            font-size: 1.25rem;
-            color: #64748b;
+        .page-header p {
+            color: var(--color-gray-500);
+            font-size: 1rem;
         }
 
         /* Search Card */
         .search-card {
-            background: #FFFFFF;
-            backdrop-filter: blur(var(--blur-xl));
-            border: 1px solid rgba(78, 169, 255, 0.1);
-            border-radius: 32px;
-            padding: 3rem;
-            box-shadow: var(--shadow-lg);
-            margin-bottom: 3rem;
-            animation: fadeInUp 0.6s var(--ease-smooth) 0.2s both;
-            transition: all 0.5s var(--ease-smooth);
-        }
-
-        .search-card:hover {
-            transform: translateY(-4px);
-            border-color: rgba(78, 169, 255, 0.2);
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
             box-shadow: var(--shadow-xl);
-            background: #FFFFFF;
+            border: 1px solid var(--color-gray-100);
+            margin-bottom: 1.5rem;
         }
 
         .form-group {
-            margin-bottom: 2rem;
+            margin-bottom: 1.25rem;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 0.75rem;
             font-weight: 600;
-            color: #0f172a;
-            font-size: 1rem;
+            font-size: 0.875rem;
+            color: var(--color-gray-700);
+            margin-bottom: 0.5rem;
         }
 
         .form-group input {
             width: 100%;
-            padding: 1.25rem 1.5rem;
-            background: #F9FBFF;
-            border: 1px solid rgba(78, 169, 255, 0.2);
-            border-radius: 16px;
-            color: #0f172a;
-            font-size: 1.1rem;
-            transition: all 0.3s var(--ease-smooth);
+            padding: 0.875rem 1rem;
+            background: var(--color-gray-50);
+            border: 1px solid var(--color-gray-200);
+            border-radius: 12px;
+            font-size: 0.95rem;
+            color: var(--color-gray-900);
+            transition: all 0.2s ease;
         }
 
         .form-group input:focus {
             outline: none;
-            background: #FFFFFF;
+            background: white;
             border-color: var(--color-blue);
-            box-shadow: 0 0 0 4px rgba(78, 169, 255, 0.1);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
 
         .form-group input::placeholder {
-            color: #94a3b8;
+            color: var(--color-gray-400);
         }
 
         .track-button {
             width: 100%;
-            padding: 1.5rem;
-            background: var(--gradient-primary);
+            padding: 0.875rem 1.5rem;
+            background: linear-gradient(135deg, var(--color-blue) 0%, var(--color-blue-light) 100%);
             color: white;
             border: none;
-            border-radius: 16px;
-            font-size: 1.125rem;
+            border-radius: 12px;
+            font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s var(--ease-smooth);
-            box-shadow: var(--shadow-xl);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .track-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            transition: left 0.5s;
-        }
-
-        .track-button:hover::before {
-            left: 100%;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
         }
 
         .track-button:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-2xl), var(--shadow-glow);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.35);
+        }
+
+        .error-message {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: var(--color-danger);
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
         }
 
         /* Result Card */
         .result-card {
-            background: #FFFFFF;
-            backdrop-filter: blur(var(--blur-xl));
-            border: 1px solid rgba(78, 169, 255, 0.1);
-            border-radius: 32px;
-            padding: 3rem;
-            box-shadow: var(--shadow-lg);
-            display: none;
-            animation: fadeInUp 0.6s var(--ease-smooth);
-            transition: all 0.5s var(--ease-smooth);
-        }
-
-        .result-card:hover {
-            transform: translateY(-4px);
-            border-color: rgba(78, 169, 255, 0.2);
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
             box-shadow: var(--shadow-xl);
-            background: #FFFFFF;
+            border: 1px solid var(--color-gray-100);
+            display: none;
         }
 
         .result-card.show {
@@ -468,282 +217,161 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 3rem;
-            padding-bottom: 2rem;
-            border-bottom: 1px solid rgba(78, 169, 255, 0.1);
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--color-gray-100);
         }
 
         .order-id {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 2rem;
+            font-size: 1.25rem;
             font-weight: 700;
+            color: var(--color-gray-900);
         }
 
         .status-badge {
-            padding: 0.75rem 1.5rem;
-            border-radius: 20px;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
             font-weight: 600;
-            font-size: 0.95rem;
             text-transform: capitalize;
-            animation: pulse 2s ease-in-out infinite;
         }
 
-        .status-pending {
-            background: rgba(245, 158, 11, 0.2);
-            color: #F59E0B;
-            border: 1px solid rgba(245, 158, 11, 0.3);
-        }
-
-        .status-confirmed {
-            background: rgba(6, 182, 212, 0.2);
-            color: #06B6D4;
-            border: 1px solid rgba(6, 182, 212, 0.3);
-        }
-
-        .status-in_progress {
-            background: rgba(78, 169, 255, 0.15);
-            color: var(--color-blue);
-            border: 1px solid rgba(78, 169, 255, 0.3);
-        }
-
-        .status-completed {
-            background: rgba(16, 185, 129, 0.2);
-            color: #10B981;
-            border: 1px solid rgba(16, 185, 129, 0.3);
-        }
+        .status-pending { background: #fef3c7; color: #b45309; }
+        .status-confirmed { background: #dbeafe; color: #1d4ed8; }
+        .status-in_progress { background: #d1fae5; color: #047857; }
+        .status-completed { background: #22c55e; color: white; }
 
         /* Progress Tracker */
         .progress-tracker {
-            margin: 3rem 0;
-            position: relative;
-        }
-
-        .progress-steps {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1rem;
-            position: relative;
+            margin-bottom: 2rem;
         }
 
         .progress-line {
-            position: absolute;
-            top: 40px;
-            left: 12.5%;
-            right: 12.5%;
-            height: 3px;
-            background: rgba(78, 169, 255, 0.2);
-            z-index: 0;
+            height: 4px;
+            background: var(--color-gray-200);
             border-radius: 2px;
+            margin-bottom: 1rem;
+            position: relative;
         }
 
         .progress-line-fill {
             height: 100%;
-            background: var(--gradient-primary);
-            transition: width 0.8s var(--ease-smooth);
+            background: linear-gradient(90deg, var(--color-blue) 0%, var(--color-success) 100%);
             border-radius: 2px;
-            position: relative;
+            transition: width 0.5s ease;
+            width: 0%;
         }
 
-        .progress-line-fill::after {
-            content: '';
-            position: absolute;
-            right: -6px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 12px;
-            height: 12px;
-            background: var(--color-blue);
-            border-radius: 50%;
-            box-shadow: 0 0 20px var(--color-blue);
-            animation: pulse 1.5s ease-in-out infinite;
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
         }
 
         .step {
-            position: relative;
             text-align: center;
-            z-index: 1;
+            flex: 1;
         }
 
         .step-circle {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 1rem;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
-            background: #F9FBFF;
-            border: 2px solid rgba(78, 169, 255, 0.2);
+            background: var(--color-gray-200);
+            color: var(--color-gray-500);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2rem;
-            transition: all 0.5s var(--ease-smooth);
+            margin: 0 auto 0.5rem;
+            font-weight: 600;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
         }
 
         .step.active .step-circle {
-            border-color: var(--color-blue);
-            background: rgba(78, 169, 255, 0.15);
-            transform: scale(1.1);
-            box-shadow: 0 0 20px rgba(78, 169, 255, 0.3);
+            background: var(--color-blue);
+            color: white;
         }
 
         .step.completed .step-circle {
-            border-color: var(--color-success);
-            background: rgba(76, 175, 80, 0.15);
+            background: var(--color-success);
+            color: white;
         }
 
         .step-label {
-            font-weight: 600;
-            font-size: 0.95rem;
-            color: #94a3b8;
+            font-size: 0.75rem;
+            color: var(--color-gray-500);
+            font-weight: 500;
         }
 
         .step.active .step-label,
         .step.completed .step-label {
-            color: #0f172a;
+            color: var(--color-gray-900);
         }
 
         /* Order Details */
         .order-details {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 1.5rem;
-            margin-top: 3rem;
+            gap: 1rem;
         }
 
         .detail-group {
-            padding: 1.5rem;
-            background: #F9FBFF;
-            border: 1px solid rgba(78, 169, 255, 0.15);
-            border-radius: 16px;
-            transition: all 0.3s var(--ease-smooth);
-        }
-
-        .detail-group:hover {
-            background: #FFFFFF;
-            border-color: rgba(78, 169, 255, 0.3);
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-md);
+            padding: 1rem;
+            background: var(--color-gray-50);
+            border-radius: 12px;
         }
 
         .detail-label {
-            font-size: 0.875rem;
-            color: #64748b;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
+            font-size: 0.75rem;
+            color: var(--color-gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.25rem;
         }
 
         .detail-value {
-            font-size: 1.25rem;
             font-weight: 600;
-            color: #0f172a;
-        }
-
-        /* Error Message */
-        .error-message {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            color: #EF4444;
-            padding: 1rem 1.5rem;
-            border-radius: 12px;
-            margin-bottom: 1.5rem;
-            display: none;
-            animation: shake 0.5s ease;
-        }
-
-        .error-message.show {
-            display: block;
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-10px); }
-            75% { transform: translateX(10px); }
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(40px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .track-header h1 {
-                font-size: 2.5rem;
-            }
-
-            .navbar {
-                padding: 1rem 1.5rem;
-            }
-
-            .nav-links {
-                display: none;
-            }
-
-            .progress-steps {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-
-            .progress-line {
-                left: 40px;
-                top: 12.5%;
-                bottom: 12.5%;
-                width: 3px;
-                height: auto;
-            }
-
-            .order-details {
-                grid-template-columns: 1fr;
-            }
-
-            .search-card,
-            .result-card {
-                padding: 2rem;
-            }
+            color: var(--color-gray-900);
         }
 
         /* Rating Section */
         .rating-section {
-            margin-top: 2.5rem;
-            padding-top: 2.5rem;
-            border-top: 1px solid rgba(78, 169, 255, 0.15);
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--color-gray-100);
+        }
+
+        .rating-header {
             text-align: center;
+            margin-bottom: 1rem;
         }
 
         .rating-header h3 {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 1.25rem;
+            font-size: 1.125rem;
             font-weight: 700;
-            color: #0f172a;
-            margin-bottom: 0.5rem;
+            color: var(--color-gray-900);
+            margin-bottom: 0.25rem;
         }
 
         .rating-header p {
-            color: #64748b;
-            font-size: 0.9rem;
-            margin-bottom: 1.5rem;
+            font-size: 0.875rem;
+            color: var(--color-gray-500);
         }
 
         .star-rating {
             display: flex;
             justify-content: center;
             gap: 0.5rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
         }
 
         .star {
             background: none;
             border: none;
             cursor: pointer;
-            padding: 0.5rem;
-            border-radius: 8px;
+            padding: 0.25rem;
+            color: var(--color-gray-300);
             transition: all 0.2s ease;
-            color: #cbd5e1;
         }
 
         .star:hover,
@@ -758,323 +386,177 @@
 
         .rating-comment {
             width: 100%;
-            padding: 1rem;
-            border: 2px solid rgba(78, 169, 255, 0.2);
+            padding: 0.875rem 1rem;
+            border: 1px solid var(--color-gray-200);
             border-radius: 12px;
-            font-family: inherit;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             resize: none;
+            font-family: inherit;
             margin-bottom: 1rem;
-            transition: all 0.3s ease;
         }
 
         .rating-comment:focus {
             outline: none;
             border-color: var(--color-blue);
-            box-shadow: 0 0 0 4px rgba(78, 169, 255, 0.1);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
 
-        .submit-rating-btn {
-            background: var(--gradient-primary);
+        .submit-rating {
+            width: 100%;
+            padding: 0.75rem 1.5rem;
+            background: var(--color-success);
             color: white;
             border: none;
-            padding: 0.875rem 2rem;
-            border-radius: 12px;
+            border-radius: 10px;
+            font-size: 0.9rem;
             font-weight: 600;
-            font-size: 1rem;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
         }
 
-        .submit-rating-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(78, 169, 255, 0.3);
+        .submit-rating:hover {
+            background: #16a34a;
         }
 
-        .rating-success {
+        .rating-thanks {
             text-align: center;
-            padding: 2rem;
-            margin-top: 2rem;
-            border-top: 1px solid rgba(78, 169, 255, 0.15);
+            padding: 1.5rem;
+            background: #f0fdf4;
+            border-radius: 12px;
+            color: #047857;
+            font-weight: 500;
         }
 
-        .rating-success h3 {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: #0f172a;
-            margin: 1rem 0 0.5rem;
-        }
+        /* Responsive */
+        @media (max-width: 640px) {
+            .order-details {
+                grid-template-columns: 1fr;
+            }
 
-        .rating-success p {
-            color: #64748b;
+            .nav-links {
+                display: none;
+            }
+
+            .page-header h1 {
+                font-size: 1.5rem;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Animated Background -->
-    <div class="gradient-mesh-bg"></div>
+    <nav class="navbar">
+        <a href="/" class="logo">ArielGo</a>
+        <ul class="nav-links">
+            <li><a href="/">Home</a></li>
+            <li><a href="/#pricing">Services</a></li>
+            <li><a href="/track.html" class="active">Track Order</a></li>
+        </ul>
+    </nav>
 
-    <!-- MASSIVE GRADIENT ORBS -->
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
+    <div class="container">
+        <div class="page-header">
+            <h1>Track Your Order</h1>
+            <p>Enter your booking details to see real-time status</p>
+        </div>
 
-    <!-- FLOATING LAUNDRY ITEMS -->
-    <div class="shapes-container">
-        <div class="shape shape-1">🧺</div>
-        <div class="shape shape-2">👕</div>
-        <div class="shape shape-3">🧴</div>
-        <div class="shape shape-4">🪣</div>
-        <div class="shape shape-5">🧦</div>
-        <div class="shape shape-6">👖</div>
-        <div class="shape shape-7">🩳</div>
-    </div>
+        <div class="search-card">
+            <div id="error-message" class="error-message"></div>
 
-    <!-- SPOTLIGHT CURSOR EFFECT -->
-    <div class="spotlight" id="spotlight"></div>
+            <form id="track-form">
+                <div class="form-group">
+                    <label for="booking-id">Booking ID</label>
+                    <input type="text" id="booking-id" name="booking-id" placeholder="e.g., 12345" required>
+                </div>
 
-    <!-- Content -->
-    <div class="content-wrapper">
-        <!-- Navigation -->
-        <nav class="navbar">
-            <a href="/" class="logo">ArielGo</a>
-            <ul class="nav-links">
-                <li><a href="/">Home</a></li>
-                <li><a href="/#features">Features</a></li>
-                <li><a href="/track.html" style="color: #4EA9FF;">Track Order</a></li>
-            </ul>
-        </nav>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" placeholder="your@email.com" required>
+                </div>
 
-        <!-- Track Container -->
-        <div class="track-container">
-            <div class="track-header">
-                <h1>Track Your Order</h1>
-                <p>Enter your booking details to see real-time status</p>
+                <button type="submit" class="track-button">Track My Order</button>
+            </form>
+        </div>
+
+        <div class="result-card" id="result-card">
+            <div class="order-header">
+                <div class="order-id">Order #<span id="order-number"></span></div>
+                <div class="status-badge" id="status-badge"></div>
             </div>
 
-            <!-- Search Card -->
-            <div class="search-card">
-                <div id="error-message" class="error-message"></div>
-
-                <form id="track-form">
-                    <div class="form-group">
-                        <label for="booking-id">Booking ID</label>
-                        <input
-                            type="text"
-                            id="booking-id"
-                            name="booking-id"
-                            placeholder="e.g., 12345"
-                            required
-                        >
+            <div class="progress-tracker">
+                <div class="progress-line">
+                    <div class="progress-line-fill" id="progress-fill"></div>
+                </div>
+                <div class="progress-steps">
+                    <div class="step" id="step-1">
+                        <div class="step-circle">1</div>
+                        <div class="step-label">Received</div>
                     </div>
-
-                    <div class="form-group">
-                        <label for="email">Email Address</label>
-                        <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            placeholder="your@email.com"
-                            required
-                        >
+                    <div class="step" id="step-2">
+                        <div class="step-circle">2</div>
+                        <div class="step-label">Confirmed</div>
                     </div>
-
-                    <button type="submit" class="track-button">
-                        Track My Order →
-                    </button>
-                </form>
+                    <div class="step" id="step-3">
+                        <div class="step-circle">3</div>
+                        <div class="step-label">Processing</div>
+                    </div>
+                    <div class="step" id="step-4">
+                        <div class="step-circle">4</div>
+                        <div class="step-label">Delivered</div>
+                    </div>
+                </div>
             </div>
 
-            <!-- Result Card -->
-            <div class="result-card" id="result-card">
-                <div class="order-header">
-                    <div class="order-id">Order #<span id="order-number"></span></div>
-                    <div class="status-badge" id="status-badge"></div>
+            <div class="order-details">
+                <div class="detail-group">
+                    <div class="detail-label">Customer</div>
+                    <div class="detail-value" id="customer-name"></div>
                 </div>
+                <div class="detail-group">
+                    <div class="detail-label">Service</div>
+                    <div class="detail-value" id="service-type"></div>
+                </div>
+                <div class="detail-group">
+                    <div class="detail-label">Bags</div>
+                    <div class="detail-value" id="num-bags"></div>
+                </div>
+                <div class="detail-group">
+                    <div class="detail-label">Total</div>
+                    <div class="detail-value" id="total-price"></div>
+                </div>
+                <div class="detail-group">
+                    <div class="detail-label">Pickup Date</div>
+                    <div class="detail-value" id="pickup-date"></div>
+                </div>
+                <div class="detail-group">
+                    <div class="detail-label">Pickup Time</div>
+                    <div class="detail-value" id="pickup-time"></div>
+                </div>
+            </div>
 
-                <!-- Progress Tracker -->
-                <div class="progress-tracker">
-                    <div class="progress-line">
-                        <div class="progress-line-fill" id="progress-fill"></div>
-                    </div>
-                    <div class="progress-steps">
-                        <div class="step" id="step-1">
-                            <div class="step-circle">1</div>
-                            <div class="step-label">Received</div>
-                        </div>
-                        <div class="step" id="step-2">
-                            <div class="step-circle">2</div>
-                            <div class="step-label">Confirmed</div>
-                        </div>
-                        <div class="step" id="step-3">
-                            <div class="step-circle">3</div>
-                            <div class="step-label">Processing</div>
-                        </div>
-                        <div class="step" id="step-4">
-                            <div class="step-circle">4</div>
-                            <div class="step-label">Delivered</div>
-                        </div>
-                    </div>
+            <div class="rating-section" id="rating-section" style="display: none;">
+                <div class="rating-header">
+                    <h3>How was your experience?</h3>
+                    <p>Your feedback helps us improve</p>
                 </div>
+                <div class="star-rating" id="star-rating">
+                    <button class="star" data-rating="1"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></button>
+                    <button class="star" data-rating="2"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></button>
+                    <button class="star" data-rating="3"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></button>
+                    <button class="star" data-rating="4"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></button>
+                    <button class="star" data-rating="5"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></button>
+                </div>
+                <textarea class="rating-comment" id="rating-comment" placeholder="Tell us more (optional)..." rows="3"></textarea>
+                <button class="submit-rating" id="submit-rating">Submit Feedback</button>
+            </div>
 
-                <!-- Order Details -->
-                <div class="order-details">
-                    <div class="detail-group">
-                        <div class="detail-label">Customer Name</div>
-                        <div class="detail-value" id="customer-name"></div>
-                    </div>
-                    <div class="detail-group">
-                        <div class="detail-label">Service Type</div>
-                        <div class="detail-value" id="service-type"></div>
-                    </div>
-                    <div class="detail-group">
-                        <div class="detail-label">Number of Bags</div>
-                        <div class="detail-value" id="num-bags"></div>
-                    </div>
-                    <div class="detail-group">
-                        <div class="detail-label">Total Price</div>
-                        <div class="detail-value" id="total-price"></div>
-                    </div>
-                    <div class="detail-group">
-                        <div class="detail-label">Pickup Date</div>
-                        <div class="detail-value" id="pickup-date"></div>
-                    </div>
-                    <div class="detail-group">
-                        <div class="detail-label">Pickup Time</div>
-                        <div class="detail-value" id="pickup-time"></div>
-                    </div>
-                </div>
-
-                <!-- Rating Section (shows after delivery) -->
-                <div class="rating-section" id="rating-section" style="display: none;">
-                    <div class="rating-header">
-                        <h3>How was your experience?</h3>
-                        <p>Your feedback helps us improve</p>
-                    </div>
-                    <div class="star-rating" id="star-rating">
-                        <button class="star" data-rating="1"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></button>
-                        <button class="star" data-rating="2"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></button>
-                        <button class="star" data-rating="3"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></button>
-                        <button class="star" data-rating="4"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></button>
-                        <button class="star" data-rating="5"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></button>
-                    </div>
-                    <textarea class="rating-comment" id="rating-comment" placeholder="Tell us more (optional)..." rows="3"></textarea>
-                    <button class="submit-rating-btn" id="submit-rating">Submit Feedback</button>
-                </div>
-
-                <!-- Rating Success -->
-                <div class="rating-success" id="rating-success" style="display: none;">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-                    <h3>Thank you!</h3>
-                    <p>Your feedback helps us serve you better.</p>
-                </div>
+            <div class="rating-thanks" id="rating-thanks" style="display: none;">
+                Thank you for your feedback!
             </div>
         </div>
     </div>
 
     <script>
-        // Particle System
-        const canvas = document.getElementById('particles-canvas');
-        const ctx = canvas.getContext('2d');
-
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        const particles = [];
-        const particleCount = 60;
-        const connectionDistance = 150;
-
-        class Particle {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.vx = (Math.random() - 0.5) * 0.5;
-                this.vy = (Math.random() - 0.5) * 0.5;
-                this.radius = Math.random() * 2 + 1;
-            }
-
-            update() {
-                this.x += this.vx;
-                this.y += this.vy;
-
-                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
-                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
-            }
-
-            draw() {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(78, 169, 255, 0.3)';
-                ctx.fill();
-            }
-        }
-
-        for (let i = 0; i < particleCount; i++) {
-            particles.push(new Particle());
-        }
-
-        function connectParticles() {
-            for (let i = 0; i < particles.length; i++) {
-                for (let j = i + 1; j < particles.length; j++) {
-                    const dx = particles[i].x - particles[j].x;
-                    const dy = particles[i].y - particles[j].y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-
-                    if (distance < connectionDistance) {
-                        ctx.beginPath();
-                        ctx.strokeStyle = `rgba(78, 169, 255, ${0.15 * (1 - distance / connectionDistance)})`;
-                        ctx.lineWidth = 0.5;
-                        ctx.moveTo(particles[i].x, particles[i].y);
-                        ctx.lineTo(particles[j].x, particles[j].y);
-                        ctx.stroke();
-                    }
-                }
-            }
-        }
-
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            particles.forEach(particle => {
-                particle.update();
-                particle.draw();
-            });
-
-            connectParticles();
-            requestAnimationFrame(animate);
-        }
-
-        animate();
-
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        });
-
-        // SPOTLIGHT CURSOR EFFECT
-        const spotlight = document.getElementById('spotlight');
-        let mouseX = 0, mouseY = 0;
-        let spotlightX = 0, spotlightY = 0;
-
-        document.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-            spotlight.style.opacity = '1';
-        });
-
-        function animateSpotlight() {
-            spotlightX += (mouseX - spotlightX) * 0.1;
-            spotlightY += (mouseY - spotlightY) * 0.1;
-
-            spotlight.style.left = spotlightX + 'px';
-            spotlight.style.top = spotlightY + 'px';
-
-            requestAnimationFrame(animateSpotlight);
-        }
-        animateSpotlight();
-
-        // Track Order Logic
         const API_BASE = window.location.origin;
 
         document.getElementById('track-form').addEventListener('submit', async (e) => {
@@ -1101,7 +583,6 @@
                     throw new Error('Email does not match our records');
                 }
 
-                // Display order details
                 document.getElementById('order-number').textContent = data.booking.id;
                 document.getElementById('customer-name').textContent = data.booking.name;
                 document.getElementById('service-type').textContent = capitalizeFirst(data.booking.service);
@@ -1120,51 +601,53 @@
 
                 resultCard.classList.add('show');
 
-                setTimeout(() => {
-                    resultCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                }, 100);
-
             } catch (error) {
-                errorMessage.textContent = error.message || 'Unable to find your order. Please check your details.';
+                errorMessage.textContent = error.message;
                 errorMessage.classList.add('show');
             }
         });
 
+        function capitalizeFirst(str) {
+            if (!str) return '';
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
         function updateProgress(status) {
             const steps = ['pending', 'confirmed', 'in_progress', 'completed'];
-            const currentIndex = steps.indexOf(status);
+            const currentStep = steps.indexOf(status);
 
             for (let i = 1; i <= 4; i++) {
-                const step = document.getElementById('step-' + i);
+                const step = document.getElementById(`step-${i}`);
                 step.classList.remove('active', 'completed');
-            }
 
-            for (let i = 0; i <= currentIndex; i++) {
-                const step = document.getElementById('step-' + (i + 1));
-                if (i < currentIndex) {
+                if (i - 1 < currentStep) {
                     step.classList.add('completed');
-                } else if (i === currentIndex) {
+                } else if (i - 1 === currentStep) {
                     step.classList.add('active');
                 }
             }
 
             const progressFill = document.getElementById('progress-fill');
-            const percentage = (currentIndex / 3) * 100;
-            progressFill.style.width = percentage + '%';
+            const progressPercent = ((currentStep) / 3) * 100;
+            progressFill.style.width = progressPercent + '%';
         }
 
-        function capitalizeFirst(str) {
-            return str.charAt(0).toUpperCase() + str.slice(1);
+        function showRatingIfCompleted(status) {
+            const ratingSection = document.getElementById('rating-section');
+            const ratingThanks = document.getElementById('rating-thanks');
+
+            if (status === 'completed') {
+                ratingSection.style.display = 'block';
+                ratingThanks.style.display = 'none';
+            } else {
+                ratingSection.style.display = 'none';
+            }
         }
 
-        // Rating System
+        // Star rating functionality
         let selectedRating = 0;
         const stars = document.querySelectorAll('.star');
-        const ratingSection = document.getElementById('rating-section');
-        const ratingSuccess = document.getElementById('rating-success');
-        const submitBtn = document.getElementById('submit-rating');
 
-        // Star selection
         stars.forEach(star => {
             star.addEventListener('click', () => {
                 selectedRating = parseInt(star.dataset.rating);
@@ -1172,8 +655,7 @@
             });
 
             star.addEventListener('mouseenter', () => {
-                const hoverRating = parseInt(star.dataset.rating);
-                highlightStars(hoverRating);
+                highlightStars(parseInt(star.dataset.rating));
             });
 
             star.addEventListener('mouseleave', () => {
@@ -1195,40 +677,28 @@
             highlightStars(selectedRating);
         }
 
-        // Show rating section for completed orders
-        function showRatingIfCompleted(status) {
-            if (status === 'completed') {
-                ratingSection.style.display = 'block';
-            }
-        }
-
-        // Submit rating
-        submitBtn.addEventListener('click', async () => {
+        document.getElementById('submit-rating').addEventListener('click', async () => {
             if (selectedRating === 0) {
                 alert('Please select a rating');
                 return;
             }
 
             const comment = document.getElementById('rating-comment').value;
-            const bookingId = document.getElementById('booking-id').value;
+            const bookingId = document.getElementById('order-number').textContent;
 
-            // For demo, just show success (in production, would send to API)
             try {
-                // Simulated API call
-                // await fetch(`${API_BASE}/api/ratings`, {
-                //     method: 'POST',
-                //     headers: { 'Content-Type': 'application/json' },
-                //     body: JSON.stringify({ bookingId, rating: selectedRating, comment })
-                // });
+                await fetch(`${API_BASE}/api/bookings/${bookingId}/rating`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ rating: selectedRating, comment })
+                });
 
-                ratingSection.style.display = 'none';
-                ratingSuccess.style.display = 'block';
+                document.getElementById('rating-section').style.display = 'none';
+                document.getElementById('rating-thanks').style.display = 'block';
             } catch (error) {
-                alert('Failed to submit rating. Please try again.');
+                console.error('Rating error:', error);
             }
         });
     </script>
-
-    <script src="js/floating-chat.js"></script>
 </body>
 </html>

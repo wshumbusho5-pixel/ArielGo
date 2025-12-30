@@ -76,11 +76,11 @@
            SCROLL ANIMATIONS & PARALLAX
            ============================================ */
 
-        /* Hero Banner Image */
+        /* Hero Banner with Scroll Zoom */
         .hero-banner {
             position: relative;
-            height: 70vh;
-            min-height: 500px;
+            height: 100vh;
+            min-height: 600px;
             overflow: hidden;
             display: flex;
             align-items: center;
@@ -89,13 +89,14 @@
 
         .hero-banner-image {
             position: absolute;
-            top: 0;
-            left: 0;
+            top: 50%;
+            left: 50%;
             width: 100%;
-            height: 120%;
+            height: 100%;
             object-fit: cover;
             will-change: transform;
-            transition: transform 0.1s linear;
+            transform: translate(-50%, -50%) scale(1);
+            transform-origin: center center;
         }
 
         .hero-banner-overlay {
@@ -309,6 +310,133 @@
             .how-step {
                 padding: 1.5rem 1rem;
             }
+        }
+
+        /* Horizontal Scroll Gallery */
+        .gallery-section {
+            padding: 4rem 0;
+            background: linear-gradient(180deg, #ffffff 0%, var(--color-gray-50) 100%);
+            overflow: hidden;
+        }
+
+        .gallery-header {
+            text-align: center;
+            padding: 0 2rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .gallery-header h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--color-gray-900);
+            margin-bottom: 0.5rem;
+        }
+
+        .gallery-header p {
+            color: var(--color-gray-500);
+        }
+
+        .gallery-track-wrapper {
+            position: relative;
+        }
+
+        .gallery-track-wrapper::before,
+        .gallery-track-wrapper::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 60px;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .gallery-track-wrapper::before {
+            left: 0;
+            background: linear-gradient(90deg, #ffffff, transparent);
+        }
+
+        .gallery-track-wrapper::after {
+            right: 0;
+            background: linear-gradient(-90deg, var(--color-gray-50), transparent);
+        }
+
+        .gallery-track {
+            display: flex;
+            gap: 1.5rem;
+            padding: 1rem 2rem 2rem;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            scrollbar-width: none;
+            cursor: grab;
+        }
+
+        .gallery-track::-webkit-scrollbar { display: none; }
+        .gallery-track:active { cursor: grabbing; }
+
+        .gallery-item {
+            flex: 0 0 300px;
+            height: 380px;
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .gallery-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .gallery-item:hover .gallery-image {
+            transform: scale(1.05);
+            transition: transform 0.5s ease;
+        }
+
+        .gallery-item-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1.5rem;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            color: white;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+        }
+
+        .gallery-item:hover .gallery-item-overlay {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .gallery-item-overlay h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .gallery-item-overlay p {
+            font-size: 0.875rem;
+            opacity: 0.9;
+        }
+
+        .gallery-scroll-hint {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            color: var(--color-gray-400);
+            font-size: 0.875rem;
         }
 
         /* Subtle gradient accent for hero */
@@ -931,6 +1059,143 @@
 
             .speed-options {
                 grid-template-columns: 1fr;
+            }
+        }
+
+        /* Coming Soon Badge & Styles */
+        .coming-soon-badge {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-left: 0.5rem;
+        }
+
+        .coming-soon-banner {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            color: #92400e;
+            padding: 0.625rem 1.25rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #fcd34d;
+        }
+
+        .coming-soon-icon svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .coming-soon-features {
+            background: var(--color-gray-50);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--color-gray-200);
+        }
+
+        .coming-soon-features h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--color-gray-900);
+            margin-bottom: 1rem;
+        }
+
+        .shoe-features-list {
+            list-style: none;
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        .shoe-features-list li {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--color-gray-700);
+            font-size: 0.95rem;
+        }
+
+        .shoe-features-list svg {
+            width: 18px;
+            height: 18px;
+            color: var(--color-success);
+            flex-shrink: 0;
+        }
+
+        .notify-signup {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid var(--color-gray-200);
+        }
+
+        .notify-signup > p:first-child {
+            font-weight: 600;
+            color: var(--color-gray-900);
+            margin-bottom: 1rem;
+        }
+
+        .notify-form {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .notify-input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--color-gray-300);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+        }
+
+        .notify-input:focus {
+            outline: none;
+            border-color: var(--color-blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .notify-btn {
+            background: var(--color-blue);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s ease;
+            white-space: nowrap;
+        }
+
+        .notify-btn:hover {
+            background: var(--color-blue-dark);
+        }
+
+        .notify-note {
+            font-size: 0.8rem;
+            color: var(--color-gray-500);
+            margin-top: 0.75rem;
+        }
+
+        .coming-soon-overlay {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.9) 0%, rgba(217, 119, 6, 0.9) 100%);
+        }
+
+        @media (max-width: 768px) {
+            .notify-form {
+                flex-direction: column;
+            }
+
+            .notify-btn {
+                width: 100%;
             }
         }
 
@@ -1853,19 +2118,18 @@
             </div>
         </nav>
 
-        <!-- Hero Banner with Parallax -->
+        <!-- Hero Banner with Scroll Zoom - ONE STATIC IMAGE -->
         <section class="hero-banner">
             <img
-                src="https://images.unsplash.com/photo-1517677208171-0bc6725a3e60?w=1920&q=80"
-                alt="Fresh clean laundry"
+                src="https://images.unsplash.com/photo-1520699697851-3dc68aa3a474?w=1920&q=80"
+                alt="Fresh white linens in ocean breeze - the freedom of fresh laundry"
                 class="hero-banner-image"
-                id="parallaxImage"
             >
             <div class="hero-banner-overlay"></div>
             <div class="hero-banner-content">
-                <h1>Fresh Laundry, Delivered with Care</h1>
-                <p>We handle your laundry so you can focus on what matters most. Professional care, eco-friendly cleaning, and service that feels like family.</p>
-                <a href="#booking" class="hero-banner-cta">Schedule Your First Pickup</a>
+                <h1>Fresh. Folded. Delivered.</h1>
+                <p>We handle the laundry. You live your life.</p>
+                <a href="#booking" class="hero-banner-cta">Schedule Free Pickup</a>
             </div>
         </section>
 
@@ -1896,31 +2160,71 @@
             </div>
         </section>
 
-        <section class="stats-section reveal">
-            <div class="stats-container stagger-children">
-                <div class="stat-card scroll-animate scroll-slide-left">
-                    <div class="stat-number">24h</div>
+        <!-- Horizontal Scroll Gallery -->
+        <section class="gallery-section">
+            <div class="gallery-header">
+                <h2>The ArielGo Standard</h2>
+                <p>Every item treated with care. Every fold intentional.</p>
+            </div>
+            <div class="gallery-track-wrapper">
+                <div class="gallery-track" id="galleryTrack">
+                    <div class="gallery-item">
+                        <img class="gallery-image" src="https://images.unsplash.com/photo-1489274495757-95c7c837b101?w=800&q=80" alt="Folded clothes">
+                        <div class="gallery-item-overlay"><h4>Precision Folding</h4><p>Every item folded with care</p></div>
+                    </div>
+                    <div class="gallery-item">
+                        <img class="gallery-image" src="https://images.unsplash.com/photo-1545173168-9f1947eebb7f?w=800&q=80" alt="Fresh towels">
+                        <div class="gallery-item-overlay"><h4>Fluffy & Fresh</h4><p>Towels that feel brand new</p></div>
+                    </div>
+                    <div class="gallery-item">
+                        <img class="gallery-image" src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80" alt="Pressed shirts">
+                        <div class="gallery-item-overlay"><h4>Crisp & Ready</h4><p>Shirts pressed to perfection</p></div>
+                    </div>
+                    <div class="gallery-item">
+                        <img class="gallery-image" src="https://images.unsplash.com/photo-1604176354204-9268737828e4?w=800&q=80" alt="Blue textiles">
+                        <div class="gallery-item-overlay"><h4>Colors Stay Vibrant</h4><p>Gentle care for every fabric</p></div>
+                    </div>
+                    <div class="gallery-item">
+                        <img class="gallery-image" src="https://images.unsplash.com/photo-1582735689369-4fe89db7114c?w=800&q=80" alt="Organized basket">
+                        <div class="gallery-item-overlay"><h4>Sorted & Organized</h4><p>Everything in its place</p></div>
+                    </div>
+                    <div class="gallery-item">
+                        <img class="gallery-image" src="https://images.unsplash.com/photo-1517677208171-0bc6725a3e60?w=800&q=80" alt="Fresh linens">
+                        <div class="gallery-item-overlay"><h4>Delivered Fresh</h4><p>Right to your door</p></div>
+                    </div>
+                </div>
+            </div>
+            <div class="gallery-scroll-hint">
+                <span>Drag to explore</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </div>
+        </section>
+
+        <section class="stats-section">
+            <div class="stats-container">
+                <div class="stat-card">
+                    <div class="stat-number" data-count-to="24" data-suffix="h">24h</div>
                     <div class="stat-label">Turnaround</div>
                 </div>
-                <div class="stat-card scroll-animate scroll-zoom-in">
+                <div class="stat-card">
                     <div class="stat-number">4.9</div>
                     <div class="stat-label">Rating</div>
                 </div>
-                <div class="stat-card scroll-animate scroll-zoom-in">
-                    <div class="stat-number">1K+</div>
+                <div class="stat-card">
+                    <div class="stat-number" data-count-to="1000" data-suffix="+">1K+</div>
                     <div class="stat-label">Customers</div>
                 </div>
-                <div class="stat-card scroll-animate scroll-slide-right">
-                    <div class="stat-number">99%</div>
+                <div class="stat-card">
+                    <div class="stat-number" data-count-to="99" data-suffix="%">99%</div>
                     <div class="stat-label">On-Time</div>
                 </div>
             </div>
         </section>
 
-        <section class="trust-section reveal">
-            <div class="trust-container stagger-children">
-                <div class="trust-badge">
-                    <div class="trust-icon">
+        <section class="trust-section">
+            <div class="trust-container" data-stagger data-stagger-delay="0.12" data-stagger-direction="scale">
+                <div class="trust-badge hover-lift" data-tilt data-tilt-intensity="6">
+                    <div class="trust-icon" data-float data-float-intensity="3">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="20 6 9 17 4 12"></polyline>
                         </svg>
@@ -1928,8 +2232,8 @@
                     <h4>100% Satisfaction</h4>
                     <p>Not happy? We'll rewash for free or give you a full refund. No questions asked.</p>
                 </div>
-                <div class="trust-badge">
-                    <div class="trust-icon">
+                <div class="trust-badge hover-lift" data-tilt data-tilt-intensity="6">
+                    <div class="trust-icon" data-float data-float-intensity="3">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                         </svg>
@@ -1937,8 +2241,8 @@
                     <h4>Earth-Conscious Care</h4>
                     <p>We use plant-based, biodegradable detergents and energy-efficient processes. Good stewardship of what we've been given.</p>
                 </div>
-                <div class="trust-badge">
-                    <div class="trust-icon">
+                <div class="trust-badge hover-lift" data-tilt data-tilt-intensity="6">
+                    <div class="trust-icon" data-float data-float-intensity="3">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                             <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
@@ -1947,8 +2251,8 @@
                     <h4>Insured & Bonded</h4>
                     <p>Your clothes are fully protected. We're licensed, insured, and background-checked.</p>
                 </div>
-                <div class="trust-badge">
-                    <div class="trust-icon">
+                <div class="trust-badge hover-lift" data-tilt data-tilt-intensity="6">
+                    <div class="trust-icon" data-float data-float-intensity="3">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="12" cy="10" r="3"></circle>
                             <path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 7 8 11.7z"></path>
@@ -2149,13 +2453,13 @@
             </div>
         </section>
 
-        <section id="features" class="features-section reveal">
-            <div class="section-header">
-                <h2>Built Around Your Needs</h2>
+        <section id="features" class="features-section">
+            <div class="section-header" data-reveal="up">
+                <h2 data-text-reveal="words">Built Around Your Needs</h2>
                 <p>Every feature designed to make your life easier and your clothes happier.</p>
             </div>
-            <div class="features-grid stagger-children">
-                <div class="feature-card scroll-animate scroll-slide-left">
+            <div class="features-grid" data-stagger data-stagger-delay="0.1">
+                <div class="feature-card hover-lift" data-tilt data-tilt-intensity="6">
                     <div class="feature-icon">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
@@ -2164,7 +2468,7 @@
                     <h3>Always Here for You</h3>
                     <p>Have a question at 10pm? No problem. Reach out anytime and we'll get back to you quickly. Real people, real responses.</p>
                 </div>
-                <div class="feature-card scroll-animate scroll-zoom-in">
+                <div class="feature-card hover-lift" data-tilt data-tilt-intensity="6">
                     <div class="feature-icon">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="12" cy="10" r="3"></circle>
@@ -2174,7 +2478,7 @@
                     <h3>Know Where We Are</h3>
                     <p>Track your driver in real-time. No guessing, no waiting around. We keep you informed every step of the way.</p>
                 </div>
-                <div class="feature-card scroll-animate scroll-slide-right">
+                <div class="feature-card hover-lift" data-tilt data-tilt-intensity="6">
                     <div class="feature-icon">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="12" cy="12" r="10"></circle>
@@ -2184,7 +2488,7 @@
                     <h3>Quick Turnaround</h3>
                     <p>Fresh clothes in 24 hours. Need them sooner? We offer same-day service because we know life doesn't wait.</p>
                 </div>
-                <div class="feature-card scroll-animate scroll-slide-left">
+                <div class="feature-card hover-lift" data-tilt data-tilt-intensity="6">
                     <div class="feature-icon">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
@@ -2195,7 +2499,7 @@
                     <h3>Gentle & Green</h3>
                     <p>Plant-based detergents, careful sorting by color and fabric. We treat your clothes — and our planet — with respect.</p>
                 </div>
-                <div class="feature-card scroll-animate scroll-zoom-in">
+                <div class="feature-card hover-lift" data-tilt data-tilt-intensity="6">
                     <div class="feature-icon">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="1" y="3" width="15" height="13" rx="2" ry="2"></rect>
@@ -2207,7 +2511,7 @@
                     <h3>We Come to You</h3>
                     <p>Free pickup and delivery to your door. Stay home, study, work, rest — we handle the running around.</p>
                 </div>
-                <div class="feature-card scroll-animate scroll-slide-right">
+                <div class="feature-card hover-lift" data-tilt data-tilt-intensity="6">
                     <div class="feature-icon">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
@@ -2252,6 +2556,14 @@
                         </svg>
                         Specialty
                     </button>
+                    <button class="service-tab" data-tab="shoe-shine">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M2 18c0-1 1-2 2-2h16c1 0 2 1 2 2v1a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-1z"></path>
+                            <path d="M4 16c0-4 2-7 6-8 1-.25 2-.5 2-1.5S11 5 10 4c-.5-.5-.5-1 0-1.5.5-.5 1-.5 1.5 0 1 1 2 1 3 0 .5-.5 1-.5 1.5 0s.5 1 0 1.5c-1 1-1 1.5-1 2.5s1 1.25 2 1.5c4 1 6 4 6 8"></path>
+                        </svg>
+                        Shoe Shine
+                        <span class="coming-soon-badge">Soon</span>
+                    </button>
                 </div>
 
                 <!-- Wash & Fold Content -->
@@ -2288,7 +2600,7 @@
                             <a href="#booking" class="cta-button">Schedule Pickup</a>
                         </div>
                         <div class="service-image">
-                            <img src="https://images.unsplash.com/photo-1545173168-9f1947eebb7f?w=600&q=80" alt="Neatly folded laundry">
+                            <img id="washFoldImage" class="rotating-service-img" src="https://images.unsplash.com/photo-1545173168-9f1947eebb7f?w=600&q=80" alt="Neatly folded laundry" data-image-set="washfold">
                             <div class="service-image-overlay">
                                 <h3>Fresh & Folded</h3>
                                 <p>Delivered back to your door</p>
@@ -2352,7 +2664,7 @@
                             <a href="#booking" class="cta-button">Schedule Pickup</a>
                         </div>
                         <div class="service-image">
-                            <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80" alt="Professional dry cleaning">
+                            <img id="dryCleanImage" class="rotating-service-img" src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80" alt="Professional dry cleaning" data-image-set="drycleaning">
                             <div class="service-image-overlay">
                                 <h3>Pressed & Perfect</h3>
                                 <p>Professional care for your best clothes</p>
@@ -2416,10 +2728,77 @@
                             <a href="#booking" class="cta-button">Schedule Pickup</a>
                         </div>
                         <div class="service-image">
-                            <img src="https://images.unsplash.com/photo-1629140727571-9b5c6f6267b4?w=600&q=80" alt="Fresh clean bedding">
+                            <img id="specialtyImage" class="rotating-service-img" src="https://images.unsplash.com/photo-1629140727571-9b5c6f6267b4?w=600&q=80" alt="Fresh clean bedding" data-image-set="specialty">
                             <div class="service-image-overlay">
                                 <h3>Fresh Bedding</h3>
                                 <p>Clean, fluffy, and ready to use</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shoe Shine Content -->
+                <div class="service-content" id="shoe-shine">
+                    <div class="service-layout">
+                        <div class="service-info">
+                            <div class="coming-soon-banner">
+                                <span class="coming-soon-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <polyline points="12 6 12 12 16 14"></polyline>
+                                    </svg>
+                                </span>
+                                <span>Coming Soon</span>
+                            </div>
+                            <h2>Professional Shoe Shine</h2>
+                            <p class="service-description">
+                                Give your shoes the care they deserve. From everyday sneakers to premium leather dress shoes — we'll restore that fresh-from-the-store shine. Drop them off with your laundry, pick them up looking brand new.
+                            </p>
+
+                            <div class="coming-soon-features">
+                                <h4>What to expect:</h4>
+                                <ul class="shoe-features-list">
+                                    <li>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <polyline points="20 6 9 17 4 12"></polyline>
+                                        </svg>
+                                        <span>Leather conditioning & polish</span>
+                                    </li>
+                                    <li>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <polyline points="20 6 9 17 4 12"></polyline>
+                                        </svg>
+                                        <span>Sneaker deep cleaning</span>
+                                    </li>
+                                    <li>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <polyline points="20 6 9 17 4 12"></polyline>
+                                        </svg>
+                                        <span>Suede & nubuck restoration</span>
+                                    </li>
+                                    <li>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <polyline points="20 6 9 17 4 12"></polyline>
+                                        </svg>
+                                        <span>Pickup & delivery with your laundry</span>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div class="notify-signup">
+                                <p>Be the first to know when we launch:</p>
+                                <div class="notify-form">
+                                    <input type="email" id="shoeNotifyEmail" placeholder="Enter your email" class="notify-input">
+                                    <button type="button" id="shoeNotifyBtn" class="notify-btn">Notify Me</button>
+                                </div>
+                                <p class="notify-note">We'll only email you once when shoe shine launches. No spam.</p>
+                            </div>
+                        </div>
+                        <div class="service-image">
+                            <img id="shoeShineImage" class="rotating-service-img" src="https://images.unsplash.com/flagged/photo-1573832959141-4f798a677b7d?w=600&q=80" alt="Professional shoe shining" data-image-set="shoes">
+                            <div class="service-image-overlay coming-soon-overlay">
+                                <h3>Shoe Shine Service</h3>
+                                <p>Launching Soon</p>
                             </div>
                         </div>
                     </div>
@@ -2731,5 +3110,62 @@
     <script src="js/main.js"></script>
     <script src="js/floating-chat.js"></script>
     <script src="js/scroll-animations.js"></script>
+    <script src="js/rotating-images.js"></script>
+
+    <!-- Shoe Shine Notify Handler -->
+    <script>
+        (function() {
+            const notifyBtn = document.getElementById('shoeNotifyBtn');
+            const notifyInput = document.getElementById('shoeNotifyEmail');
+
+            if (notifyBtn && notifyInput) {
+                notifyBtn.addEventListener('click', function() {
+                    const email = notifyInput.value.trim();
+
+                    if (!email) {
+                        notifyInput.style.borderColor = '#ef4444';
+                        notifyInput.placeholder = 'Please enter your email';
+                        return;
+                    }
+
+                    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                        notifyInput.style.borderColor = '#ef4444';
+                        notifyInput.value = '';
+                        notifyInput.placeholder = 'Please enter a valid email';
+                        return;
+                    }
+
+                    // Store in localStorage for now (can connect to backend later)
+                    const notifyList = JSON.parse(localStorage.getItem('shoeShineNotify') || '[]');
+                    if (!notifyList.includes(email)) {
+                        notifyList.push(email);
+                        localStorage.setItem('shoeShineNotify', JSON.stringify(notifyList));
+                    }
+
+                    // Show success state
+                    notifyBtn.textContent = 'Subscribed!';
+                    notifyBtn.style.background = '#22c55e';
+                    notifyInput.value = '';
+                    notifyInput.placeholder = 'You\'re on the list!';
+                    notifyInput.disabled = true;
+                    notifyBtn.disabled = true;
+
+                    // Reset after 3 seconds
+                    setTimeout(() => {
+                        notifyBtn.textContent = 'Notify Me';
+                        notifyBtn.style.background = '';
+                        notifyInput.placeholder = 'Enter your email';
+                        notifyInput.disabled = false;
+                        notifyBtn.disabled = false;
+                    }, 3000);
+                });
+
+                // Reset border on input
+                notifyInput.addEventListener('focus', function() {
+                    this.style.borderColor = '';
+                });
+            }
+        })();
+    </script>
 </body>
 </html>

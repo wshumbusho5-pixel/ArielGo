@@ -153,6 +153,17 @@ else
 fi
 echo ""
 
+# Test 11: Run API Tests
+echo "🧪 Test 11: API Unit Tests"
+if npm test --silent > /dev/null 2>&1; then
+    TEST_COUNT=$(npm test 2>&1 | grep -o "[0-9]* passed" | head -1)
+    echo -e "${GREEN}✓ All API tests passed ($TEST_COUNT)${NC}"
+else
+    echo -e "${RED}✗ API tests failed - run 'npm test' to see details${NC}"
+    FAILED=1
+fi
+echo ""
+
 # Final Summary
 echo "=============================================="
 if [ "$FAILED" -eq "0" ]; then

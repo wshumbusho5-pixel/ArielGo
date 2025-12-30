@@ -5,56 +5,341 @@
 {% block content %}
 <div class="bookings-page">
     <div class="page-header">
-        <h2>All Bookings</h2>
+        <div class="page-title">
+            <h2>All Bookings</h2>
+            <p class="page-subtitle">Manage and track all customer orders</p>
+        </div>
         <div class="filters">
-            <a href="{{ url_for('bookings', status='all') }}" class="filter-btn {% if status_filter == 'all' %}active{% endif %}">All</a>
-            <a href="{{ url_for('bookings', status='pending') }}" class="filter-btn {% if status_filter == 'pending' %}active{% endif %}">Pending</a>
-            <a href="{{ url_for('bookings', status='confirmed') }}" class="filter-btn {% if status_filter == 'confirmed' %}active{% endif %}">Confirmed</a>
-            <a href="{{ url_for('bookings', status='in_progress') }}" class="filter-btn {% if status_filter == 'in_progress' %}active{% endif %}">In Progress</a>
-            <a href="{{ url_for('bookings', status='completed') }}" class="filter-btn {% if status_filter == 'completed' %}active{% endif %}">Completed</a>
-            <a href="{{ url_for('bookings', status='cancelled') }}" class="filter-btn {% if status_filter == 'cancelled' %}active{% endif %}">Cancelled</a>
+            <a href="{{ url_for('bookings', status='all') }}" class="filter-btn {% if status_filter == 'all' %}active{% endif %}">
+                All
+            </a>
+            <a href="{{ url_for('bookings', status='pending') }}" class="filter-btn {% if status_filter == 'pending' %}active{% endif %}">
+                <span class="filter-dot filter-dot-pending"></span>
+                Pending
+            </a>
+            <a href="{{ url_for('bookings', status='confirmed') }}" class="filter-btn {% if status_filter == 'confirmed' %}active{% endif %}">
+                <span class="filter-dot filter-dot-confirmed"></span>
+                Confirmed
+            </a>
+            <a href="{{ url_for('bookings', status='in_progress') }}" class="filter-btn {% if status_filter == 'in_progress' %}active{% endif %}">
+                <span class="filter-dot filter-dot-in_progress"></span>
+                In Progress
+            </a>
+            <a href="{{ url_for('bookings', status='completed') }}" class="filter-btn {% if status_filter == 'completed' %}active{% endif %}">
+                <span class="filter-dot filter-dot-completed"></span>
+                Completed
+            </a>
+            <a href="{{ url_for('bookings', status='cancelled') }}" class="filter-btn {% if status_filter == 'cancelled' %}active{% endif %}">
+                <span class="filter-dot filter-dot-cancelled"></span>
+                Cancelled
+            </a>
         </div>
     </div>
 
     {% if bookings %}
-    <table class="bookings-table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Customer</th>
-                <th>Phone</th>
-                <th>Email</th>
-                <th>Service</th>
-                <th>Bags</th>
-                <th>Total</th>
-                <th>Status</th>
-                <th>Pickup Date</th>
-                <th>Created</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for booking in bookings %}
-            <tr>
-                <td>#{{ booking.id }}</td>
-                <td>{{ booking.name }}</td>
-                <td>{{ booking.phone }}</td>
-                <td>{{ booking.email }}</td>
-                <td>{{ booking.service }}</td>
-                <td>{{ booking.numberOfBags }}</td>
-                <td>${{ "%.2f"|format(booking.totalPrice / 100) }}</td>
-                <td><span class="status-badge status-{{ booking.status }}">{{ booking.status }}</span></td>
-                <td>{{ booking.pickupDate }} {{ booking.pickupTime }}</td>
-                <td>{{ booking.createdAt[:10] }}</td>
-                <td>
-                    <a href="{{ url_for('booking_detail', booking_id=booking.id) }}" class="btn-small">View</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="table-container">
+        <table class="bookings-table">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Customer</th>
+                    <th>Contact</th>
+                    <th>Service</th>
+                    <th>Bags</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Pickup</th>
+                    <th>Created</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for booking in bookings %}
+                <tr>
+                    <td>
+                        <span class="order-id">#{{ booking.id }}</span>
+                    </td>
+                    <td>
+                        <div class="customer-info">
+                            <span class="customer-name">{{ booking.name }}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="contact-info">
+                            <span class="contact-phone">{{ booking.phone }}</span>
+                            <span class="contact-email">{{ booking.email }}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="service-type">{{ booking.service }}</span>
+                    </td>
+                    <td>
+                        <span class="bags-count">{{ booking.numberOfBags }}</span>
+                    </td>
+                    <td>
+                        <span class="price">${{ "%.2f"|format(booking.totalPrice / 100) }}</span>
+                    </td>
+                    <td>
+                        <span class="status-badge status-{{ booking.status }}">{{ booking.status.replace('_', ' ') }}</span>
+                    </td>
+                    <td>
+                        <div class="pickup-info">
+                            <span class="pickup-date">{{ booking.pickupDate }}</span>
+                            <span class="pickup-time">{{ booking.pickupTime }}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="created-date">{{ booking.createdAt[:10] }}</span>
+                    </td>
+                    <td>
+                        <a href="{{ url_for('booking_detail', booking_id=booking.id) }}" class="btn-small">
+                            View
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="table-footer">
+        <p class="results-count">Showing <strong>{{ bookings|length }}</strong> booking{% if bookings|length != 1 %}s{% endif %}</p>
+    </div>
     {% else %}
-    <p class="no-data">No bookings found</p>
+    <div class="empty-state">
+        <div class="empty-icon">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+            </svg>
+        </div>
+        <h3>No bookings found</h3>
+        <p>{% if status_filter != 'all' %}There are no {{ status_filter.replace('_', ' ') }} bookings{% else %}No bookings have been made yet{% endif %}</p>
+        {% if status_filter != 'all' %}
+        <a href="{{ url_for('bookings', status='all') }}" class="btn-secondary">View all bookings</a>
+        {% endif %}
+    </div>
     {% endif %}
 </div>
+
+<style>
+    .page-title {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .page-subtitle {
+        color: var(--gray-500);
+        font-size: 0.9375rem;
+        margin-top: 0.25rem;
+    }
+
+    /* Filter dots */
+    .filter-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 6px;
+    }
+
+    .filter-dot-pending { background: var(--warning-500); }
+    .filter-dot-confirmed { background: var(--primary-500); }
+    .filter-dot-in_progress { background: var(--purple-500); }
+    .filter-dot-completed { background: var(--success-500); }
+    .filter-dot-cancelled { background: var(--danger-500); }
+
+    .filter-btn.active .filter-dot {
+        background: white;
+    }
+
+    /* Table Container */
+    .table-container {
+        background: white;
+        border-radius: var(--radius-xl);
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--gray-100);
+        overflow: hidden;
+    }
+
+    .table-container .bookings-table {
+        border: none;
+        box-shadow: none;
+        border-radius: 0;
+    }
+
+    /* Order ID */
+    .order-id {
+        font-family: var(--font-mono);
+        font-weight: 600;
+        color: var(--gray-900);
+    }
+
+    /* Customer Info */
+    .customer-info {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .customer-name {
+        font-weight: 500;
+        color: var(--gray-900);
+    }
+
+    /* Contact Info */
+    .contact-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.125rem;
+    }
+
+    .contact-phone {
+        font-size: 0.875rem;
+        color: var(--gray-700);
+    }
+
+    .contact-email {
+        font-size: 0.75rem;
+        color: var(--gray-400);
+    }
+
+    /* Service Type */
+    .service-type {
+        font-size: 0.875rem;
+        color: var(--gray-700);
+        text-transform: capitalize;
+    }
+
+    /* Bags Count */
+    .bags-count {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 28px;
+        height: 28px;
+        background: var(--gray-100);
+        border-radius: var(--radius-md);
+        font-weight: 600;
+        font-size: 0.875rem;
+        color: var(--gray-700);
+    }
+
+    /* Price */
+    .price {
+        font-family: var(--font-mono);
+        font-weight: 600;
+        color: var(--gray-900);
+    }
+
+    /* Pickup Info */
+    .pickup-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.125rem;
+    }
+
+    .pickup-date {
+        font-size: 0.875rem;
+        color: var(--gray-700);
+    }
+
+    .pickup-time {
+        font-size: 0.75rem;
+        color: var(--gray-400);
+    }
+
+    /* Created Date */
+    .created-date {
+        font-size: 0.875rem;
+        color: var(--gray-500);
+    }
+
+    /* Table Footer */
+    .table-footer {
+        padding: 1rem 1.5rem;
+        background: white;
+        border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+        border: 1px solid var(--gray-100);
+        border-top: none;
+        margin-top: -1px;
+    }
+
+    .results-count {
+        font-size: 0.875rem;
+        color: var(--gray-500);
+    }
+
+    .results-count strong {
+        color: var(--gray-700);
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: white;
+        border-radius: var(--radius-xl);
+        border: 1px solid var(--gray-100);
+    }
+
+    .empty-icon {
+        margin-bottom: 1.5rem;
+        color: var(--gray-300);
+    }
+
+    .empty-state h3 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: var(--gray-900);
+        margin-bottom: 0.5rem;
+    }
+
+    .empty-state p {
+        color: var(--gray-500);
+        margin-bottom: 1.5rem;
+    }
+
+    @media (max-width: 1200px) {
+        .bookings-table .contact-email {
+            display: none;
+        }
+    }
+
+    @media (max-width: 992px) {
+        .bookings-table th:nth-child(3),
+        .bookings-table td:nth-child(3),
+        .bookings-table th:nth-child(9),
+        .bookings-table td:nth-child(9) {
+            display: none;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .filters {
+            width: 100%;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .filter-btn {
+            white-space: nowrap;
+        }
+
+        .bookings-table th:nth-child(4),
+        .bookings-table td:nth-child(4),
+        .bookings-table th:nth-child(8),
+        .bookings-table td:nth-child(8) {
+            display: none;
+        }
+    }
+</style>
 {% endblock %}
