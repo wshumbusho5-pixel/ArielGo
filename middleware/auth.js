@@ -55,17 +55,45 @@ function requireDriverAuth(req, res, next) {
 }
 
 /**
+ * Middleware to require user (customer) authentication
+ * Checks if request has valid user session
+ * Returns 401 if not authenticated
+ */
+function requireAuth(req, res, next) {
+  if (!req.session || !req.session.user) {
+    return res.status(401).json({
+      success: false,
+      error: 'Authentication required. Please login to use AI assistant.',
+      requireLogin: true
+    });
+  }
+
+  next();
+}
+
+/**
  * Check if request has authenticated driver session
  * @param {object} req - Express request object
  * @returns {boolean} - True if authenticated
  */
-function isAuthenticated(req) {
+function isDriverAuthenticated(req) {
   return req.session && req.session.driver && req.session.driver.is_active;
+}
+
+/**
+ * Check if request has authenticated user (customer) session
+ * @param {object} req - Express request object
+ * @returns {boolean} - True if authenticated
+ */
+function isUserAuthenticated(req) {
+  return req.session && req.session.user;
 }
 
 module.exports = {
   hashPassword,
   verifyPassword,
   requireDriverAuth,
-  isAuthenticated
+  requireAuth,
+  isDriverAuthenticated,
+  isUserAuthenticated
 };

@@ -6,9 +6,9 @@
     const chatHTML = `
         <div id="ai-chat-widget" class="ai-chat-widget">
             <!-- Chat Button -->
-            <button id="chat-toggle" class="chat-toggle" aria-label="Open AI Assistant">
-                <span class="chat-icon">🤖</span>
-                <span class="chat-text">Chat with AI</span>
+            <button id="chat-toggle" class="chat-toggle" aria-label="Chat with us">
+                <span class="chat-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg></span>
+                <span class="chat-text">Chat with us</span>
                 <span class="chat-pulse"></span>
             </button>
 
@@ -16,9 +16,9 @@
             <div id="chat-window" class="chat-window">
                 <div class="chat-header">
                     <div class="chat-header-left">
-                        <div class="chat-avatar">🤖</div>
+                        <div class="chat-avatar">A</div>
                         <div>
-                            <div class="chat-title">ArielAssist</div>
+                            <div class="chat-title">Ariel Support</div>
                             <div class="chat-status">
                                 <span class="status-dot"></span>
                                 Online
@@ -30,17 +30,15 @@
 
                 <div class="chat-messages" id="chat-messages">
                     <div class="message ai-message">
-                        <div class="message-avatar">🤖</div>
+                        <div class="message-avatar">A</div>
                         <div class="message-content">
                             <div class="message-bubble">
-                                Hi! I'm ArielAssist, your AI laundry concierge. I can help you:
+                                Hey! How can we help you today? We can assist with:
                                 <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
-                                    <li>Book a pickup</li>
-                                    <li>Track your order</li>
-                                    <li>Answer questions</li>
-                                    <li>Manage your account</li>
+                                    <li>Booking a pickup</li>
+                                    <li>Tracking your order</li>
+                                    <li>Questions about service</li>
                                 </ul>
-                                How can I help you today?
                             </div>
                             <div class="message-time">Just now</div>
                         </div>
@@ -475,7 +473,7 @@
 
             const messageHTML = `
                 <div class="message ai-message">
-                    <div class="message-avatar">🤖</div>
+                    <div class="message-avatar">A</div>
                     <div class="message-content">
                         <div class="message-bubble">${response}</div>
                         <div class="message-time">Just now</div>

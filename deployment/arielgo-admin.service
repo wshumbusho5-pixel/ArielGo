@@ -1,0 +1,24 @@
+[Unit]
+Description=ArielGo Admin Dashboard (Flask)
+Documentation=https://github.com/yourusername/arielgo
+After=network.target postgresql.service
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/arielgo/admin
+Environment=FLASK_APP=app.py
+Environment=FLASK_ENV=production
+ExecStart=/usr/bin/python3 -m gunicorn --bind 0.0.0.0:5002 --workers 2 app:app
+Restart=always
+RestartSec=10
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=arielgo-admin
+
+# Security
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

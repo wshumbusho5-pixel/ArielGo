@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Dashboard - ArielGo</title>
 
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="My Dashboard - ArielGo">
+    <meta property="og:description" content="Manage your laundry orders and account settings on ArielGo.">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -325,6 +332,160 @@
                 gap: 0.5rem;
             }
         }
+
+        /* Rate Order Button */
+        .rate-order-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+            margin-top: 1rem;
+            padding: 0.75rem 1rem;
+            background: rgba(78, 169, 255, 0.1);
+            border: 1px solid rgba(78, 169, 255, 0.2);
+            border-radius: 10px;
+            color: var(--color-blue);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .rate-order-btn:hover {
+            background: rgba(78, 169, 255, 0.15);
+            transform: translateY(-1px);
+        }
+
+        /* Rating Modal */
+        .rating-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .rating-modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .rating-modal {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .rating-modal-overlay.show .rating-modal {
+            transform: scale(1);
+        }
+
+        .rating-modal h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 0.5rem;
+        }
+
+        .rating-modal p {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-star-rating {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-star {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            color: #cbd5e1;
+            transition: all 0.2s ease;
+        }
+
+        .modal-star:hover,
+        .modal-star.active {
+            color: #fbbf24;
+            transform: scale(1.1);
+        }
+
+        .modal-star.active svg {
+            fill: #fbbf24;
+        }
+
+        .modal-comment {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid rgba(78, 169, 255, 0.2);
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            resize: none;
+            margin-bottom: 1rem;
+        }
+
+        .modal-comment:focus {
+            outline: none;
+            border-color: var(--color-blue);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .modal-btn-cancel {
+            background: #f1f5f9;
+            border: none;
+            color: #64748b;
+        }
+
+        .modal-btn-submit {
+            background: var(--gradient-primary);
+            border: none;
+            color: white;
+        }
+
+        .modal-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .modal-success {
+            padding: 1rem 0;
+        }
+
+        .modal-success svg {
+            margin-bottom: 1rem;
+        }
     </style>
 </head>
 <body>
@@ -366,6 +527,60 @@
 
             <div id="ordersContainer">
                 <div class="loading">Loading your orders...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rating Modal -->
+    <div class="rating-modal-overlay" id="ratingModal">
+        <div class="rating-modal">
+            <div id="ratingContent">
+                <h3>How was your experience?</h3>
+                <p>Your feedback helps us improve our service</p>
+
+                <div class="modal-star-rating" id="modalStars">
+                    <button class="modal-star" data-rating="1">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                        </svg>
+                    </button>
+                    <button class="modal-star" data-rating="2">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                        </svg>
+                    </button>
+                    <button class="modal-star" data-rating="3">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                        </svg>
+                    </button>
+                    <button class="modal-star" data-rating="4">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                        </svg>
+                    </button>
+                    <button class="modal-star" data-rating="5">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                        </svg>
+                    </button>
+                </div>
+
+                <textarea class="modal-comment" id="ratingComment" rows="3" placeholder="Tell us more about your experience (optional)..."></textarea>
+
+                <div class="modal-buttons">
+                    <button class="modal-btn modal-btn-cancel" onclick="closeRatingModal()">Cancel</button>
+                    <button class="modal-btn modal-btn-submit" onclick="submitRating()">Submit</button>
+                </div>
+            </div>
+
+            <div id="ratingSuccess" class="modal-success" style="display: none;">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M9 12l2 2 4-4"></path>
+                </svg>
+                <h3>Thank you!</h3>
+                <p>Your feedback has been submitted.</p>
             </div>
         </div>
     </div>
@@ -476,6 +691,12 @@
                             <div style="font-weight: 700; color: #4EA9FF;">$${(order.totalPrice / 100).toFixed(2)}</div>
                         </div>
                     </div>
+                    ${order.status === 'completed' ? `
+                        <button class="rate-order-btn" onclick="openRatingModal('${order.id}')">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                            Rate this order
+                        </button>
+                    ` : ''}
                 </div>
             `).join('');
 
@@ -516,6 +737,121 @@
             const date = new Date(dateStr);
             return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
         }
+
+        // Rating Modal Functions
+        let currentRatingOrderId = null;
+        let selectedRating = 0;
+
+        function openRatingModal(orderId) {
+            currentRatingOrderId = orderId;
+            selectedRating = 0;
+
+            // Reset modal state
+            document.getElementById('ratingContent').style.display = 'block';
+            document.getElementById('ratingSuccess').style.display = 'none';
+            document.getElementById('ratingComment').value = '';
+
+            // Reset stars
+            document.querySelectorAll('.modal-star').forEach(star => {
+                star.classList.remove('active');
+                star.querySelector('svg').style.fill = 'none';
+            });
+
+            // Show modal
+            document.getElementById('ratingModal').classList.add('show');
+        }
+
+        function closeRatingModal() {
+            document.getElementById('ratingModal').classList.remove('show');
+            currentRatingOrderId = null;
+            selectedRating = 0;
+        }
+
+        // Star rating interaction
+        document.getElementById('modalStars').addEventListener('click', (e) => {
+            const starBtn = e.target.closest('.modal-star');
+            if (!starBtn) return;
+
+            selectedRating = parseInt(starBtn.dataset.rating);
+
+            // Update star visuals
+            document.querySelectorAll('.modal-star').forEach(star => {
+                const rating = parseInt(star.dataset.rating);
+                if (rating <= selectedRating) {
+                    star.classList.add('active');
+                    star.querySelector('svg').style.fill = '#fbbf24';
+                } else {
+                    star.classList.remove('active');
+                    star.querySelector('svg').style.fill = 'none';
+                }
+            });
+        });
+
+        // Hover effects for stars
+        document.getElementById('modalStars').addEventListener('mouseover', (e) => {
+            const starBtn = e.target.closest('.modal-star');
+            if (!starBtn) return;
+
+            const hoverRating = parseInt(starBtn.dataset.rating);
+
+            document.querySelectorAll('.modal-star').forEach(star => {
+                const rating = parseInt(star.dataset.rating);
+                if (rating <= hoverRating) {
+                    star.querySelector('svg').style.fill = '#fbbf24';
+                } else if (rating > selectedRating) {
+                    star.querySelector('svg').style.fill = 'none';
+                }
+            });
+        });
+
+        document.getElementById('modalStars').addEventListener('mouseout', () => {
+            document.querySelectorAll('.modal-star').forEach(star => {
+                const rating = parseInt(star.dataset.rating);
+                if (rating <= selectedRating) {
+                    star.querySelector('svg').style.fill = '#fbbf24';
+                } else {
+                    star.querySelector('svg').style.fill = 'none';
+                }
+            });
+        });
+
+        async function submitRating() {
+            if (selectedRating === 0) {
+                alert('Please select a rating');
+                return;
+            }
+
+            const comment = document.getElementById('ratingComment').value.trim();
+
+            try {
+                // For now, we'll just show success (can be connected to API later)
+                console.log('Rating submitted:', {
+                    orderId: currentRatingOrderId,
+                    rating: selectedRating,
+                    comment: comment
+                });
+
+                // Show success message
+                document.getElementById('ratingContent').style.display = 'none';
+                document.getElementById('ratingSuccess').style.display = 'block';
+
+                // Close modal after delay
+                setTimeout(() => {
+                    closeRatingModal();
+                }, 2000);
+
+            } catch (error) {
+                console.error('Error submitting rating:', error);
+                alert('Failed to submit rating. Please try again.');
+            }
+        }
+
+        // Close modal when clicking overlay
+        document.getElementById('ratingModal').addEventListener('click', (e) => {
+            if (e.target.id === 'ratingModal') {
+                closeRatingModal();
+            }
+        });
 
         // Initialize
         async function init() {

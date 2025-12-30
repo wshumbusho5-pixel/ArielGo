@@ -116,6 +116,31 @@ function initializeDatabase() {
     db.run(`
         CREATE INDEX IF NOT EXISTS idx_user_email ON users(email)
     `);
+
+    // Create AI usage tracking table
+    db.run(`
+        CREATE TABLE IF NOT EXISTS ai_usage (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            user_email TEXT NOT NULL,
+            tokens_used INTEGER DEFAULT 0,
+            question TEXT,
+            response TEXT,
+            createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        )
+    `, (err) => {
+        if (err) {
+            console.error('Error creating ai_usage table:', err);
+        } else {
+            console.log('✅ AI usage tracking table ready');
+        }
+    });
+
+    // Create index on user_id and date for rate limiting queries
+    db.run(`
+        CREATE INDEX IF NOT EXISTS idx_ai_usage_user_date ON ai_usage(user_id, createdAt)
+    `);
 }
 
 /**
@@ -573,6 +598,89 @@ function getDriverOrders(driverId, status = null) {
 }
 
 /**
+ * Log AI usage for rate limiting and tracking
+ */
+function logAIUsage(userId, userEmail, tokensUsed, question, response) {
+    return new Promise((resolve, reject) => {
+        const sql = `
+            INSERT INTO ai_usage (user_id, user_email, tokens_used, question, response)
+            VALUES (?, ?, ?, ?, ?)
+        `;
+
+        db.run(sql, [userId, userEmail, tokensUsed, question, response], function(err) {
+            if (err) {
+                console.error('Error logging AI usage:', err);
+                reject(err);
+            } else {
+                resolve({ id: this.lastID });
+            }
+        });
+    });
+}
+
+/**
+ * Check AI usage limit for user (5 questions per day)
+ */
+function checkAIUsageLimit(userId) {
+    return new Promise((resolve, reject) => {
+        // Get usage count for today
+        const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+        const sql = `
+            SELECT COUNT(*) as count
+            FROM ai_usage
+            WHERE user_id = ?
+            AND DATE(createdAt) = DATE(?)
+        `;
+
+        db.get(sql, [userId, today], (err, row) => {
+            if (err) {
+                console.error('Error checking AI usage limit:', err);
+                reject(err);
+            } else {
+                const usageCount = row ? row.count : 0;
+                const limit = 5;
+                const remaining = Math.max(0, limit - usageCount);
+
+                resolve({
+                    allowed: usageCount < limit,
+                    usageCount: usageCount,
+                    limit: limit,
+                    remaining: remaining
+                });
+            }
+        });
+    });
+}
+
+/**
+ * Get AI usage stats for a user
+ */
+function getAIUsageStats(userId) {
+    return new Promise((resolve, reject) => {
+        const sql = `
+            SELECT
+                COUNT(*) as totalQuestions,
+                SUM(tokens_used) as totalTokens,
+                DATE(createdAt) as date
+            FROM ai_usage
+            WHERE user_id = ?
+            GROUP BY DATE(createdAt)
+            ORDER BY date DESC
+            LIMIT 30
+        `;
+
+        db.all(sql, [userId], (err, rows) => {
+            if (err) {
+                console.error('Error getting AI usage stats:', err);
+                reject(err);
+            } else {
+                resolve(rows || []);
+            }
+        });
+    });
+}
+
+/**
  * Close database connection
  */
 function close() {
@@ -602,5 +710,8 @@ module.exports = {
     updateLastLogin,
     getBookingsByUserId,
     updateUser,
+    logAIUsage,
+    checkAIUsageLimit,
+    getAIUsageStats,
     close
 };

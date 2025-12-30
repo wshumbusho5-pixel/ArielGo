@@ -25,7 +25,7 @@ const aiAssistant = require('./services/ai-assistant');
 const bcrypt = require('bcrypt');
 const session = require('express-session');
 const SQLiteStore = require('connect-sqlite3')(session);
-const { requireDriverAuth } = require('./middleware/auth');
+const { requireDriverAuth, requireAuth } = require('./middleware/auth');
 const driverDb = require('./database/driver-db');
 
 // Create Express application
@@ -927,10 +927,12 @@ app.patch('/api/promo/:id/deactivate', async (req, res) => {
 // AI ASSISTANT ROUTES
 // ==================================
 
-// Chat with AI assistant
-app.post('/api/assistant/chat', async (req, res) => {
+// Chat with AI assistant (LOGGED-IN USERS ONLY, RATE LIMITED)
+app.post('/api/assistant/chat', requireAuth, async (req, res) => {
     try {
-        const { message, userEmail } = req.body;
+        const { message } = req.body;
+        const userId = req.session.user.id;
+        const userEmail = req.session.user.email;
 
         if (!message) {
             return res.status(400).json({
@@ -939,39 +941,62 @@ app.post('/api/assistant/chat', async (req, res) => {
             });
         }
 
+        // Check rate limit (5 questions per day)
+        const usageLimit = await db.checkAIUsageLimit(userId);
+
+        if (!usageLimit.allowed) {
+            return res.status(429).json({
+                success: false,
+                error: `Daily AI limit reached. You can ask ${usageLimit.limit} questions per day. Try again tomorrow!`,
+                usageCount: usageLimit.usageCount,
+                limit: usageLimit.limit,
+                remaining: 0
+            });
+        }
+
         // Build user context
         const context = {};
 
-        if (userEmail) {
-            // Get user's bookings
-            const allBookings = await db.getAllBookings();
-            const userBookings = allBookings.filter(b => b.email === userEmail);
+        // Get user's bookings
+        const userBookings = await db.getBookingsByUserId(userId);
 
-            // Get active orders
-            const activeOrders = userBookings.filter(b =>
-                ['pending', 'confirmed', 'in_progress'].includes(b.status)
-            );
+        // Get active orders
+        const activeOrders = userBookings.filter(b =>
+            ['pending', 'confirmed', 'in_progress'].includes(b.status)
+        );
 
-            // Build context
-            context.userEmail = userEmail;
-            context.activeOrders = activeOrders;
-            context.orderHistory = {
-                totalOrders: userBookings.length,
-                lastOrderDate: userBookings.length > 0
-                    ? userBookings.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0].pickupDate
-                    : null
-            };
-
-            // Add user name from most recent booking
-            if (userBookings.length > 0) {
-                context.userName = userBookings[0].name;
-            }
-        }
+        // Build context
+        context.userEmail = userEmail;
+        context.userName = req.session.user.name;
+        context.activeOrders = activeOrders;
+        context.orderHistory = {
+            totalOrders: userBookings.length,
+            lastOrderDate: userBookings.length > 0
+                ? userBookings.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0].pickupDate
+                : null
+        };
 
         // Get AI response
-        const response = await aiAssistant.chat(message, context);
+        const aiResponse = await aiAssistant.chat(message, context);
 
-        res.json(response);
+        // Log AI usage if successful
+        if (aiResponse.success) {
+            await db.logAIUsage(
+                userId,
+                userEmail,
+                aiResponse.tokensUsed || 0,
+                message,
+                aiResponse.message
+            );
+        }
+
+        // Add remaining questions to response
+        const newLimit = await db.checkAIUsageLimit(userId);
+        aiResponse.remaining = newLimit.remaining;
+        aiResponse.usageCount = newLimit.usageCount;
+        aiResponse.limit = newLimit.limit;
+
+        res.json(aiResponse);
 
     } catch (error) {
         console.error('Error in AI chat:', error);
@@ -982,29 +1007,30 @@ app.post('/api/assistant/chat', async (req, res) => {
     }
 });
 
-// Get conversation suggestions
-app.post('/api/assistant/suggestions', async (req, res) => {
+// Get conversation suggestions (LOGGED-IN USERS ONLY)
+app.post('/api/assistant/suggestions', requireAuth, async (req, res) => {
     try {
-        const { userEmail } = req.body;
+        const userId = req.session.user.id;
 
         // Build user context
         const context = {};
+        const userBookings = await db.getBookingsByUserId(userId);
+        const activeOrders = userBookings.filter(b =>
+            ['pending', 'confirmed', 'in_progress'].includes(b.status)
+        );
 
-        if (userEmail) {
-            const allBookings = await db.getAllBookings();
-            const userBookings = allBookings.filter(b => b.email === userEmail);
-            const activeOrders = userBookings.filter(b =>
-                ['pending', 'confirmed', 'in_progress'].includes(b.status)
-            );
-
-            context.activeOrders = activeOrders;
-        }
+        context.activeOrders = activeOrders;
 
         const suggestions = aiAssistant.getSuggestions(context);
 
+        // Check usage limit to show remaining questions
+        const usageLimit = await db.checkAIUsageLimit(userId);
+
         res.json({
             success: true,
-            suggestions: suggestions
+            suggestions: suggestions,
+            remaining: usageLimit.remaining,
+            limit: usageLimit.limit
         });
 
     } catch (error) {
@@ -1016,13 +1042,31 @@ app.post('/api/assistant/suggestions', async (req, res) => {
     }
 });
 
-// Get laundry care tip
+// Get laundry care tip (PUBLIC - no login required, but rate limited)
 app.get('/api/assistant/tip', async (req, res) => {
     try {
-        const topic = req.query.topic || null;
-        const result = await aiAssistant.getLaundryCareTip(topic);
+        // Tips are free and don't count toward user limit
+        // But we'll only generate them occasionally to save costs
 
-        res.json(result);
+        // For now, return static tips instead of AI-generated
+        const staticTips = [
+            "Always check garment care labels before washing to prevent damage.",
+            "Separate whites from colors to prevent color bleeding in the wash.",
+            "Turn jeans inside out before washing to preserve color and prevent fading.",
+            "Use cold water for most loads to save energy and prevent shrinking.",
+            "Don't overload your washing machine - clothes need room to get clean.",
+            "Remove clothes from the dryer promptly to prevent wrinkles.",
+            "Clean your lint trap after every load for efficiency and safety.",
+            "Pre-treat stains as soon as possible for best results."
+        ];
+
+        const randomTip = staticTips[Math.floor(Math.random() * staticTips.length)];
+
+        res.json({
+            success: true,
+            tip: randomTip,
+            provider: 'static'
+        });
 
     } catch (error) {
         console.error('Error getting laundry tip:', error);
