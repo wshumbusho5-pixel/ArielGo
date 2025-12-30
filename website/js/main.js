@@ -14,6 +14,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Set minimum date for pickup (today)
     setMinimumPickupDate();
+
+    // Initialize service type switching
+    initServiceTypeSwitching();
+
+    // Initialize quantity controls
+    initQuantityControls();
 });
 
 // ==================================
@@ -131,9 +137,26 @@ async function handleBooking(formData) {
     submitButton.textContent = 'Processing...';
 
     try {
-        // Get number of bags from form field
-        const bagsInput = document.getElementById('bags') || document.querySelector('input[name="bags"]');
-        formData.numberOfBags = bagsInput ? parseInt(bagsInput.value) || 1 : 1;
+        // Check service type and get appropriate quantity data
+        const serviceType = formData.service;
+
+        if (serviceType === 'dry-cleaning' || serviceType === 'specialty') {
+            // Per-item services - get selected items
+            const selectedItems = getSelectedItems();
+            if (selectedItems.length === 0) {
+                alert('Please select at least one item.');
+                submitButton.disabled = false;
+                submitButton.textContent = originalButtonText;
+                return;
+            }
+            formData.items = selectedItems;
+            formData.numberOfBags = 0; // Not applicable for per-item services
+        } else {
+            // Wash & Fold - get number of bags
+            const bagsInput = document.getElementById('bags') || document.querySelector('input[name="bags"]');
+            formData.numberOfBags = bagsInput ? parseInt(bagsInput.value) || 1 : 1;
+            formData.items = [];
+        }
 
         // Send booking to backend
         const response = await fetch('/api/bookings', {
@@ -212,30 +235,173 @@ function getTimeDisplay(timeValue) {
 // FUTURE ENHANCEMENTS (Coming Soon)
 // ==================================
 
-/*
- * TODO: Add these features as you learn more:
- *
- * 1. BACKEND INTEGRATION
- *    - Replace mailto with actual form submission to a server
- *    - Store bookings in a database
- *    - Send automated confirmation emails
- *
- * 2. PAYMENT INTEGRATION
- *    - Add Stripe or Square for payment processing
- *    - Allow prepayment or save card info
- *
- * 3. REAL-TIME FEATURES
- *    - Show available pickup time slots
- *    - Live driver tracking
- *    - SMS/email notifications
- *
- * 4. USER ACCOUNTS
- *    - Customer login/signup
- *    - Order history
- *    - Saved addresses and preferences
- *
- * 5. ANALYTICS
- *    - Track which services are most popular
- *    - Monitor conversion rates
- *    - A/B test different pricing displays
- */
+// ==================================
+// SERVICE TYPE SWITCHING
+// ==================================
+function initServiceTypeSwitching() {
+    const serviceSelect = document.getElementById('service');
+    if (!serviceSelect) return;
+
+    serviceSelect.addEventListener('change', function() {
+        const selectedService = this.value;
+
+        // Get all sections
+        const bagsSection = document.getElementById('bags-section');
+        const dryCleaningSection = document.getElementById('dry-cleaning-section');
+        const specialtySection = document.getElementById('specialty-section');
+        const orderSummary = document.getElementById('order-summary');
+
+        // Hide all sections first
+        if (bagsSection) bagsSection.style.display = 'none';
+        if (dryCleaningSection) dryCleaningSection.style.display = 'none';
+        if (specialtySection) specialtySection.style.display = 'none';
+        if (orderSummary) orderSummary.style.display = 'none';
+
+        // Reset all item quantities when switching service
+        document.querySelectorAll('.item-qty').forEach(input => {
+            input.value = 0;
+            input.closest('.item-selector').classList.remove('has-quantity');
+        });
+
+        // Show appropriate section based on service type
+        if (selectedService === 'standard' || selectedService === 'same-day' || selectedService === 'rush') {
+            // Wash & Fold - show bags section
+            if (bagsSection) bagsSection.style.display = 'block';
+        } else if (selectedService === 'dry-cleaning') {
+            // Dry Cleaning - show item selection
+            if (dryCleaningSection) dryCleaningSection.style.display = 'block';
+            if (orderSummary) orderSummary.style.display = 'block';
+        } else if (selectedService === 'specialty') {
+            // Specialty Items - show specialty selection
+            if (specialtySection) specialtySection.style.display = 'block';
+            if (orderSummary) orderSummary.style.display = 'block';
+        }
+
+        // Update order summary
+        updateOrderSummary();
+    });
+}
+
+// ==================================
+// QUANTITY CONTROLS
+// ==================================
+function initQuantityControls() {
+    // Handle +/- button clicks
+    document.querySelectorAll('.qty-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const action = this.dataset.action;
+            const quantityControl = this.closest('.quantity-control');
+            const input = quantityControl.querySelector('.item-qty');
+            const itemSelector = this.closest('.item-selector');
+
+            let currentValue = parseInt(input.value) || 0;
+            const min = parseInt(input.min) || 0;
+            const max = parseInt(input.max) || 99;
+
+            if (action === 'plus' && currentValue < max) {
+                currentValue++;
+            } else if (action === 'minus' && currentValue > min) {
+                currentValue--;
+            }
+
+            input.value = currentValue;
+
+            // Toggle has-quantity class for styling
+            if (currentValue > 0) {
+                itemSelector.classList.add('has-quantity');
+            } else {
+                itemSelector.classList.remove('has-quantity');
+            }
+
+            // Update order summary
+            updateOrderSummary();
+        });
+    });
+
+    // Handle manual input changes
+    document.querySelectorAll('.item-qty').forEach(input => {
+        input.addEventListener('change', function() {
+            const itemSelector = this.closest('.item-selector');
+            const currentValue = parseInt(this.value) || 0;
+
+            if (currentValue > 0) {
+                itemSelector.classList.add('has-quantity');
+            } else {
+                itemSelector.classList.remove('has-quantity');
+            }
+
+            updateOrderSummary();
+        });
+    });
+}
+
+// ==================================
+// ORDER SUMMARY
+// ==================================
+function updateOrderSummary() {
+    const summaryItems = document.getElementById('summary-items');
+    const summaryTotal = document.getElementById('summary-total-amount');
+    const orderSummary = document.getElementById('order-summary');
+
+    if (!summaryItems || !summaryTotal) return;
+
+    // Get all items with quantity > 0
+    const selectedItems = [];
+    let total = 0;
+
+    document.querySelectorAll('.item-qty').forEach(input => {
+        const qty = parseInt(input.value) || 0;
+        if (qty > 0) {
+            const itemSelector = input.closest('.item-selector');
+            const itemName = itemSelector.querySelector('.item-name').textContent;
+            const priceInCents = parseInt(input.dataset.price) || 0;
+            const itemTotal = qty * priceInCents;
+
+            selectedItems.push({
+                name: itemName,
+                qty: qty,
+                price: priceInCents,
+                total: itemTotal
+            });
+
+            total += itemTotal;
+        }
+    });
+
+    // Update summary display
+    if (selectedItems.length > 0) {
+        summaryItems.innerHTML = selectedItems.map(item => `
+            <div class="summary-item">
+                <span class="summary-item-name">${item.name}</span>
+                <span class="summary-item-qty">x${item.qty}</span>
+                <span class="summary-item-price">$${(item.total / 100).toFixed(2)}</span>
+            </div>
+        `).join('');
+
+        summaryTotal.textContent = `$${(total / 100).toFixed(2)}`;
+        if (orderSummary) orderSummary.style.display = 'block';
+    } else {
+        summaryItems.innerHTML = '<p style="color: #9ca3af; font-size: 0.85rem;">No items selected yet</p>';
+        summaryTotal.textContent = '$0.00';
+    }
+}
+
+// ==================================
+// GET SELECTED ITEMS FOR FORM SUBMISSION
+// ==================================
+function getSelectedItems() {
+    const items = [];
+    document.querySelectorAll('.item-qty').forEach(input => {
+        const qty = parseInt(input.value) || 0;
+        if (qty > 0) {
+            const itemSelector = input.closest('.item-selector');
+            items.push({
+                item: input.dataset.item,
+                name: itemSelector.querySelector('.item-name').textContent,
+                quantity: qty,
+                priceInCents: parseInt(input.dataset.price) || 0
+            });
+        }
+    });
+    return items;
+}

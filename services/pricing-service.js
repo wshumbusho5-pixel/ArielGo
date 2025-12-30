@@ -96,11 +96,12 @@ function getServicePricing(serviceType) {
 
 /**
  * Calculate total price for a booking
- * @param {string} serviceType - Type of service (standard, same-day, rush)
- * @param {number} numberOfBags - Number of bags to clean
+ * @param {string} serviceType - Type of service (standard, same-day, rush, dry-cleaning, specialty)
+ * @param {number} numberOfBags - Number of bags to clean (for wash & fold)
+ * @param {array} items - Array of items with quantities (for dry-cleaning/specialty)
  * @returns {object} Pricing breakdown
  */
-function calculateBookingTotal(serviceType, numberOfBags) {
+function calculateBookingTotal(serviceType, numberOfBags, items = []) {
     // Validate service type
     if (!PRICING[serviceType]) {
         return {
@@ -109,6 +110,14 @@ function calculateBookingTotal(serviceType, numberOfBags) {
         };
     }
 
+    const service = PRICING[serviceType];
+
+    // Handle per-item pricing (dry-cleaning and specialty)
+    if (service.pricingType === 'per-item') {
+        return calculateItemTotal(serviceType, items);
+    }
+
+    // Handle per-bag pricing (wash & fold)
     // Validate number of bags
     if (!numberOfBags || numberOfBags < 1) {
         return {
@@ -117,22 +126,98 @@ function calculateBookingTotal(serviceType, numberOfBags) {
         };
     }
 
-    const pricePerBag = PRICING[serviceType].pricePerBag;
+    const pricePerBag = service.pricePerBag;
     const totalCents = pricePerBag * numberOfBags;
 
     return {
         success: true,
         serviceType: serviceType,
-        serviceName: PRICING[serviceType].name,
+        serviceName: service.name,
+        pricingType: 'per-bag',
         pricePerBag: pricePerBag,
         pricePerBagDollars: (pricePerBag / 100).toFixed(2),
         numberOfBags: numberOfBags,
         total: totalCents,
         totalDollars: (totalCents / 100).toFixed(2),
-        turnaround: PRICING[serviceType].turnaround,
+        turnaround: service.turnaround,
         breakdown: {
-            basePrice: `${PRICING[serviceType].displayPrice} per bag`,
+            basePrice: `${service.displayPrice} per bag`,
             quantity: `${numberOfBags} bag${numberOfBags > 1 ? 's' : ''}`,
+            total: `$${(totalCents / 100).toFixed(2)}`
+        }
+    };
+}
+
+/**
+ * Calculate total for per-item services (dry-cleaning, specialty)
+ * @param {string} serviceType - Type of service
+ * @param {array} items - Array of items [{item: 'dress-shirt', quantity: 2}, ...]
+ * @returns {object} Pricing breakdown
+ */
+function calculateItemTotal(serviceType, items) {
+    const service = PRICING[serviceType];
+
+    if (!items || items.length === 0) {
+        return {
+            success: false,
+            error: 'No items selected. Please select at least one item.'
+        };
+    }
+
+    let totalCents = 0;
+    const itemBreakdown = [];
+
+    for (const selectedItem of items) {
+        const itemKey = selectedItem.item;
+        const quantity = parseInt(selectedItem.quantity) || 0;
+
+        if (quantity <= 0) continue;
+
+        // Check if price is provided in the request (from frontend)
+        let pricePerItem;
+        if (selectedItem.priceInCents) {
+            pricePerItem = selectedItem.priceInCents;
+        } else if (service.items && service.items[itemKey]) {
+            pricePerItem = service.items[itemKey].price;
+        } else {
+            // Unknown item, skip
+            continue;
+        }
+
+        const itemTotal = pricePerItem * quantity;
+        totalCents += itemTotal;
+
+        const itemName = selectedItem.name || (service.items[itemKey] ? service.items[itemKey].name : itemKey);
+        itemBreakdown.push({
+            item: itemKey,
+            name: itemName,
+            quantity: quantity,
+            pricePerItem: pricePerItem,
+            pricePerItemDollars: (pricePerItem / 100).toFixed(2),
+            total: itemTotal,
+            totalDollars: (itemTotal / 100).toFixed(2)
+        });
+    }
+
+    if (itemBreakdown.length === 0) {
+        return {
+            success: false,
+            error: 'No valid items found. Please select at least one item.'
+        };
+    }
+
+    return {
+        success: true,
+        serviceType: serviceType,
+        serviceName: service.name,
+        pricingType: 'per-item',
+        items: itemBreakdown,
+        itemCount: itemBreakdown.reduce((sum, item) => sum + item.quantity, 0),
+        total: totalCents,
+        totalDollars: (totalCents / 100).toFixed(2),
+        turnaround: service.turnaround,
+        breakdown: {
+            items: itemBreakdown.map(item => `${item.name} x${item.quantity}: $${item.totalDollars}`),
             total: `$${(totalCents / 100).toFixed(2)}`
         }
     };
