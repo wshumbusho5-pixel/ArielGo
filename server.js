@@ -293,6 +293,14 @@ app.get('/api/bookings/:id', async (req, res) => {
             });
         }
 
+        // Store tracked booking in session for anonymous messaging
+        if (!req.session.trackedBookings) {
+            req.session.trackedBookings = [];
+        }
+        if (!req.session.trackedBookings.includes(parseInt(bookingId))) {
+            req.session.trackedBookings.push(parseInt(bookingId));
+        }
+
         res.json({
             success: true,
             booking: booking
@@ -1235,9 +1243,10 @@ app.get('/api/messages/:bookingId', async (req, res) => {
     try {
         const bookingId = parseInt(req.params.bookingId);
 
-        // Determine who is requesting (driver or customer)
+        // Determine who is requesting (driver, logged-in customer, or anonymous tracker)
         let readerType = null;
         let readerId = null;
+        let isAnonymousTracker = false;
 
         if (req.session.driver) {
             readerType = 'driver';
@@ -1245,10 +1254,14 @@ app.get('/api/messages/:bookingId', async (req, res) => {
         } else if (req.session.user) {
             readerType = 'customer';
             readerId = req.session.user.id;
+        } else if (req.session.trackedBookings && req.session.trackedBookings.includes(bookingId)) {
+            // Anonymous user who has tracked this booking
+            readerType = 'customer';
+            isAnonymousTracker = true;
         } else {
             return res.status(401).json({
                 success: false,
-                error: 'Authentication required'
+                error: 'Authentication required. Please track your order first.'
             });
         }
 
@@ -1262,7 +1275,7 @@ app.get('/api/messages/:bookingId', async (req, res) => {
         }
 
         // Verify access: drivers assigned to order, or customer who owns order
-        if (readerType === 'customer' && booking.user_id !== readerId) {
+        if (readerType === 'customer' && !isAnonymousTracker && booking.user_id !== readerId) {
             return res.status(403).json({
                 success: false,
                 error: 'Access denied'
@@ -1321,9 +1334,10 @@ app.post('/api/messages/:bookingId', async (req, res) => {
             });
         }
 
-        // Determine sender
+        // Determine sender (driver, logged-in customer, or anonymous tracker)
         let senderType = null;
         let senderId = null;
+        let isAnonymousTracker = false;
 
         if (req.session.driver) {
             senderType = 'driver';
@@ -1331,10 +1345,15 @@ app.post('/api/messages/:bookingId', async (req, res) => {
         } else if (req.session.user) {
             senderType = 'customer';
             senderId = req.session.user.id;
+        } else if (req.session.trackedBookings && req.session.trackedBookings.includes(bookingId)) {
+            // Anonymous user who has tracked this booking
+            senderType = 'customer';
+            senderId = 0; // Anonymous sender
+            isAnonymousTracker = true;
         } else {
             return res.status(401).json({
                 success: false,
-                error: 'Authentication required'
+                error: 'Authentication required. Please track your order first.'
             });
         }
 
@@ -1355,8 +1374,8 @@ app.post('/api/messages/:bookingId', async (req, res) => {
             });
         }
 
-        // Verify access
-        if (senderType === 'customer' && booking.user_id !== senderId) {
+        // Verify access (skip for anonymous trackers - they verified by tracking)
+        if (senderType === 'customer' && !isAnonymousTracker && booking.user_id !== senderId) {
             return res.status(403).json({
                 success: false,
                 error: 'Access denied'

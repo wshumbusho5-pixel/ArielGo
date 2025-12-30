@@ -1023,7 +1023,9 @@
             messageList.innerHTML = '<div class="message-empty">Loading messages...</div>';
 
             try {
-                const response = await fetch(`${API_BASE}/api/messages/${currentBooking.id}`);
+                const response = await fetch(`${API_BASE}/api/messages/${currentBooking.id}`, {
+                    credentials: 'include'
+                });
                 const data = await response.json();
 
                 if (!data.success) {
@@ -1073,6 +1075,7 @@
                 const response = await fetch(`${API_BASE}/api/messages/${currentBooking.id}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
                     body: JSON.stringify({ message })
                 });
 
