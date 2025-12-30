@@ -15,8 +15,8 @@
         gsap.registerPlugin(ScrollTrigger);
 
         // ============================================
-        // HERO ZOOM EFFECT - "COMING AT YOU" 3D PULL
-        // Image starts deep and rushes toward viewer
+        // HERO ZOOM EFFECT - "COMING DOWN AT YOU"
+        // Image rushes DOWN and OUT toward the viewer
         // ============================================
 
         const heroImage = document.querySelector('.hero-banner-image');
@@ -24,13 +24,13 @@
         const heroContent = document.querySelector('.hero-banner-content');
 
         if (heroImage && heroBanner) {
-            // Start slightly pulled back - like it's deep in the screen
+            // Start pulled back in the screen
             gsap.set(heroImage, {
-                scale: 0.95,
-                filter: 'brightness(0.9)'
+                scale: 1,
+                y: 0
             });
 
-            // Create timeline for the "coming at you" effect
+            // Create timeline for the "coming down at you" effect
             const heroTimeline = gsap.timeline({
                 scrollTrigger: {
                     trigger: heroBanner,
@@ -40,20 +40,19 @@
                 }
             });
 
-            // Image RUSHES toward you - like coming out of the screen
+            // Image zooms OUT and moves DOWN - rushing toward your face
             heroTimeline.to(heroImage, {
-                scale: 1.8,
-                filter: 'brightness(1.1)',
-                ease: 'power2.in'
+                scale: 1.6,
+                y: 150,
+                ease: 'power1.in'
             }, 0);
 
-            // Content gets pushed back/swallowed as image rushes forward
+            // Content fades as image overtakes the screen
             if (heroContent) {
                 heroTimeline.to(heroContent, {
-                    scale: 0.8,
                     opacity: 0,
-                    y: 50,
-                    ease: 'power1.in'
+                    y: -50,
+                    ease: 'power1.out'
                 }, 0);
             }
         }
