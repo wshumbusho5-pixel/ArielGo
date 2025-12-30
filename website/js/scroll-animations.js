@@ -15,50 +15,40 @@
         gsap.registerPlugin(ScrollTrigger);
 
         // ============================================
-        // HERO ZOOM EFFECT - REACTIVE OPPOSITE ZOOM
-        // Image zooms OUT (bigger), Text zooms IN (smaller)
+        // HERO ZOOM EFFECT - FULL SCREEN PARALLAX ZOOM
+        // Image zooms in dramatically as you scroll
         // ============================================
 
         const heroImage = document.querySelector('.hero-banner-image');
-        const heroFrame = document.querySelector('.hero-image-frame');
         const heroBanner = document.querySelector('.hero-banner');
-        const heroText = document.querySelector('.hero-text');
+        const heroContent = document.querySelector('.hero-banner-content');
 
-        if (heroImage && heroBanner && heroFrame) {
-            // Set initial states
+        if (heroImage && heroBanner) {
+            // Set initial state
             gsap.set(heroImage, { scale: 1 });
-            gsap.set(heroText, { scale: 1, opacity: 1 });
 
-            // Create timeline for reactive zoom effect
+            // Create timeline for the zoom effect
             const heroTimeline = gsap.timeline({
                 scrollTrigger: {
                     trigger: heroBanner,
                     start: 'top top',
                     end: 'bottom top',
-                    scrub: 0.4
+                    scrub: 0.5
                 }
             });
 
-            // IMAGE ZOOMS OUT (gets bigger, comes toward you)
+            // Image zooms in as you scroll
             heroTimeline.to(heroImage, {
-                scale: 3,
-                ease: 'power1.in'
-            }, 0);
-
-            // Frame grows and lifts dramatically
-            heroTimeline.to(heroFrame, {
-                y: -60,
-                scale: 1.15,
+                scale: 1.3,
                 ease: 'none'
             }, 0);
 
-            // TEXT ZOOMS IN (gets smaller, recedes away) - OPPOSITE!
-            if (heroText) {
-                heroTimeline.to(heroText, {
-                    scale: 0.7,
+            // Content fades out and moves up
+            if (heroContent) {
+                heroTimeline.to(heroContent, {
+                    y: -100,
                     opacity: 0,
-                    y: -80,
-                    ease: 'power1.in'
+                    ease: 'none'
                 }, 0);
             }
         }
