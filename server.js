@@ -1455,6 +1455,35 @@ app.get('/api/messages/unread/count', async (req, res) => {
     }
 });
 
+// Get unread message count for a specific booking (customer)
+app.get('/api/messages/:bookingId/unread', async (req, res) => {
+    try {
+        const bookingId = parseInt(req.params.bookingId);
+
+        // Verify access
+        if (!req.session.user && !(req.session.trackedBookings && req.session.trackedBookings.includes(bookingId))) {
+            return res.status(401).json({
+                success: false,
+                error: 'Authentication required'
+            });
+        }
+
+        const count = await db.getUnreadMessageCount(bookingId, 'customer');
+
+        res.json({
+            success: true,
+            unreadCount: count
+        });
+
+    } catch (error) {
+        console.error('Error counting unread messages:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to count unread messages'
+        });
+    }
+});
+
 // ==================================
 // ERROR HANDLING
 // ==================================
