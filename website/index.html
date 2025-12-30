@@ -22,13 +22,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- GSAP Animation Library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-
-    <!-- Premium Scroll Animations CSS -->
-    <link rel="stylesheet" href="css/scroll-animations.css">
-
     <style>
         * {
             margin: 0;
@@ -1840,9 +1833,9 @@
 </head>
 <body>
     <div class="content-wrapper">
-        <nav class="navbar" data-navbar-scroll>
+        <nav class="navbar">
             <div class="navbar-inner">
-                <div class="logo" data-magnetic data-magnetic-strength="0.2">Ariel<span>Go</span></div>
+                <div class="logo">Ariel<span>Go</span></div>
                 <ul class="nav-links">
                     <li><a href="#features">Features</a></li>
                     <li><a href="#pricing">Pricing</a></li>
@@ -1854,7 +1847,7 @@
         </nav>
 
         <!-- Hero Banner with Parallax -->
-        <section class="hero-banner" data-parallax="image">
+        <section class="hero-banner">
             <img
                 src="https://images.unsplash.com/photo-1517677208171-0bc6725a3e60?w=1920&q=80"
                 alt="Fresh clean laundry"
@@ -1862,33 +1855,33 @@
                 id="parallaxImage"
             >
             <div class="hero-banner-overlay"></div>
-            <div class="hero-banner-content" data-reveal="up">
-                <h1 data-text-reveal="words">Fresh Laundry, Delivered with Care</h1>
-                <p data-reveal="up">We handle your laundry so you can focus on what matters most. Professional care, eco-friendly cleaning, and service that feels like family.</p>
-                <a href="#booking" class="hero-banner-cta hover-lift" data-magnetic>Schedule Your First Pickup</a>
+            <div class="hero-banner-content">
+                <h1>Fresh Laundry, Delivered with Care</h1>
+                <p>We handle your laundry so you can focus on what matters most. Professional care, eco-friendly cleaning, and service that feels like family.</p>
+                <a href="#booking" class="hero-banner-cta">Schedule Your First Pickup</a>
             </div>
         </section>
 
         <!-- How It Works Section -->
-        <section class="how-it-works">
+        <section class="how-it-works reveal">
             <div class="how-container">
-                <div class="how-header" data-reveal="up">
-                    <h2 data-text-reveal="words">Simple as 1-2-3</h2>
+                <div class="how-header">
+                    <h2>Simple as 1-2-3</h2>
                     <p>We've made the process effortless so you can focus on what truly matters.</p>
                 </div>
-                <div class="how-steps" data-stagger data-stagger-delay="0.15">
-                    <div class="how-step" data-tilt data-tilt-intensity="5">
-                        <div class="step-number" data-float data-float-intensity="5" data-float-duration="2">1</div>
+                <div class="how-steps stagger-children">
+                    <div class="how-step scroll-animate scroll-slide-left">
+                        <div class="step-number">1</div>
                         <h3>Book in Seconds</h3>
                         <p>Pick a time that works for you — morning, afternoon, or evening. No complicated forms, just a quick booking.</p>
                     </div>
-                    <div class="how-step" data-tilt data-tilt-intensity="5">
-                        <div class="step-number" data-float data-float-intensity="5" data-float-duration="2.5">2</div>
+                    <div class="how-step scroll-animate scroll-zoom-in">
+                        <div class="step-number">2</div>
                         <h3>We'll Be There</h3>
                         <p>A friendly driver arrives at your door. Hand off your bag and go about your day — we've got it from here.</p>
                     </div>
-                    <div class="how-step" data-tilt data-tilt-intensity="5">
-                        <div class="step-number" data-float data-float-intensity="5" data-float-duration="3">3</div>
+                    <div class="how-step scroll-animate scroll-slide-right">
+                        <div class="step-number">3</div>
                         <h3>Fresh & Ready</h3>
                         <p>Your clothes return clean, fresh, and neatly folded. It's like a little gift delivered right to your door.</p>
                     </div>
@@ -1896,22 +1889,22 @@
             </div>
         </section>
 
-        <section class="stats-section">
-            <div class="stats-container" data-stagger data-stagger-delay="0.1">
-                <div class="stat-card hover-lift" data-tilt data-tilt-intensity="8">
-                    <div class="stat-number" data-counter="24" data-counter-suffix="h">0h</div>
+        <section class="stats-section reveal">
+            <div class="stats-container stagger-children">
+                <div class="stat-card scroll-animate scroll-slide-left">
+                    <div class="stat-number">24h</div>
                     <div class="stat-label">Turnaround</div>
                 </div>
-                <div class="stat-card hover-lift" data-tilt data-tilt-intensity="8">
+                <div class="stat-card scroll-animate scroll-zoom-in">
                     <div class="stat-number">4.9</div>
                     <div class="stat-label">Rating</div>
                 </div>
-                <div class="stat-card hover-lift" data-tilt data-tilt-intensity="8">
-                    <div class="stat-number" data-counter="1000" data-counter-suffix="+">0+</div>
+                <div class="stat-card scroll-animate scroll-zoom-in">
+                    <div class="stat-number">1K+</div>
                     <div class="stat-label">Customers</div>
                 </div>
-                <div class="stat-card hover-lift" data-tilt data-tilt-intensity="8">
-                    <div class="stat-number" data-counter="99" data-counter-suffix="%">0%</div>
+                <div class="stat-card scroll-animate scroll-slide-right">
+                    <div class="stat-number">99%</div>
                     <div class="stat-label">On-Time</div>
                 </div>
             </div>
@@ -1961,15 +1954,15 @@
         </section>
 
         <!-- Our Story Section -->
-        <section class="story-section">
+        <section class="story-section reveal">
             <div class="story-container">
-                <div class="story-icon" data-reveal="scale" data-float data-float-intensity="8">
+                <div class="story-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                     </svg>
                 </div>
-                <h2 data-text-reveal="words">More Than Laundry. It's About Serving You Well.</h2>
-                <p class="story-lead" data-reveal="up">We believe in treating every garment with the same care we'd give our own — and treating every customer like a neighbor.</p>
+                <h2>More Than Laundry. It's About Serving You Well.</h2>
+                <p class="story-lead">We believe in treating every garment with the same care we'd give our own — and treating every customer like a neighbor.</p>
                 <p class="story-text">ArielGo started with a simple calling: to serve our community with excellence and integrity. We saw busy students, hardworking professionals, and families stretched thin — all needing a little help with the everyday. So we stepped in, not just to wash clothes, but to give you back something precious: your time.</p>
                 <p class="story-text">Every load we handle is washed with purpose. We use eco-friendly, plant-based detergents because caring for your clothes means caring for our planet too. Our team operates with honesty, reliability, and a genuine desire to make your day a little easier. That's not just business — it's how we believe life should be lived.</p>
 
@@ -2730,6 +2723,5 @@
 
     <script src="js/main.js"></script>
     <script src="js/floating-chat.js"></script>
-    <script src="js/scroll-animations.js"></script>
 </body>
 </html>
