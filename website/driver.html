@@ -453,6 +453,224 @@
             display: block;
         }
 
+        /* Message Button */
+        .btn-message {
+            background: #ede9fe;
+            color: #7c3aed;
+            position: relative;
+        }
+
+        .btn-message:hover {
+            background: #ddd6fe;
+        }
+
+        .unread-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: var(--color-danger);
+            color: white;
+            font-size: 0.65rem;
+            font-weight: 700;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Message Modal */
+        .message-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .message-modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .message-modal {
+            background: white;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+            box-shadow: var(--shadow-xl);
+        }
+
+        .message-modal-overlay.show .message-modal {
+            transform: scale(1);
+        }
+
+        .message-modal-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--color-gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .message-modal-header h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--color-gray-900);
+        }
+
+        .message-modal-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            color: var(--color-gray-400);
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .message-modal-close:hover {
+            background: var(--color-gray-100);
+            color: var(--color-gray-600);
+        }
+
+        .message-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem 1.5rem;
+            min-height: 200px;
+            max-height: 400px;
+        }
+
+        .message-item {
+            margin-bottom: 1rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message-item.sent {
+            align-items: flex-end;
+        }
+
+        .message-item.received {
+            align-items: flex-start;
+        }
+
+        .message-bubble {
+            max-width: 80%;
+            padding: 0.75rem 1rem;
+            border-radius: 16px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .message-item.sent .message-bubble {
+            background: linear-gradient(135deg, var(--color-blue) 0%, var(--color-blue-light) 100%);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message-item.received .message-bubble {
+            background: var(--color-gray-100);
+            color: var(--color-gray-900);
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-time {
+            font-size: 0.7rem;
+            color: var(--color-gray-400);
+            margin-top: 0.25rem;
+        }
+
+        .message-empty {
+            text-align: center;
+            padding: 2rem;
+            color: var(--color-gray-400);
+        }
+
+        .message-input-area {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--color-gray-200);
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--color-gray-200);
+            border-radius: 12px;
+            font-size: 0.9rem;
+            resize: none;
+            font-family: inherit;
+            background: var(--color-gray-50);
+        }
+
+        .message-input:focus {
+            outline: none;
+            border-color: var(--color-blue);
+            background: white;
+        }
+
+        .message-send-btn {
+            padding: 0.75rem 1.25rem;
+            background: linear-gradient(135deg, var(--color-blue) 0%, var(--color-blue-light) 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+        }
+
+        .message-send-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .message-send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Privacy Notice */
+        .privacy-notice {
+            background: #fef3c7;
+            border: 1px solid #fcd34d;
+            border-radius: 8px;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.75rem;
+            color: #92400e;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+        }
+
+        .privacy-notice svg {
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .stats-grid {
@@ -573,8 +791,39 @@
         </div>
     </div>
 
+    <!-- Message Modal -->
+    <div class="message-modal-overlay" id="messageModal">
+        <div class="message-modal">
+            <div class="message-modal-header">
+                <h3>Message Customer - <span id="messageCustomerName"></span></h3>
+                <button class="message-modal-close" onclick="closeMessageModal()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="message-list" id="messageList">
+                <div class="message-empty">Loading messages...</div>
+            </div>
+            <div class="message-input-area" id="messageInputArea">
+                <textarea class="message-input" id="messageInput" rows="1" placeholder="Type a message..."></textarea>
+                <button class="message-send-btn" id="sendMessageBtn" onclick="sendMessage()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                    Send
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const API_BASE = window.location.origin;
+        let currentMessageOrderId = null;
+        let currentMessageOrderStatus = null;
+        let unreadCounts = {};
 
         async function checkAuth() {
             try {
@@ -604,6 +853,19 @@
 
         checkAuth();
         loadOrders();
+        loadUnreadCounts();
+
+        async function loadUnreadCounts() {
+            try {
+                const response = await fetch(`${API_BASE}/api/messages/unread/count`);
+                const data = await response.json();
+                if (data.success) {
+                    unreadCounts = data.unreadByOrder || {};
+                }
+            } catch (error) {
+                console.error('Error loading unread counts:', error);
+            }
+        }
 
         async function loadOrders() {
             document.getElementById('emptyState').classList.remove('visible');
@@ -628,6 +890,7 @@
                     return;
                 }
 
+                await loadUnreadCounts();
                 displayOrders(data.orders);
 
             } catch (error) {
@@ -644,7 +907,11 @@
             document.getElementById('pendingOrders').textContent = pending;
             document.getElementById('inProgressOrders').textContent = inProgress;
 
-            const ordersHtml = orders.map((order, index) => `
+            const ordersHtml = orders.map((order, index) => {
+                const isCompleted = order.status === 'completed';
+                const unreadCount = unreadCounts[order.id] || 0;
+
+                return `
                 <div class="order-card">
                     <div class="order-header">
                         <span class="order-number">${index + 1}</span>
@@ -654,6 +921,14 @@
                         </div>
                         <span class="order-status status-${order.status}">${order.status.replace('_', ' ')}</span>
                     </div>
+                    ${isCompleted ? `
+                    <div class="privacy-notice">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                        Contact info hidden for privacy after delivery
+                    </div>` : ''}
                     <div class="order-details">
                         <div class="order-detail full-width">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -696,6 +971,7 @@
                         </div>` : ''}
                     </div>
                     <div class="order-actions">
+                        ${!isCompleted ? `
                         <button class="btn btn-call" onclick="callCustomer('${order.phone}')">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72"></path>
@@ -708,6 +984,13 @@
                             </svg>
                             Navigate
                         </button>
+                        <button class="btn btn-message" onclick="openMessageModal(${order.id}, '${order.name}', '${order.status}')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                            </svg>
+                            Message
+                            ${unreadCount > 0 ? `<span class="unread-badge">${unreadCount}</span>` : ''}
+                        </button>` : ''}
                         ${order.status === 'confirmed' ? `
                         <button class="btn btn-start" onclick="updateStatus(${order.id}, 'in_progress')">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -724,18 +1007,151 @@
                         </button>` : ''}
                     </div>
                 </div>
-            `).join('');
+            `}).join('');
 
             document.getElementById('ordersContainer').innerHTML = ordersHtml;
         }
 
         function callCustomer(phone) {
+            // Check if phone is masked
+            if (phone.includes('***')) {
+                alert('Contact info hidden. Use the messaging feature to communicate.');
+                return;
+            }
             window.location.href = `tel:${phone}`;
         }
 
         function navigate(address) {
+            // Check if address is masked
+            if (address.includes('hidden') || address.includes('area')) {
+                alert('Full address hidden. Use the messaging feature to coordinate.');
+                return;
+            }
             window.open(`https://www.google.com/maps/dir/?api=1&destination=${address}`, '_blank');
         }
+
+        // Messaging Functions
+        async function openMessageModal(orderId, customerName, orderStatus) {
+            currentMessageOrderId = orderId;
+            currentMessageOrderStatus = orderStatus;
+            document.getElementById('messageCustomerName').textContent = customerName;
+            document.getElementById('messageModal').classList.add('show');
+
+            // Hide input area for completed orders
+            const inputArea = document.getElementById('messageInputArea');
+            if (orderStatus === 'completed' || orderStatus === 'cancelled') {
+                inputArea.style.display = 'none';
+            } else {
+                inputArea.style.display = 'flex';
+            }
+
+            await loadMessages(orderId);
+        }
+
+        function closeMessageModal() {
+            document.getElementById('messageModal').classList.remove('show');
+            currentMessageOrderId = null;
+            currentMessageOrderStatus = null;
+        }
+
+        async function loadMessages(orderId) {
+            const messageList = document.getElementById('messageList');
+            messageList.innerHTML = '<div class="message-empty">Loading messages...</div>';
+
+            try {
+                const response = await fetch(`${API_BASE}/api/messages/${orderId}`);
+                const data = await response.json();
+
+                if (!data.success) {
+                    throw new Error(data.error || 'Failed to load messages');
+                }
+
+                if (data.messages.length === 0) {
+                    messageList.innerHTML = '<div class="message-empty">No messages yet. Send a message to the customer.</div>';
+                    return;
+                }
+
+                const messagesHtml = data.messages.map(msg => {
+                    const isSent = msg.sender_type === 'driver';
+                    const time = new Date(msg.createdAt).toLocaleTimeString('en-US', {
+                        hour: 'numeric',
+                        minute: '2-digit'
+                    });
+                    return `
+                        <div class="message-item ${isSent ? 'sent' : 'received'}">
+                            <div class="message-bubble">${escapeHtml(msg.message)}</div>
+                            <div class="message-time">${time}</div>
+                        </div>
+                    `;
+                }).join('');
+
+                messageList.innerHTML = messagesHtml;
+                messageList.scrollTop = messageList.scrollHeight;
+
+                // Update unread count
+                if (unreadCounts[orderId]) {
+                    unreadCounts[orderId] = 0;
+                }
+
+            } catch (error) {
+                console.error('Error loading messages:', error);
+                messageList.innerHTML = '<div class="message-empty">Failed to load messages.</div>';
+            }
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+
+            if (!message || !currentMessageOrderId) return;
+
+            const sendBtn = document.getElementById('sendMessageBtn');
+            sendBtn.disabled = true;
+
+            try {
+                const response = await fetch(`${API_BASE}/api/messages/${currentMessageOrderId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message })
+                });
+
+                const data = await response.json();
+
+                if (!data.success) {
+                    throw new Error(data.error || 'Failed to send message');
+                }
+
+                input.value = '';
+                await loadMessages(currentMessageOrderId);
+
+            } catch (error) {
+                console.error('Error sending message:', error);
+                alert('Failed to send message: ' + error.message);
+            } finally {
+                sendBtn.disabled = false;
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Send message on Enter key
+        document.getElementById('messageInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        // Close modal when clicking outside
+        document.getElementById('messageModal').addEventListener('click', (e) => {
+            if (e.target.id === 'messageModal') {
+                closeMessageModal();
+            }
+        });
 
         async function updateStatus(bookingId, newStatus) {
             const messages = {
@@ -765,6 +1181,21 @@
                 alert('Error: ' + error.message);
             }
         }
+
+        // Poll for new messages every 30 seconds
+        setInterval(async () => {
+            await loadUnreadCounts();
+            // Update badges without full reload
+            Object.entries(unreadCounts).forEach(([orderId, count]) => {
+                const badge = document.querySelector(`[onclick*="openMessageModal(${orderId}"] .unread-badge`);
+                if (badge && count > 0) {
+                    badge.textContent = count;
+                    badge.style.display = 'flex';
+                } else if (badge) {
+                    badge.style.display = 'none';
+                }
+            });
+        }, 30000);
     </script>
 </body>
 </html>
