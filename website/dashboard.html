@@ -1175,11 +1175,25 @@
             const comment = document.getElementById('ratingComment').value.trim();
 
             try {
-                console.log('Rating submitted:', {
-                    orderId: currentRatingOrderId,
-                    rating: selectedRating,
-                    comment: comment
+                const response = await fetch(`${API_BASE}/api/reviews`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        booking_id: currentRatingOrderId,
+                        customer_name: currentUser ? currentUser.name : 'Anonymous',
+                        rating: selectedRating,
+                        review_text: comment || null
+                    })
                 });
+
+                const data = await response.json();
+
+                if (!data.success) {
+                    throw new Error(data.error || 'Failed to submit review');
+                }
 
                 // Show success message
                 document.getElementById('ratingContent').style.display = 'none';

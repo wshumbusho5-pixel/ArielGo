@@ -141,6 +141,32 @@ function initializeDatabase() {
     db.run(`
         CREATE INDEX IF NOT EXISTS idx_ai_usage_user_date ON ai_usage(user_id, createdAt)
     `);
+
+    // Create reviews table
+    db.run(`
+        CREATE TABLE IF NOT EXISTS reviews (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            booking_id INTEGER,
+            user_id INTEGER,
+            customer_name TEXT NOT NULL,
+            rating INTEGER NOT NULL CHECK(rating >= 1 AND rating <= 5),
+            review_text TEXT,
+            approved INTEGER DEFAULT 0,
+            createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (booking_id) REFERENCES bookings(id),
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        )
+    `, (err) => {
+        if (err) {
+            console.error('Error creating reviews table:', err);
+        } else {
+            console.log('✅ Reviews table ready');
+            // Create index on approved for faster public queries
+            db.run(`
+                CREATE INDEX IF NOT EXISTS idx_reviews_approved ON reviews(approved)
+            `);
+        }
+    });
 }
 
 /**
@@ -804,6 +830,143 @@ function getUnreadMessageCount(bookingId, readerType) {
     });
 }
 
+// ==================================
+// REVIEW FUNCTIONS
+// ==================================
+
+/**
+ * Create a new review
+ */
+function createReview(reviewData) {
+    return new Promise((resolve, reject) => {
+        const sql = `
+            INSERT INTO reviews (booking_id, user_id, customer_name, rating, review_text, approved)
+            VALUES (?, ?, ?, ?, ?, ?)
+        `;
+
+        const params = [
+            reviewData.booking_id || null,
+            reviewData.user_id || null,
+            reviewData.customer_name,
+            reviewData.rating,
+            reviewData.review_text || null,
+            reviewData.approved || 0
+        ];
+
+        db.run(sql, params, function(err) {
+            if (err) {
+                console.error('Error creating review:', err);
+                reject(err);
+            } else {
+                getReviewById(this.lastID)
+                    .then(resolve)
+                    .catch(reject);
+            }
+        });
+    });
+}
+
+/**
+ * Get review by ID
+ */
+function getReviewById(id) {
+    return new Promise((resolve, reject) => {
+        const sql = 'SELECT * FROM reviews WHERE id = ?';
+
+        db.get(sql, [id], (err, row) => {
+            if (err) {
+                console.error('Error fetching review:', err);
+                reject(err);
+            } else {
+                resolve(row || null);
+            }
+        });
+    });
+}
+
+/**
+ * Get all approved reviews (for public display)
+ */
+function getApprovedReviews(limit = 10) {
+    return new Promise((resolve, reject) => {
+        const sql = `
+            SELECT * FROM reviews
+            WHERE approved = 1
+            ORDER BY createdAt DESC
+            LIMIT ?
+        `;
+
+        db.all(sql, [limit], (err, rows) => {
+            if (err) {
+                console.error('Error fetching approved reviews:', err);
+                reject(err);
+            } else {
+                resolve(rows || []);
+            }
+        });
+    });
+}
+
+/**
+ * Get all reviews (for admin)
+ */
+function getAllReviews() {
+    return new Promise((resolve, reject) => {
+        const sql = 'SELECT * FROM reviews ORDER BY createdAt DESC';
+
+        db.all(sql, [], (err, rows) => {
+            if (err) {
+                console.error('Error fetching all reviews:', err);
+                reject(err);
+            } else {
+                resolve(rows || []);
+            }
+        });
+    });
+}
+
+/**
+ * Update review approval status
+ */
+function updateReviewApproval(id, approved) {
+    return new Promise((resolve, reject) => {
+        const sql = 'UPDATE reviews SET approved = ? WHERE id = ?';
+
+        db.run(sql, [approved ? 1 : 0, id], function(err) {
+            if (err) {
+                console.error('Error updating review approval:', err);
+                reject(err);
+            } else {
+                if (this.changes === 0) {
+                    resolve(null);
+                } else {
+                    getReviewById(id)
+                        .then(resolve)
+                        .catch(reject);
+                }
+            }
+        });
+    });
+}
+
+/**
+ * Delete a review
+ */
+function deleteReview(id) {
+    return new Promise((resolve, reject) => {
+        const sql = 'DELETE FROM reviews WHERE id = ?';
+
+        db.run(sql, [id], function(err) {
+            if (err) {
+                console.error('Error deleting review:', err);
+                reject(err);
+            } else {
+                resolve(this.changes > 0);
+            }
+        });
+    });
+}
+
 /**
  * Close database connection
  */
@@ -843,5 +1006,12 @@ module.exports = {
     getMessagesByBookingId,
     markMessagesAsRead,
     getUnreadMessageCount,
+    // Review functions
+    createReview,
+    getReviewById,
+    getApprovedReviews,
+    getAllReviews,
+    updateReviewApproval,
+    deleteReview,
     close
 };
