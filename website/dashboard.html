@@ -1175,7 +1175,7 @@
             const comment = document.getElementById('ratingComment').value.trim();
 
             try {
-                const response = await fetch(`${API_BASE}/api/reviews`, {
+                const response = await fetch(`${API_URL}/api/reviews`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
