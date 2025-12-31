@@ -1496,6 +1496,156 @@ app.get('/api/messages/:bookingId/unread', async (req, res) => {
 });
 
 // ==================================
+// REVIEW ROUTES
+// ==================================
+
+// Submit a new review
+app.post('/api/reviews', async (req, res) => {
+    try {
+        const { booking_id, customer_name, rating, review_text } = req.body;
+
+        // Validation
+        if (!customer_name || !rating) {
+            return res.status(400).json({
+                success: false,
+                error: 'Customer name and rating are required'
+            });
+        }
+
+        if (rating < 1 || rating > 5) {
+            return res.status(400).json({
+                success: false,
+                error: 'Rating must be between 1 and 5'
+            });
+        }
+
+        // Get user_id from session if logged in
+        const user_id = req.session.user ? req.session.user.id : null;
+
+        const review = await db.createReview({
+            booking_id: booking_id || null,
+            user_id,
+            customer_name,
+            rating: parseInt(rating),
+            review_text: review_text || null,
+            approved: 0 // All reviews start as pending approval
+        });
+
+        res.json({
+            success: true,
+            message: 'Review submitted successfully! It will appear on the website after approval.',
+            review
+        });
+
+    } catch (error) {
+        console.error('Error creating review:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to submit review'
+        });
+    }
+});
+
+// Get approved reviews (public - for website display)
+app.get('/api/reviews', async (req, res) => {
+    try {
+        const limit = parseInt(req.query.limit) || 10;
+        const reviews = await db.getApprovedReviews(limit);
+
+        res.json({
+            success: true,
+            reviews
+        });
+
+    } catch (error) {
+        console.error('Error fetching reviews:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to fetch reviews'
+        });
+    }
+});
+
+// Get all reviews (admin only)
+app.get('/api/reviews/all', async (req, res) => {
+    try {
+        // TODO: Add admin authentication check
+        const reviews = await db.getAllReviews();
+
+        res.json({
+            success: true,
+            reviews
+        });
+
+    } catch (error) {
+        console.error('Error fetching all reviews:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to fetch reviews'
+        });
+    }
+});
+
+// Approve/disapprove a review (admin only)
+app.patch('/api/reviews/:id/approve', async (req, res) => {
+    try {
+        // TODO: Add admin authentication check
+        const reviewId = parseInt(req.params.id);
+        const { approved } = req.body;
+
+        const review = await db.updateReviewApproval(reviewId, approved);
+
+        if (!review) {
+            return res.status(404).json({
+                success: false,
+                error: 'Review not found'
+            });
+        }
+
+        res.json({
+            success: true,
+            message: approved ? 'Review approved' : 'Review disapproved',
+            review
+        });
+
+    } catch (error) {
+        console.error('Error updating review approval:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to update review'
+        });
+    }
+});
+
+// Delete a review (admin only)
+app.delete('/api/reviews/:id', async (req, res) => {
+    try {
+        // TODO: Add admin authentication check
+        const reviewId = parseInt(req.params.id);
+        const deleted = await db.deleteReview(reviewId);
+
+        if (!deleted) {
+            return res.status(404).json({
+                success: false,
+                error: 'Review not found'
+            });
+        }
+
+        res.json({
+            success: true,
+            message: 'Review deleted'
+        });
+
+    } catch (error) {
+        console.error('Error deleting review:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to delete review'
+        });
+    }
+});
+
+// ==================================
 // ERROR HANDLING
 // ==================================
 

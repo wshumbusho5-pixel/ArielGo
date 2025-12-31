@@ -3465,6 +3465,98 @@
                 testimonialsTrack.scrollLeft = scrollLeft - walk;
             });
         }
+
+        // ============================================
+        // LOAD REAL REVIEWS FROM API
+        // ============================================
+        async function loadRealReviews() {
+            try {
+                const response = await fetch(`${window.location.origin}/api/reviews?limit=10`);
+                const data = await response.json();
+
+                if (data.success && data.reviews && data.reviews.length > 0) {
+                    const track = document.getElementById('testimonialsTrack');
+                    const indicatorsContainer = document.getElementById('testimonialsIndicators');
+
+                    // Generate stars based on rating
+                    function generateStars(rating) {
+                        return '★'.repeat(rating) + '☆'.repeat(5 - rating);
+                    }
+
+                    // Format relative date
+                    function formatDate(dateStr) {
+                        const date = new Date(dateStr);
+                        const now = new Date();
+                        const diffMs = now - date;
+                        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+                        if (diffDays === 0) return 'Today';
+                        if (diffDays === 1) return 'Yesterday';
+                        if (diffDays < 7) return `${diffDays} days ago`;
+                        if (diffDays < 14) return '1 week ago';
+                        if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
+                        if (diffDays < 60) return '1 month ago';
+                        return `${Math.floor(diffDays / 30)} months ago`;
+                    }
+
+                    // Create review cards HTML
+                    const reviewCards = data.reviews.map(review => {
+                        const initial = review.customer_name ? review.customer_name.charAt(0).toUpperCase() : 'A';
+                        const displayName = review.customer_name || 'Anonymous';
+                        return `
+                            <div class="testimonial-card real-review">
+                                <div class="testimonial-header">
+                                    <div class="testimonial-avatar">${initial}</div>
+                                    <div class="testimonial-info">
+                                        <h5>${displayName}</h5>
+                                        <div class="testimonial-stars">${generateStars(review.rating)}</div>
+                                    </div>
+                                </div>
+                                <p class="testimonial-text">"${review.review_text || 'Great service!'}"</p>
+                                <p class="testimonial-date">${formatDate(review.createdAt)}</p>
+                            </div>
+                        `;
+                    }).join('');
+
+                    // Prepend real reviews to the track
+                    track.insertAdjacentHTML('afterbegin', reviewCards);
+
+                    // Update indicators
+                    const totalCards = track.querySelectorAll('.testimonial-card').length;
+                    let indicatorsHTML = '';
+                    for (let i = 0; i < totalCards; i++) {
+                        indicatorsHTML += `<span class="testimonials-indicator${i === 0 ? ' active' : ''}" data-index="${i}"></span>`;
+                    }
+                    indicatorsContainer.innerHTML = indicatorsHTML;
+
+                    // Re-bind indicator click events
+                    document.querySelectorAll('.testimonials-indicator').forEach(indicator => {
+                        indicator.addEventListener('click', () => {
+                            const index = parseInt(indicator.dataset.index);
+                            const cardWidth = 380 + 24;
+                            track.scrollTo({
+                                left: index * cardWidth,
+                                behavior: 'smooth'
+                            });
+                        });
+                    });
+
+                    // Update scroll listener for new indicators
+                    track.addEventListener('scroll', () => {
+                        const cardWidth = 380 + 24;
+                        const currentIndex = Math.round(track.scrollLeft / cardWidth);
+                        document.querySelectorAll('.testimonials-indicator').forEach((ind, idx) => {
+                            ind.classList.toggle('active', idx === currentIndex);
+                        });
+                    });
+                }
+            } catch (error) {
+                console.log('Using default testimonials');
+            }
+        }
+
+        // Load real reviews on page load
+        loadRealReviews();
     </script>
 
     <script>
