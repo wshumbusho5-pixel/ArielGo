@@ -6,7 +6,7 @@ After=network.target postgresql.service
 [Service]
 Type=simple
 User=ubuntu
-WorkingDirectory=/home/ubuntu/arielgo/admin
+WorkingDirectory=/home/ubuntu/laundry-app/admin
 Environment=FLASK_APP=app.py
 Environment=FLASK_ENV=production
 ExecStart=/usr/bin/python3 -m gunicorn --bind 0.0.0.0:5002 --workers 2 app:app

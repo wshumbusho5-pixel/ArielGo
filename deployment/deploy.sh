@@ -65,39 +65,39 @@ echo -e "${YELLOW}📝 Database password: $DB_PASSWORD${NC}"
 echo -e "${YELLOW}   Save this password! Adding to .env file...${NC}"
 
 # Update .env file with database password
-if [ -f /home/ubuntu/arielgo/.env ]; then
-    sed -i "s/DB_PASSWORD=.*/DB_PASSWORD=$DB_PASSWORD/" /home/ubuntu/arielgo/.env
+if [ -f /home/ubuntu/laundry-app/.env ]; then
+    sed -i "s/DB_PASSWORD=.*/DB_PASSWORD=$DB_PASSWORD/" /home/ubuntu/laundry-app/.env
     echo -e "${GREEN}✅ Updated .env with database password${NC}"
 fi
 
 echo -e "${BLUE}📦 Step 7: Installing Node.js dependencies...${NC}"
-cd /home/ubuntu/arielgo
+cd /home/ubuntu/laundry-app
 npm install --production
 
 echo -e "${BLUE}📦 Step 8: Installing Python dependencies for admin...${NC}"
-cd /home/ubuntu/arielgo/admin
+cd /home/ubuntu/laundry-app/admin
 pip3 install -r requirements.txt
 pip3 install gunicorn
 
 echo -e "${BLUE}📦 Step 9: Initializing PostgreSQL database tables...${NC}"
-cd /home/ubuntu/arielgo
+cd /home/ubuntu/laundry-app
 export $(cat .env | grep -v '^#' | xargs)
 node -e "const db = require('./database/database-pg.js');" || echo "Database initialization will complete on first run"
 
 echo -e "${BLUE}📦 Step 10: Setting up systemd services...${NC}"
-sudo cp /home/ubuntu/arielgo/deployment/arielgo-backend.service /etc/systemd/system/
-sudo cp /home/ubuntu/arielgo/deployment/arielgo-admin.service /etc/systemd/system/
+sudo cp /home/ubuntu/laundry-app/deployment/arielgo-backend.service /etc/systemd/system/
+sudo cp /home/ubuntu/laundry-app/deployment/arielgo-admin.service /etc/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl enable arielgo-backend
 sudo systemctl enable arielgo-admin
 
 echo -e "${BLUE}📦 Step 11: Configuring Nginx...${NC}"
-sudo cp /home/ubuntu/arielgo/deployment/nginx.conf /etc/nginx/sites-available/arielgo
+sudo cp /home/ubuntu/laundry-app/deployment/nginx.conf /etc/nginx/sites-available/arielgo
 sudo ln -sf /etc/nginx/sites-available/arielgo /etc/nginx/sites-enabled/
 sudo rm -f /etc/nginx/sites-enabled/default
 
 # Get the domain from .env or use placeholder
-DOMAIN=$(grep DOMAIN /home/ubuntu/arielgo/.env | cut -d '=' -f2 || echo "yourdomain.com")
+DOMAIN=$(grep DOMAIN /home/ubuntu/laundry-app/.env | cut -d '=' -f2 || echo "yourdomain.com")
 
 # Replace placeholder domain in nginx config
 sudo sed -i "s/yourdomain.com/$DOMAIN/g" /etc/nginx/sites-available/arielgo

@@ -17,10 +17,8 @@
     <meta name="twitter:title" content="ArielGo - Laundry Delivery Seattle">
     <meta name="twitter:description" content="We pick up your laundry, wash it, and deliver it back. Next day. Simple.">
 
-    <!-- Premium Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Premium Fonts - Fontshare -->
+    <link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&f[]=satoshi@300,400,500,700&display=swap" rel="stylesheet">
 
     <!-- GSAP Animation Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
@@ -66,13 +64,18 @@
         }
 
         body {
-            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-family: 'Satoshi', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             background: #fafafa;
             color: var(--color-gray-900);
             line-height: 1.6;
             overflow-x: hidden;
             width: 100%;
             position: relative;
+        }
+
+        /* Headlines use Clash Display */
+        h1, h2, h3, .stat-number, .speed-price, .logo {
+            font-family: 'Clash Display', sans-serif;
         }
 
         .content-wrapper {
@@ -132,7 +135,7 @@
         }
 
         .hero-banner-content h1 {
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Satoshi', sans-serif;
             font-size: 4rem;
             font-weight: 800;
             line-height: 1.1;
@@ -175,7 +178,7 @@
         }
 
         .hero-banner-content h1 {
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Satoshi', sans-serif;
             font-size: 3.5rem;
             font-weight: 700;
             margin-bottom: 1rem;
@@ -303,7 +306,7 @@
         }
 
         .how-header h2 {
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Satoshi', sans-serif;
             font-size: 2rem;
             font-weight: 700;
             color: var(--color-gray-900);
@@ -527,7 +530,7 @@
         }
 
         .logo {
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Satoshi', sans-serif;
             font-size: 1.5rem;
             font-weight: 700;
             color: var(--color-gray-900);
@@ -653,7 +656,7 @@
         }
 
         .hero h1 {
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Satoshi', sans-serif;
             font-size: 3.5rem;
             font-weight: 700;
             line-height: 1.1;
@@ -782,7 +785,7 @@
         }
 
         .stat-number {
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Satoshi', sans-serif;
             font-size: 2.5rem;
             font-weight: 700;
             color: var(--color-gray-900);
@@ -891,7 +894,7 @@
         }
 
         .service-info h2 {
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Satoshi', sans-serif;
             font-size: 2.5rem;
             font-weight: 700;
             color: var(--color-gray-900);
@@ -1282,21 +1285,85 @@
         }
 
         .booking-section {
-            padding: 5rem 2rem;
-            background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+            padding: 6rem 2rem;
+            background: linear-gradient(135deg, #1e40af 0%, #2563eb 50%, #3b82f6 100%);
             position: relative;
+            overflow: hidden;
         }
 
         .booking-section::before {
-            content: '';
+            content: 'BOOK NOW';
             position: absolute;
-            bottom: 0;
+            top: 50%;
             left: 50%;
-            transform: translateX(-50%);
-            width: 600px;
-            height: 400px;
-            background: radial-gradient(ellipse at center bottom, rgba(37, 99, 235, 0.05) 0%, transparent 70%);
+            transform: translate(-50%, -50%);
+            font-family: 'Clash Display', sans-serif;
+            font-size: 15vw;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.03);
+            white-space: nowrap;
             pointer-events: none;
+            z-index: 0;
+        }
+
+        .booking-section .section-header h2 {
+            color: white !important;
+            font-size: 2.5rem;
+        }
+
+        .booking-section .section-header p {
+            color: rgba(255, 255, 255, 0.9) !important;
+        }
+
+        .booking-section .booking-container {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Floating sticky Book Now button */
+        .floating-cta {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: white;
+            padding: 16px 28px;
+            border-radius: 50px;
+            font-family: 'Clash Display', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            text-decoration: none;
+            box-shadow: 0 10px 40px rgba(37, 99, 235, 0.4);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+
+        .floating-cta:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 50px rgba(37, 99, 235, 0.5);
+        }
+
+        .floating-cta svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 10px 40px rgba(37, 99, 235, 0.4); }
+            50% { box-shadow: 0 10px 60px rgba(37, 99, 235, 0.6), 0 0 20px rgba(37, 99, 235, 0.3); }
+        }
+
+        @media (max-width: 768px) {
+            .floating-cta {
+                bottom: 20px;
+                right: 20px;
+                padding: 14px 24px;
+                font-size: 0.9rem;
+            }
         }
 
         .section-header {
@@ -1305,7 +1372,7 @@
         }
 
         .section-header h2 {
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Satoshi', sans-serif;
             font-size: 2rem;
             font-weight: 700;
             letter-spacing: -0.02em;
@@ -1371,7 +1438,7 @@
         }
 
         .feature-card h3 {
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Satoshi', sans-serif;
             font-size: 1rem;
             font-weight: 600;
             margin-bottom: 0.5rem;
@@ -1423,7 +1490,7 @@
         }
 
         .pricing-card h3 {
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Satoshi', sans-serif;
             font-size: 1rem;
             font-weight: 600;
             margin-bottom: 0.5rem;
@@ -1431,7 +1498,7 @@
         }
 
         .pricing-amount {
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Satoshi', sans-serif;
             font-size: 2.5rem;
             font-weight: 700;
             color: var(--color-gray-900);
@@ -1484,10 +1551,12 @@
 
         .booking-form {
             background: #ffffff;
-            border: 1px solid var(--color-gray-200);
-            border-radius: 12px;
-            padding: 2rem;
-            box-shadow: var(--shadow-lg);
+            border: none;
+            border-radius: 16px;
+            padding: 2.5rem;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
+            max-width: 600px;
+            margin: 0 auto;
         }
 
         .form-row {
@@ -1724,7 +1793,7 @@
         }
 
         .footer-section h3 {
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Satoshi', sans-serif;
             font-size: 1.125rem;
             font-weight: 600;
             margin-bottom: 0.75rem;
@@ -1793,7 +1862,7 @@
         }
 
         .trust-badge h4 {
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Satoshi', sans-serif;
             font-size: 0.9rem;
             font-weight: 600;
             color: var(--color-gray-900);
@@ -2400,6 +2469,14 @@
     <!-- Custom Cursor - Unique touch -->
     <div class="cursor-dot" id="cursorDot"></div>
     <div class="cursor-ring" id="cursorRing"></div>
+
+    <!-- Floating Book Now CTA -->
+    <a href="#booking" class="floating-cta" id="floatingCta">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+        Book Now
+    </a>
 
     <div class="content-wrapper">
         <nav class="navbar">
@@ -3250,16 +3327,16 @@
                     <div class="stat-label" style="color: rgba(255,255,255,0.85);">Turnaround</div>
                 </div>
                 <div class="stat-card" style="background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2);">
-                    <div class="stat-number" style="color: white;">4.9</div>
-                    <div class="stat-label" style="color: rgba(255,255,255,0.85);">Rating</div>
+                    <div class="stat-number" style="color: white;">$0</div>
+                    <div class="stat-label" style="color: rgba(255,255,255,0.85);">Delivery Fee</div>
                 </div>
                 <div class="stat-card" style="background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2);">
-                    <div class="stat-number" data-count-to="1000" data-suffix="+" style="color: white;">1K+</div>
-                    <div class="stat-label" style="color: rgba(255,255,255,0.85);">Happy Customers</div>
+                    <div class="stat-number" data-count-to="100" data-suffix="%" style="color: white;">100%</div>
+                    <div class="stat-label" style="color: rgba(255,255,255,0.85);">Satisfaction Guarantee</div>
                 </div>
                 <div class="stat-card" style="background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2);">
-                    <div class="stat-number" data-count-to="99" data-suffix="%" style="color: white;">99%</div>
-                    <div class="stat-label" style="color: rgba(255,255,255,0.85);">On-Time</div>
+                    <div class="stat-number" data-count-to="7" style="color: white;">7</div>
+                    <div class="stat-label" style="color: rgba(255,255,255,0.85);">Days a Week</div>
                 </div>
             </div>
         </section>

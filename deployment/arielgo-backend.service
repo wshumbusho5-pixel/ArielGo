@@ -6,7 +6,7 @@ After=network.target postgresql.service
 [Service]
 Type=simple
 User=ubuntu
-WorkingDirectory=/home/ubuntu/arielgo
+WorkingDirectory=/home/ubuntu/laundry-app
 Environment=NODE_ENV=production
 ExecStart=/usr/bin/node server.js
 Restart=always
