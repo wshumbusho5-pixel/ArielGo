@@ -1,10 +1,30 @@
 /**
  * ArielGo Premium Scroll Effects CSS
- * Clean, no fade-in dependencies
+ * Apple-inspired animations
  */
 
 /* ============================================
-   BASE - GPU ACCELERATION
+   TEXT SPLIT ANIMATIONS
+   ============================================ */
+
+.word {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: top;
+}
+
+.word-inner {
+    display: inline-block;
+    will-change: transform, opacity;
+}
+
+.char {
+    display: inline-block;
+    will-change: transform, opacity;
+}
+
+/* ============================================
+   GPU ACCELERATION
    ============================================ */
 
 .feature-card,
@@ -14,30 +34,295 @@
 .order-card,
 .speed-card,
 .story-value,
-.testimonial-card {
-    will-change: transform;
+.testimonial-card,
+.hero-banner-content,
+.hero-banner-image {
+    will-change: transform, opacity;
     backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    transform: translateZ(0);
 }
 
 /* ============================================
-   HOVER LIFT EFFECT
+   BUTTON RIPPLE EFFECT
+   ============================================ */
+
+.btn-hero-primary,
+.btn-primary,
+.btn-nav-cta,
+.cta-button,
+.hero-banner-cta,
+.donation-cta {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.4);
+    transform: scale(0);
+    animation: ripple-effect 0.6s ease-out forwards;
+    pointer-events: none;
+}
+
+@keyframes ripple-effect {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+/* ============================================
+   HOVER LIFT EFFECT - ENHANCED
    ============================================ */
 
 .hover-lift {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: transform 0.4s cubic-bezier(0.03, 0.98, 0.52, 0.99),
+                box-shadow 0.4s cubic-bezier(0.03, 0.98, 0.52, 0.99);
 }
 
 .hover-lift:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
 }
 
 /* ============================================
-   SMOOTH TRANSITIONS
+   CARD GLOW ON HOVER
+   ============================================ */
+
+.speed-card,
+.feature-card,
+.trust-badge {
+    position: relative;
+}
+
+.speed-card::before,
+.feature-card::before,
+.trust-badge::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: inherit;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    background: radial-gradient(
+        600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+        rgba(37, 99, 235, 0.06),
+        transparent 40%
+    );
+    pointer-events: none;
+    z-index: 1;
+}
+
+.speed-card:hover::before,
+.feature-card:hover::before,
+.trust-badge:hover::before {
+    opacity: 1;
+}
+
+/* ============================================
+   SMOOTH NAVBAR TRANSITIONS
    ============================================ */
 
 .navbar {
-    transition: padding 0.3s ease, backdrop-filter 0.3s ease;
+    transition: padding 0.4s cubic-bezier(0.03, 0.98, 0.52, 0.99),
+                backdrop-filter 0.4s ease,
+                background 0.4s ease,
+                box-shadow 0.4s ease;
+}
+
+.navbar.scrolled {
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* ============================================
+   HERO SECTION ENHANCEMENTS
+   ============================================ */
+
+.hero-banner {
+    overflow: hidden;
+}
+
+.hero-banner-image {
+    transform-origin: center center;
+}
+
+.hero-banner h1 {
+    perspective: 1000px;
+}
+
+.hero-banner h1 .word-inner {
+    transform-style: preserve-3d;
+}
+
+/* ============================================
+   SECTION HEADERS
+   ============================================ */
+
+.section-header h2 {
+    perspective: 800px;
+}
+
+.section-header h2 .word-inner {
+    transform-origin: center bottom;
+}
+
+/* ============================================
+   STATS COUNTER ENHANCEMENT
+   ============================================ */
+
+.stat-number {
+    font-variant-numeric: tabular-nums;
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover .stat-number {
+    transform: scale(1.1);
+}
+
+/* ============================================
+   TESTIMONIAL CARDS
+   ============================================ */
+
+.testimonial-card {
+    transition: transform 0.4s cubic-bezier(0.03, 0.98, 0.52, 0.99),
+                box-shadow 0.4s ease;
+}
+
+.testimonial-card:hover {
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
+}
+
+/* ============================================
+   GALLERY SECTION
+   ============================================ */
+
+.gallery-track {
+    cursor: grab;
+}
+
+.gallery-track:active {
+    cursor: grabbing;
+}
+
+.gallery-item {
+    transition: transform 0.5s cubic-bezier(0.03, 0.98, 0.52, 0.99);
+}
+
+.gallery-item:hover {
+    transform: scale(1.05);
+    z-index: 2;
+}
+
+.gallery-item img {
+    transition: transform 0.6s cubic-bezier(0.03, 0.98, 0.52, 0.99);
+}
+
+.gallery-item:hover img {
+    transform: scale(1.1);
+}
+
+/* ============================================
+   FORM ELEMENTS
+   ============================================ */
+
+.booking-form input,
+.booking-form select,
+.booking-form textarea {
+    transition: border-color 0.3s ease,
+                box-shadow 0.3s ease,
+                transform 0.2s ease;
+}
+
+.booking-form input:focus,
+.booking-form select:focus,
+.booking-form textarea:focus {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(37, 99, 235, 0.15);
+}
+
+/* ============================================
+   SCROLL INDICATOR (Optional)
+   ============================================ */
+
+.scroll-indicator {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: bounce-scroll 2s infinite;
+}
+
+@keyframes bounce-scroll {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateX(-50%) translateY(0);
+    }
+    40% {
+        transform: translateX(-50%) translateY(-10px);
+    }
+    60% {
+        transform: translateX(-50%) translateY(-5px);
+    }
+}
+
+/* ============================================
+   LINK UNDERLINE ANIMATION
+   ============================================ */
+
+.footer-section a,
+.nav-links a {
+    position: relative;
+}
+
+.footer-section a::after,
+.nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.3s cubic-bezier(0.03, 0.98, 0.52, 0.99);
+}
+
+.footer-section a:hover::after,
+.nav-links a:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+}
+
+/* ============================================
+   DONATION CARD
+   ============================================ */
+
+.donation-card {
+    transition: transform 0.5s cubic-bezier(0.03, 0.98, 0.52, 0.99),
+                box-shadow 0.5s ease;
+}
+
+.donation-card:hover {
+    transform: translateY(-10px) rotate(-2deg);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+}
+
+/* ============================================
+   LOADING STATE (for images)
+   ============================================ */
+
+.gallery-image {
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.gallery-image.loaded {
+    opacity: 1;
 }
 
 /* ============================================
@@ -51,5 +336,35 @@
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    .word-inner,
+    .char {
+        opacity: 1 !important;
+        transform: none !important;
+    }
+}
+
+/* ============================================
+   MOBILE OPTIMIZATIONS
+   ============================================ */
+
+@media (max-width: 768px) {
+    /* Disable heavy effects on mobile for performance */
+    .cursor-glow {
+        display: none !important;
+    }
+
+    /* Simpler hover states */
+    .hover-lift:hover {
+        transform: translateY(-4px);
+    }
+
+    /* Faster animations */
+    .speed-card,
+    .feature-card,
+    .trust-badge {
+        transition-duration: 0.2s;
     }
 }
