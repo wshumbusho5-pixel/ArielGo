@@ -884,6 +884,28 @@
     };
 
     // ============================================
+    // FLOATING CTA VISIBILITY
+    // ============================================
+
+    const initFloatingCTA = () => {
+        const floatingCta = document.getElementById('floatingCta');
+        const bookingSection = document.getElementById('booking');
+
+        if (!floatingCta || !bookingSection) return;
+
+        // Hide floating CTA when booking section is visible
+        ScrollTrigger.create({
+            trigger: bookingSection,
+            start: 'top 80%',
+            end: 'bottom 20%',
+            onEnter: () => gsap.to(floatingCta, { opacity: 0, scale: 0.8, duration: 0.3, pointerEvents: 'none' }),
+            onLeave: () => gsap.to(floatingCta, { opacity: 1, scale: 1, duration: 0.3, pointerEvents: 'auto' }),
+            onEnterBack: () => gsap.to(floatingCta, { opacity: 0, scale: 0.8, duration: 0.3, pointerEvents: 'none' }),
+            onLeaveBack: () => gsap.to(floatingCta, { opacity: 1, scale: 1, duration: 0.3, pointerEvents: 'auto' })
+        });
+    };
+
+    // ============================================
     // INITIALIZE
     // ============================================
 
@@ -894,10 +916,12 @@
         document.addEventListener('DOMContentLoaded', () => {
             initAppleEffects();
             initCustomCursor();
+            initFloatingCTA();
         });
     } else {
         initAppleEffects();
         initCustomCursor();
+        initFloatingCTA();
     }
 
 })();

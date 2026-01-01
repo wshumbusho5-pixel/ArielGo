@@ -6,14 +6,18 @@ require('dotenv').config();
 
 let twilioClient = null;
 
-// Initialize Twilio client if credentials are provided
-if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN) {
-    const twilio = require('twilio');
-    twilioClient = twilio(
-        process.env.TWILIO_ACCOUNT_SID,
-        process.env.TWILIO_AUTH_TOKEN
-    );
-    console.log('✅ Twilio SMS service initialized');
+// Initialize Twilio client if valid credentials are provided
+const twilioSid = process.env.TWILIO_ACCOUNT_SID;
+const twilioToken = process.env.TWILIO_AUTH_TOKEN;
+
+if (twilioSid && twilioToken && twilioSid.startsWith('AC')) {
+    try {
+        const twilio = require('twilio');
+        twilioClient = twilio(twilioSid, twilioToken);
+        console.log('✅ Twilio SMS service initialized');
+    } catch (error) {
+        console.log('⚠️  Twilio initialization failed - SMS notifications disabled');
+    }
 } else {
     console.log('⚠️  Twilio not configured - SMS notifications disabled');
 }
