@@ -2387,6 +2387,20 @@
     </style>
 </head>
 <body>
+    <!-- Page Loader - Shows engineering effort -->
+    <div class="page-loader" id="pageLoader">
+        <div class="loader-content">
+            <div class="loader-logo">Ariel<span style="color: #3b82f6">Go</span></div>
+            <div class="loader-bar">
+                <div class="loader-progress"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Cursor - Unique touch -->
+    <div class="cursor-dot" id="cursorDot"></div>
+    <div class="cursor-ring" id="cursorRing"></div>
+
     <div class="content-wrapper">
         <nav class="navbar">
             <div class="navbar-inner">
@@ -2428,9 +2442,21 @@
             >
             <div class="hero-banner-overlay"></div>
             <div class="hero-banner-content">
-                <h1>Fresh. Folded. Delivered.</h1>
+                <span class="sticker-badge">Now Serving U-District</span>
+                <h1>Fresh. Folded. <span class="hand-drawn-underline">Delivered.</span></h1>
                 <p>We handle the laundry. You live your life. Professional wash & fold, delivered to your door.</p>
-                <a href="#booking" class="hero-cta">Schedule Free Pickup</a>
+                <a href="#booking" class="btn-book-unique">
+                    <span class="btn-text">
+                        <small>Free Pickup</small>
+                        Schedule Now
+                    </span>
+                    <span class="btn-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </span>
+                </a>
             </div>
         </section>
 
@@ -2460,6 +2486,15 @@
                 </div>
             </div>
         </section>
+
+        <!-- Wave Divider -->
+        <div class="wave-divider wave-blue">
+            <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25"></path>
+                <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5"></path>
+                <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z"></path>
+            </svg>
+        </div>
 
         <!-- Services & Pricing Section - Moved up for better UX -->
         <section id="pricing" class="services-section reveal">
@@ -2744,6 +2779,13 @@
             </div>
         </section>
 
+        <!-- Wave Divider - Curved -->
+        <div class="wave-divider wave-curved">
+            <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path d="M600,112.77C268.63,112.77,0,65.52,0,7.23V120H1200V7.23C1200,65.52,931.37,112.77,600,112.77Z"></path>
+            </svg>
+        </div>
+
         <!-- Trust Section - Moved up for conversion -->
         <section class="trust-section">
             <div class="trust-container" data-stagger data-stagger-delay="0.12" data-stagger-direction="scale">
@@ -2788,91 +2830,63 @@
             </div>
         </section>
 
-        <!-- Testimonials Section - Moved up for social proof -->
-        <section class="testimonials-section reveal">
+        <!-- Our Promise Section - Honest social proof -->
+        <section class="promise-section reveal">
             <div class="section-header">
-                <h2>What Our Customers Say</h2>
-                <p>Real reviews from real people in Seattle's U-District</p>
+                <h2>Our Promise to You</h2>
+                <p>We're new, but we're serious about earning your trust</p>
             </div>
-            <div class="testimonials-container">
-                <div class="testimonials-track" id="testimonialsTrack">
-                    <div class="testimonial-card">
-                        <div class="testimonial-header">
-                            <div class="testimonial-avatar">S</div>
-                            <div class="testimonial-info">
-                                <h5>Sarah M.</h5>
-                                <div class="testimonial-stars">★★★★★</div>
-                            </div>
+            <div class="promise-container">
+                <div class="promise-intro">
+                    <p class="promise-lead">We're a young local business serving Seattle's U-District. We don't have hundreds of reviews yet — but we have something better: <strong>a genuine commitment to doing right by every customer.</strong></p>
+                </div>
+                <div class="promise-grid">
+                    <div class="promise-card hover-lift">
+                        <div class="promise-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                <polyline points="9 12 11 14 15 10"></polyline>
+                            </svg>
                         </div>
-                        <p class="testimonial-text">"Game changer for busy grad students! Scheduling was super easy through their website. My clothes came back perfectly folded and smelling fresh. Will definitely use again!"</p>
-                        <p class="testimonial-date">2 weeks ago</p>
+                        <h4>100% Satisfaction Guarantee</h4>
+                        <p>Not happy? We'll rewash for free or give you a full refund. No questions, no hassle. Your satisfaction is literally guaranteed.</p>
                     </div>
-                    <div class="testimonial-card">
-                        <div class="testimonial-header">
-                            <div class="testimonial-avatar">J</div>
-                            <div class="testimonial-info">
-                                <h5>James K.</h5>
-                                <div class="testimonial-stars">★★★★★</div>
-                            </div>
+                    <div class="promise-card hover-lift">
+                        <div class="promise-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg>
                         </div>
-                        <p class="testimonial-text">"I've tried other laundry services but ArielGo is on another level. The real-time tracking is incredible - I knew exactly when my driver arrived. Plus, same-day delivery actually means same-day!"</p>
-                        <p class="testimonial-date">1 week ago</p>
+                        <h4>Insured & Accountable</h4>
+                        <p>We're a real, registered business. Your clothes are protected. If something goes wrong, we take full responsibility.</p>
                     </div>
-                    <div class="testimonial-card">
-                        <div class="testimonial-header">
-                            <div class="testimonial-avatar">M</div>
-                            <div class="testimonial-info">
-                                <h5>Maria L.</h5>
-                                <div class="testimonial-stars">★★★★★</div>
-                            </div>
+                    <div class="promise-card hover-lift">
+                        <div class="promise-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                            </svg>
                         </div>
-                        <p class="testimonial-text">"Finally, a laundry service that actually cares about quality. They treated my delicate items with such care. The eco-friendly detergent is a huge plus too. Worth every penny!"</p>
-                        <p class="testimonial-date">3 days ago</p>
-                    </div>
-                    <div class="testimonial-card">
-                        <div class="testimonial-header">
-                            <div class="testimonial-avatar">D</div>
-                            <div class="testimonial-info">
-                                <h5>David R.</h5>
-                                <div class="testimonial-stars">★★★★★</div>
-                            </div>
-                        </div>
-                        <p class="testimonial-text">"As a working professional, I don't have time for laundry. ArielGo has saved me hours every week. The pickup and delivery windows are super flexible, and the quality is consistently excellent."</p>
-                        <p class="testimonial-date">1 week ago</p>
-                    </div>
-                    <div class="testimonial-card">
-                        <div class="testimonial-header">
-                            <div class="testimonial-avatar">E</div>
-                            <div class="testimonial-info">
-                                <h5>Emily T.</h5>
-                                <div class="testimonial-stars">★★★★★</div>
-                            </div>
-                        </div>
-                        <p class="testimonial-text">"I messaged them about a wine stain and they responded right away with advice. When my clothes came back, the stain was completely gone. These folks know their stuff!"</p>
-                        <p class="testimonial-date">5 days ago</p>
-                    </div>
-                    <div class="testimonial-card">
-                        <div class="testimonial-header">
-                            <div class="testimonial-avatar">A</div>
-                            <div class="testimonial-info">
-                                <h5>Alex P.</h5>
-                                <div class="testimonial-stars">★★★★★</div>
-                            </div>
-                        </div>
-                        <p class="testimonial-text">"I had a rush order for a job interview the next day. ArielGo came through with the 4-hour service and my suit looked perfect. You guys literally saved my career opportunity. Thank you!"</p>
-                        <p class="testimonial-date">2 weeks ago</p>
+                        <h4>Real Humans, Real Support</h4>
+                        <p>Call or text us directly at (717) 537-8893. You'll talk to a real person who cares — not a bot or call center.</p>
                     </div>
                 </div>
-                <div class="testimonials-indicators" id="testimonialsIndicators">
-                    <span class="testimonials-indicator active" data-index="0"></span>
-                    <span class="testimonials-indicator" data-index="1"></span>
-                    <span class="testimonials-indicator" data-index="2"></span>
-                    <span class="testimonials-indicator" data-index="3"></span>
-                    <span class="testimonials-indicator" data-index="4"></span>
-                    <span class="testimonials-indicator" data-index="5"></span>
+                <div class="first-customer-cta">
+                    <div class="cta-content">
+                        <h3>Be One of Our First Customers</h3>
+                        <p>Early supporters get our best service. Try us risk-free — if we don't exceed your expectations, you don't pay.</p>
+                        <a href="#booking" class="btn-hero-primary">Book Your First Pickup</a>
+                    </div>
                 </div>
             </div>
         </section>
+
+        <!-- Wave Divider - Tilt -->
+        <div class="wave-divider wave-tilt">
+            <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path d="M1200 120L0 16.48 0 0 1200 0 1200 120z"></path>
+            </svg>
+        </div>
 
         <!-- Features Section - Moved up for conversion -->
         <section id="features" class="features-section">
@@ -3227,23 +3241,25 @@
             </div>
         </section>
 
-        <section class="stats-section">
+        <!-- Stats Section - DIAGONAL GRID BREAKER -->
+        <section class="stats-section diagonal-section">
+            <div class="blob-accent" style="top: -100px; right: -150px; opacity: 0.3;"></div>
             <div class="stats-container">
-                <div class="stat-card">
-                    <div class="stat-number" data-count-to="24" data-suffix="h">24h</div>
-                    <div class="stat-label">Turnaround</div>
+                <div class="stat-card" style="background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2);">
+                    <div class="stat-number" data-count-to="24" data-suffix="h" style="color: white;">24h</div>
+                    <div class="stat-label" style="color: rgba(255,255,255,0.85);">Turnaround</div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-number">4.9</div>
-                    <div class="stat-label">Rating</div>
+                <div class="stat-card" style="background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2);">
+                    <div class="stat-number" style="color: white;">4.9</div>
+                    <div class="stat-label" style="color: rgba(255,255,255,0.85);">Rating</div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-number" data-count-to="1000" data-suffix="+">1K+</div>
-                    <div class="stat-label">Customers</div>
+                <div class="stat-card" style="background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2);">
+                    <div class="stat-number" data-count-to="1000" data-suffix="+" style="color: white;">1K+</div>
+                    <div class="stat-label" style="color: rgba(255,255,255,0.85);">Happy Customers</div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-number" data-count-to="99" data-suffix="%">99%</div>
-                    <div class="stat-label">On-Time</div>
+                <div class="stat-card" style="background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2);">
+                    <div class="stat-number" data-count-to="99" data-suffix="%" style="color: white;">99%</div>
+                    <div class="stat-label" style="color: rgba(255,255,255,0.85);">On-Time</div>
                 </div>
             </div>
         </section>
